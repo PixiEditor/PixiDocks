@@ -1,0 +1,28 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="using:PixiDocks.Avalonia.Controls">
+    <Design.PreviewWith>
+        <controls:DockableArea />
+    </Design.PreviewWith>
+
+    <ControlTheme TargetType="controls:DockableArea" x:Key="{x:Type controls:DockableArea}">
+        <!-- Set Defaults -->
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border Background="{TemplateBinding Background}" Name="PART_Drop" CornerRadius="{TemplateBinding CornerRadius}"
+                        BorderBrush="{TemplateBinding BorderBrush}" DragDrop.AllowDrop="True"
+                        BorderThickness="{TemplateBinding BorderThickness}">
+                    <DockPanel>
+                        <Button DockPanel.Dock="Top" Command="{Binding RelativeSource={RelativeSource TemplatedParent},
+                        Path=FloatCommand}" CommandParameter="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ActiveDockable}"/>
+                        <ContentPresenter DockPanel.Dock="Bottom" Content="{TemplateBinding ActiveDockable}"/>
+                    </DockPanel>
+                </Border>
+            </ControlTemplate>
+        </Setter>
+
+        <Style Selector="^:dockableOver /template/ Border">
+            <Setter Property="Background" Value="Red"/>
+        </Style>
+    </ControlTheme>
+</ResourceDictionary>

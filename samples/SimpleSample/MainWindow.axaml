@@ -3,14 +3,22 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:controls="clr-namespace:PixiDocks.Avalonia.Controls;assembly=PixiDocks.Avalonia"
+        xmlns:avalonia="clr-namespace:PixiDocks.Avalonia;assembly=PixiDocks.Avalonia"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="SimpleSample.MainWindow"
         Title="SimpleSample">
+    <Window.Resources>
+        <avalonia:DockContext x:Key="DockContext"/>
+    </Window.Resources>
     <Grid>
-        <controls:Dockable Width="150" Height="300" >
-            <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
-                <Button Width="60" Height="30" Content="Hello"/>
-            </Grid>
-        </controls:Dockable>
+        <controls:DockableArea Width="150" Height="300" Context="{StaticResource DockContext}" Background="#252525" CornerRadius="5">
+        <controls:DockableArea.ActiveDockable>
+            <controls:Dockable Id="SomeDockable">
+                <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Button Width="60" Height="30" Content="Hello"/>
+                </Grid>
+            </controls:Dockable>
+        </controls:DockableArea.ActiveDockable>
+        </controls:DockableArea>
     </Grid>
 </Window>

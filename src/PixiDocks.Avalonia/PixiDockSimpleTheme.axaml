@@ -5,7 +5,9 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <MergeResourceInclude Source="Controls/Dockable.axaml"/>
+                <MergeResourceInclude Source="Controls/DockableArea.axaml"/>
                 <MergeResourceInclude Source="Controls/HostWindow.axaml"/>
+                <MergeResourceInclude Source="Controls/HostWindowTitleBar.axaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Styles.Resources>

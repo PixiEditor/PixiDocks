@@ -1,0 +1,83 @@
+﻿<!--
+https://github.com/wieslawsoltes/Dock/blob/master/LICENSE.TXT
+
+The MIT License (MIT)
+
+Copyright (c) Wiesław Šoltés
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.-->
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:controls="clr-namespace:PixiDocks.Avalonia.Controls">
+  <Design.PreviewWith>
+    <Border>
+      <controls:HostWindowTitleBar Background="SkyBlue" Height="30" Width="300" Foreground="Black" />
+    </Border>
+  </Design.PreviewWith>
+
+  <ControlTheme x:Key="{x:Type controls:HostWindowTitleBar}" TargetType="controls:HostWindowTitleBar">
+
+    <Setter Property="VerticalAlignment" Value="Top" />
+    <Setter Property="HorizontalAlignment" Value="Stretch" />
+    <Setter Property="Background" Value="Transparent" />
+
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Panel Background="{TemplateBinding Background}" HorizontalAlignment="{TemplateBinding HorizontalAlignment}" VerticalAlignment="Stretch">
+          <Panel x:Name="PART_MouseTracker" Height="1" VerticalAlignment="Top" />
+          <Panel x:Name="PART_Container">
+            <Border IsHitTestVisible="True" x:Name="PART_Background" Background="{TemplateBinding Background}" />
+            <CaptionButtons x:Name="PART_CaptionButtons" VerticalAlignment="Top" HorizontalAlignment="Right" Foreground="{TemplateBinding Foreground}" />
+          </Panel>
+        </Panel>
+      </ControlTemplate>
+    </Setter>
+ 
+    <Style Selector="^:fullscreen">
+      <Setter Property="Background" Value="{DynamicResource SystemAccentColor}" />
+    </Style>
+
+    <Style Selector="^/template/ Border#PART_Background">
+      <Setter Property="IsHitTestVisible" Value="False" />
+    </Style>
+
+    <Style Selector="^:fullscreen /template/ Border#PART_Background">
+      <Setter Property="IsHitTestVisible" Value="True" />
+    </Style>
+
+    <Style Selector="^:fullscreen /template/ Panel#PART_MouseTracker">
+      <Setter Property="Background" Value="Transparent" />
+    </Style>
+
+    <Style Selector="^:fullscreen /template/ Panel#PART_Container">
+      <Setter Property="RenderTransform" Value="translateY(-30px)" />
+      <Setter Property="Transitions">
+        <Transitions>
+          <TransformOperationsTransition Property="RenderTransform" Duration="0:0:.25" />
+        </Transitions>
+      </Setter>
+    </Style>
+
+    <Style Selector="^:fullscreen:pointerover /template/ Panel#PART_Container">
+      <Setter Property="RenderTransform" Value="none" />
+    </Style>
+
+  </ControlTheme>
+
+</ResourceDictionary>

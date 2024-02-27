@@ -12,12 +12,7 @@
     <ControlTheme TargetType="controls:Dockable" x:Key="{x:Type controls:Dockable}">
         <Setter Property="Template">
             <ControlTemplate>
-                <Border Background="Transparent" BorderBrush="Black" BorderThickness="1">
-                    <DockPanel>
-                        <Button Name="PART_FloatButton" DockPanel.Dock="Top"/>
-                        <ContentPresenter DockPanel.Dock="Bottom" Content="{TemplateBinding Content}"/>
-                    </DockPanel>
-                </Border>
+                <ContentPresenter DockPanel.Dock="Bottom" Content="{TemplateBinding Content}"/>
             </ControlTemplate>
         </Setter>
     </ControlTheme>

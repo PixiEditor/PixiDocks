@@ -6,12 +6,20 @@
     </Design.PreviewWith>
 
     <ControlTheme TargetType="controls:HostWindow" x:Key="{x:Type controls:HostWindow}">
+
+        <Setter Property="FontFamily" Value="{TemplateBinding FontFamily}" />
+        <Setter Property="WindowState" Value="Normal" />
+        <Setter Property="UseLayoutRounding" Value="True" />
+        <Setter Property="SystemDecorations" Value="Full" />
+        <Setter Property="ExtendClientAreaToDecorationsHint" Value="True" />
+        <Setter Property="ExtendClientAreaChromeHints" Value="PreferSystemChrome" />
+
         <Setter Property="Template">
             <ControlTemplate>
-                <Panel Background="{DynamicResource WindowBackgroundBrush}">
+                <Panel>
                     <VisualLayerManager>
                         <VisualLayerManager.ChromeOverlayLayer>
-                            <!--<HostWindowTitleBar Name="PART_TitleBar" />-->
+                            <controls:HostWindowTitleBar Name="PART_TitleBar" />
                         </VisualLayerManager.ChromeOverlayLayer>
                         <ContentPresenter Name="PART_ContentPresenter"
                                           ContentTemplate="{TemplateBinding ContentTemplate}"
