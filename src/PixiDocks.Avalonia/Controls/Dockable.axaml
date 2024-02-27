@@ -1,0 +1,24 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="using:PixiDocks.Avalonia.Controls">
+    <Design.PreviewWith>
+        <controls:Dockable>
+            <Grid Width="150" Height="300" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Button Width="60" Height="30" Content="Hello"/>
+            </Grid>
+        </controls:Dockable>
+    </Design.PreviewWith>
+
+    <ControlTheme TargetType="controls:Dockable" x:Key="{x:Type controls:Dockable}">
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border Background="Transparent" BorderBrush="Black" BorderThickness="1">
+                    <DockPanel>
+                        <Button Name="PART_FloatButton" DockPanel.Dock="Top"/>
+                        <ContentPresenter DockPanel.Dock="Bottom" Content="{TemplateBinding Content}"/>
+                    </DockPanel>
+                </Border>
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+</ResourceDictionary>
