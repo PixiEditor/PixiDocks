@@ -1,0 +1,20 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="using:PixiDocks.Avalonia.Controls">
+    <Design.PreviewWith>
+        <controls:DockableAreaRegion />
+    </Design.PreviewWith>
+
+    <ControlTheme TargetType="controls:DockableAreaRegion" x:Key="{x:Type controls:DockableAreaRegion}">
+        <!-- Set Defaults -->
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}">
+                    <ContentPresenter Content="{TemplateBinding OutputGrid}" />
+                </Border>
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+</ResourceDictionary>

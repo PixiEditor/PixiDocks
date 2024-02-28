@@ -59,7 +59,7 @@ public class HostWindowState
         {
             if(_lastHost != null)
             {
-                Context.Dock(hostDockable, _lastHost);
+                _lastHost.Dock(hostDockable);
                 _lastHost = null;
             }
         }
@@ -70,7 +70,6 @@ public class HostWindowState
         host = null;
         foreach (IDockableHost dockHost in Context.AllHosts)
         {
-            Control c;
             if (dockHost.IsDockableWithin(position.X, position.Y))
             {
                 host = dockHost;

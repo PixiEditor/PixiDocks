@@ -59,12 +59,3 @@ public class DockingPicker : TemplatedControl
         return null;
     }
 }
-
-public enum DockingDirection
-{
-    Top,
-    Bottom,
-    Left,
-    Right,
-    Center
-}

@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Windows.Input;
 using Avalonia;
 using Avalonia.Controls;
@@ -31,10 +32,25 @@ public class DockableArea : TemplatedControl, IDockableHost
 
     public static readonly StyledProperty<ObservableCollection<IDockable>> DockablesProperty =
         AvaloniaProperty.Register<DockableArea, ObservableCollection<IDockable>>(
-            nameof(Dockables), new ObservableCollection<IDockable>());
+            nameof(Dockables));
 
     public static readonly StyledProperty<ICommand> FloatCommandProperty = AvaloniaProperty.Register<DockableArea, ICommand>(
-        "FloatCommand");
+        nameof(FloatCommand));
+
+    public static readonly StyledProperty<IDockContext> ContextProperty = AvaloniaProperty.Register<DockableArea, IDockContext>(
+        nameof(Context));
+
+    public static readonly StyledProperty<IDockable> ActiveDockableProperty = AvaloniaProperty.Register<DockableArea, IDockable>(
+        nameof(ActiveDockable));
+
+    public static readonly StyledProperty<DockableAreaRegion> RegionProperty = AvaloniaProperty.Register<DockableArea, DockableAreaRegion>(
+        nameof(Region));
+
+    public DockableAreaRegion Region
+    {
+        get => GetValue(RegionProperty);
+        set => SetValue(RegionProperty, value);
+    }
 
     public ICommand FloatCommand
     {
@@ -42,17 +58,11 @@ public class DockableArea : TemplatedControl, IDockableHost
         set => SetValue(FloatCommandProperty, value);
     }
 
-    public static readonly StyledProperty<IDockContext> ContextProperty = AvaloniaProperty.Register<DockableArea, IDockContext>(
-        nameof(Context));
-
     public IDockContext Context
     {
         get => GetValue(ContextProperty);
         set => SetValue(ContextProperty, value);
     }
-
-    public static readonly StyledProperty<IDockable> ActiveDockableProperty = AvaloniaProperty.Register<DockableArea, IDockable>(
-        nameof(ActiveDockable));
 
     public IDockable ActiveDockable
     {
@@ -67,6 +77,7 @@ public class DockableArea : TemplatedControl, IDockableHost
     }
 
     private DockingPicker _picker;
+    private DockingDirection? _lastDirection;
 
     static DockableArea()
     {
@@ -78,9 +89,13 @@ public class DockableArea : TemplatedControl, IDockableHost
     {
         base.OnApplyTemplate(e);
         AvaloniaObject drop = e.NameScope.Find<AvaloniaObject>("PART_Drop");
-        AddHandler(DragDrop.DropEvent, Drop);
 
         _picker = e.NameScope.Find<DockingPicker>("PART_DockingPicker");
+    }
+
+    public DockableArea()
+    {
+        Dockables = new ObservableCollection<IDockable>();
     }
 
     public void AddDockable(IDockable dockable)
@@ -98,6 +113,11 @@ public class DockableArea : TemplatedControl, IDockableHost
         }
 
         dockable.Host = null;
+
+        if (Dockables.Count == 0)
+        {
+            Region.RemoveDockableArea(this);
+        }
     }
 
     public bool IsDockableWithin(int x, int y)
@@ -109,6 +129,11 @@ public class DockableArea : TemplatedControl, IDockableHost
     private Point ToRelativePoint(int x, int y)
     {
         PixelPoint point = new PixelPoint(x, y);
+        if(VisualRoot is null)
+        {
+            return new Point(-1, -1);
+        }
+
         Point pos = this.PointToClient(point);
 
         pos += Bounds.Position;
@@ -124,22 +149,22 @@ public class DockableArea : TemplatedControl, IDockableHost
     {
         Point? pos = ToRelativePoint(x, y);
         pos -= _picker.Bounds.Position;
-        DockingDirection? direction = _picker.GetDockingDirection(pos.Value);
-        if (direction.HasValue)
+        _lastDirection = _picker.GetDockingDirection(pos.Value);
+        if (_lastDirection.HasValue)
         {
-            bool isCenter = direction.Value == DockingDirection.Center;
+            bool isCenter = _lastDirection.Value == DockingDirection.Center;
             PseudoClasses.Set(":center", isCenter);
 
-            bool isLeft = direction.Value == DockingDirection.Left;
+            bool isLeft = _lastDirection.Value == DockingDirection.Left;
             PseudoClasses.Set(":left", isLeft);
 
-            bool isRight = direction.Value == DockingDirection.Right;
+            bool isRight = _lastDirection.Value == DockingDirection.Right;
             PseudoClasses.Set(":right", isRight);
 
-            bool isTop = direction.Value == DockingDirection.Top;
+            bool isTop = _lastDirection.Value == DockingDirection.Top;
             PseudoClasses.Set(":top", isTop);
 
-            bool isBottom = direction.Value == DockingDirection.Bottom;
+            bool isBottom = _lastDirection.Value == DockingDirection.Bottom;
             PseudoClasses.Set(":bottom", isBottom);
         }
     }
@@ -154,14 +179,16 @@ public class DockableArea : TemplatedControl, IDockableHost
         PseudoClasses.Set(":bottom", false);
     }
 
-    private void Drop(object? sender, DragEventArgs e)
+    public void Dock(IDockable dockable)
     {
-        if (e.Data.Contains(HostWindow.DragFormat))
+        if (!Equals(dockable.Host, this))
         {
-            IDockable dockable = (IDockable)e.Data.Get(HostWindow.DragFormat);
-            if(dockable == null) return;
-
-            if (!Equals(dockable.Host, this))
+            if (_lastDirection.HasValue && _lastDirection.Value != DockingDirection.Center)
+            {
+                DockableArea newArea = Region.SplitDockableArea(this, _lastDirection.Value);
+                Context.Dock(dockable, newArea);
+            }
+            else
             {
                 Context.Dock(dockable, this);
             }
@@ -174,6 +201,10 @@ public class DockableArea : TemplatedControl, IDockableHost
         {
             dockable.Host = sender;
             sender.FloatCommand = new RelayCommand<IDockable>(sender.Context.Float);
+            if (!sender.Dockables.Contains(dockable))
+            {
+                sender.Dockables.Add(dockable);
+            }
         }
     }
 

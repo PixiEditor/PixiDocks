@@ -11,7 +11,6 @@ namespace PixiDocks.Avalonia.Controls;
 [PseudoClasses(":dragging")]
 public class HostWindow : Window, IHostWindow
 {
-    public const string DragFormat = "PixiDocks.Avalonia.Controls.Dockable";
     public IDockable? ActiveDockable { get; }
 
     private HostWindowTitleBar? _hostWindowTitleBar;

@@ -11,14 +11,23 @@
         <avalonia:DockContext x:Key="DockContext"/>
     </Window.Resources>
     <Grid>
-        <controls:DockableArea Context="{StaticResource DockContext}" Background="#252525" CornerRadius="5">
-        <controls:DockableArea.ActiveDockable>
-            <controls:Dockable Id="SomeDockable">
-                <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <Button Width="60" Height="30" Content="Hello"/>
-                </Grid>
-            </controls:Dockable>
-        </controls:DockableArea.ActiveDockable>
-        </controls:DockableArea>
+        <controls:DockableAreaRegion>
+            <controls:DockableArea Context="{StaticResource DockContext}" Background="#252525" CornerRadius="5">
+                <controls:DockableArea.ActiveDockable>
+                    <controls:Dockable Id="SomeDockable">
+                        <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Button Width="60" Height="30" Content="Hello"/>
+                        </Grid>
+                    </controls:Dockable>
+                </controls:DockableArea.ActiveDockable>
+                <controls:DockableArea.Dockables>
+                    <controls:Dockable Id="SomeDockable2">
+                        <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <CheckBox Width="60" Height="30" Content="Hello2"/>
+                        </Grid>
+                    </controls:Dockable>
+                </controls:DockableArea.Dockables>
+            </controls:DockableArea>
+        </controls:DockableAreaRegion>
     </Grid>
 </Window>

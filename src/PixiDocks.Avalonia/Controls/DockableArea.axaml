@@ -13,7 +13,7 @@
                         BorderBrush="{TemplateBinding BorderBrush}" DragDrop.AllowDrop="True"
                         BorderThickness="{TemplateBinding BorderThickness}">
                     <Grid>
-                       <controls:DockingPicker IsVisible="False" Name="PART_DockingPicker" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <controls:DockingPicker IsVisible="False" Name="PART_DockingPicker" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         <Grid ColumnDefinitions="*, *" RowDefinitions="*, *">
                             <Border Classes="dockPreview" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Name="TopPreview"/>
                             <Border Classes="dockPreview" Grid.Row="0" Grid.Column="0" Name="LeftPreview" Grid.RowSpan="2"/>
