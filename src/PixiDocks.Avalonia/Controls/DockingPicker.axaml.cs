@@ -17,6 +17,7 @@ public class DockingPicker : TemplatedControl
     private Image _left;
     private Image _right;
     private Image _center;
+    private bool _initialized;
 
     protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
     {
@@ -26,11 +27,12 @@ public class DockingPicker : TemplatedControl
         _left = e.NameScope.Get<Image>("PART_Left");
         _right = e.NameScope.Get<Image>("PART_Right");
         _center = e.NameScope.Get<Image>("PART_Center");
+        _initialized = true;
     }
 
     public DockingDirection? GetDockingDirection(Point? relativePoint)
     {
-        if (relativePoint == null)
+        if (relativePoint == null || !_initialized)
         {
             return null;
         }

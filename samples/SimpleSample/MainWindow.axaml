@@ -26,6 +26,11 @@
                             <CheckBox Width="60" Height="30" Content="Hello2"/>
                         </Grid>
                     </controls:Dockable>
+                    <controls:Dockable Id="SomeDockable3">
+                        <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <ToggleSwitch Width="60" Height="30" Content="Hello3"/>
+                        </Grid>
+                    </controls:Dockable>
                 </controls:DockableArea.Dockables>
             </controls:DockableArea>
         </controls:DockableAreaRegion>

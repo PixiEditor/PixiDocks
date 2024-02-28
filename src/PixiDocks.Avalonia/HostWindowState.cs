@@ -36,6 +36,12 @@ public class HostWindowState
                 {
                     if (host != Window.ActiveDockable.Host)
                     {
+                        if(_lastHost != null && _lastHost != host)
+                        {
+                            _lastHost.OnDockableExited(Window.ActiveDockable, position.X, position.Y);
+                            _lastHost = null;
+                        }
+
                         if (_lastHost == null)
                         {
                             host!.OnDockableEntered(Window.ActiveDockable, position.X, position.Y);
@@ -59,6 +65,7 @@ public class HostWindowState
         {
             if(_lastHost != null)
             {
+                _lastHost.OnDockableExited(hostDockable, position.X, position.Y);
                 _lastHost.Dock(hostDockable);
                 _lastHost = null;
             }

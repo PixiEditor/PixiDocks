@@ -148,6 +148,8 @@ public class DockableArea : TemplatedControl, IDockableHost
     public void OnDockableOver(IDockable dockable, int x, int y)
     {
         Point? pos = ToRelativePoint(x, y);
+        pos = Region.TranslatePoint(pos.Value, this);
+
         pos -= _picker.Bounds.Position;
         _lastDirection = _picker.GetDockingDirection(pos.Value);
         if (_lastDirection.HasValue)
@@ -188,7 +190,7 @@ public class DockableArea : TemplatedControl, IDockableHost
                 DockableArea newArea = Region.SplitDockableArea(this, _lastDirection.Value);
                 Context.Dock(dockable, newArea);
             }
-            else
+            else if (_lastDirection.HasValue && _lastDirection.Value == DockingDirection.Center)
             {
                 Context.Dock(dockable, this);
             }

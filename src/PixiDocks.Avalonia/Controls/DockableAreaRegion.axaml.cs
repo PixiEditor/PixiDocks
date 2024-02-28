@@ -37,6 +37,7 @@ public class DockableAreaRegion : TemplatedControl
             if (args.NewValue is DockableArea dockableArea)
             {
                 dockableArea.Region = sender;
+                sender._splitDockableAreas.Add(dockableArea, DockingDirection.Center);
                 sender.OutputGrid.Children.Add(dockableArea);
             }
         });
@@ -48,26 +49,34 @@ public class DockableAreaRegion : TemplatedControl
         int currentColumn = Grid.GetColumn(dockableArea);
         int newRow = 0;
         int newColumn = 0;
+        int rowSpan = Grid.GetRowSpan(dockableArea);
+        int columnSpan = Grid.GetColumnSpan(dockableArea);
 
         switch (direction)
         {
             case DockingDirection.Top:
                 OutputGrid.RowDefinitions.Add(new RowDefinition(GridLength.Star));
-                Grid.SetRow(dockableArea, currentRow + 1);
+                ShiftRows(currentRow, 1);
                 newRow = currentRow;
+                columnSpan = Math.Min(columnSpan + 1, OutputGrid.ColumnDefinitions.Count);
                 break;
             case DockingDirection.Bottom:
                 OutputGrid.RowDefinitions.Add(new RowDefinition(GridLength.Star));
+                ShiftRows(currentRow + 1, 1);
                 newRow = currentRow + 1;
+                columnSpan = Math.Min(columnSpan + 1, OutputGrid.ColumnDefinitions.Count);
                 break;
             case DockingDirection.Left:
                 OutputGrid.ColumnDefinitions.Add(new ColumnDefinition(GridLength.Star));
-                Grid.SetColumn(dockableArea, currentColumn + 1);
+                ShiftColumns(currentColumn, 1);
                 newColumn = currentColumn;
+                rowSpan = Math.Min(rowSpan + 1, OutputGrid.RowDefinitions.Count);
                 break;
             case DockingDirection.Right:
                 OutputGrid.ColumnDefinitions.Add(new ColumnDefinition(GridLength.Star));
+                ShiftColumns(currentColumn + 1, 1);
                 newColumn = currentColumn + 1;
+                rowSpan = Math.Min(rowSpan + 1, OutputGrid.RowDefinitions.Count);
                 break;
             case DockingDirection.Center:
                 return dockableArea;
@@ -81,9 +90,33 @@ public class DockableAreaRegion : TemplatedControl
         _splitDockableAreas.Add(newDockableArea, direction);
         Grid.SetRow(newDockableArea, newRow);
         Grid.SetColumn(newDockableArea, newColumn);
+        Grid.SetRowSpan(newDockableArea, rowSpan);
+        Grid.SetColumnSpan(newDockableArea, columnSpan);
         OutputGrid.Children.Add(newDockableArea);
 
         return newDockableArea;
+    }
+
+    private void ShiftRows(int newRow, int by)
+    {
+        foreach (var child in OutputGrid.Children)
+        {
+            if (child is DockableArea dockableAreaChild && Grid.GetRow(dockableAreaChild) >= newRow)
+            {
+                Grid.SetRow(dockableAreaChild, Grid.GetRow(dockableAreaChild) + by);
+            }
+        }
+    }
+
+    private void ShiftColumns(int newColumn, int by)
+    {
+        foreach (var child in OutputGrid.Children)
+        {
+            if (child is DockableArea dockableAreaChild && Grid.GetColumn(dockableAreaChild) >= newColumn)
+            {
+                Grid.SetColumn(dockableAreaChild, Grid.GetColumn(dockableAreaChild) + by);
+            }
+        }
     }
 
     public void RemoveDockableArea(DockableArea dockableArea)
@@ -97,24 +130,12 @@ public class DockableAreaRegion : TemplatedControl
         if (direction is DockingDirection.Top or DockingDirection.Bottom)
         {
             OutputGrid.RowDefinitions.RemoveAt(row);
-            foreach (var child in OutputGrid.Children)
-            {
-                if (child is DockableArea dockableAreaChild && Grid.GetRow(dockableAreaChild) > row)
-                {
-                    Grid.SetRow(dockableAreaChild, Grid.GetRow(dockableAreaChild) - 1);
-                }
-            }
+            ShiftRows(row, -1);
         }
         else if (direction is DockingDirection.Left or DockingDirection.Right)
         {
             OutputGrid.ColumnDefinitions.RemoveAt(column);
-            foreach (var child in OutputGrid.Children)
-            {
-                if (child is DockableArea dockableAreaChild && Grid.GetColumn(dockableAreaChild) > column)
-                {
-                    Grid.SetColumn(dockableAreaChild, Grid.GetColumn(dockableAreaChild) - 1);
-                }
-            }
+            ShiftColumns(column, -1);
         }
 
         _splitDockableAreas.Remove(dockableArea);
