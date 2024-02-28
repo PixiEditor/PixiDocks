@@ -14,4 +14,12 @@
       <ProjectReference Include="..\PixiDocks.Core\PixiDocks.Core.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <AvaloniaResource Include="Images\*" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <UpToDateCheckInput Remove="Styles\PreviewBorder.axaml" />
+    </ItemGroup>
+
 </Project>

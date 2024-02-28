@@ -20,6 +20,7 @@ public class HostWindow : Window, IHostWindow
 
     private Control? _chromeGrip;
     private HostWindowState _state;
+    private Point _dragStartPoint;
 
     protected override Type StyleKeyOverride => typeof(HostWindow);
 
@@ -41,7 +42,7 @@ public class HostWindow : Window, IHostWindow
     {
         if (_draggingWindow)
         {
-            _state.ProcessDragEvent(e.Point, EventType.DragMove);
+            _state.ProcessDragEvent(this.PointToScreen(_dragStartPoint), EventType.DragMove);
         }
     }
 
@@ -76,6 +77,7 @@ public class HostWindow : Window, IHostWindow
 
         PseudoClasses.Set(":dragging", true);
         _draggingWindow = true;
+        _dragStartPoint = e.GetPosition(this);
         BeginMoveDrag(e);
 
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))

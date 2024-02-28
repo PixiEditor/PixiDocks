@@ -22,7 +22,7 @@ public class HostWindowState
 
         window.Closing += (sender, args) =>
         {
-            _lastHost?.OnDockableExited(hostDockable);
+            _lastHost?.OnDockableExited(hostDockable, 0, 0);
         };
     }
 
@@ -38,11 +38,11 @@ public class HostWindowState
                     {
                         if (_lastHost == null)
                         {
-                            host!.OnDockableEntered(Window.ActiveDockable);
+                            host!.OnDockableEntered(Window.ActiveDockable, position.X, position.Y);
                         }
                         else
                         {
-                            host!.OnDockableOver(Window.ActiveDockable);
+                            host!.OnDockableOver(Window.ActiveDockable, position.X, position.Y);
                         }
 
                         _lastHost = host;
@@ -50,7 +50,7 @@ public class HostWindowState
                 }
                 else if (_lastHost != null)
                 {
-                    _lastHost.OnDockableExited(Window.ActiveDockable);
+                    _lastHost.OnDockableExited(Window.ActiveDockable, position.X, position.Y);
                     _lastHost = null;
                 }
             }

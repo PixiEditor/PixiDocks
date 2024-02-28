@@ -12,17 +12,48 @@
                 <Border Background="{TemplateBinding Background}" Name="PART_Drop" CornerRadius="{TemplateBinding CornerRadius}"
                         BorderBrush="{TemplateBinding BorderBrush}" DragDrop.AllowDrop="True"
                         BorderThickness="{TemplateBinding BorderThickness}">
-                    <DockPanel>
-                        <Button DockPanel.Dock="Top" Command="{Binding RelativeSource={RelativeSource TemplatedParent},
+                    <Grid>
+                       <controls:DockingPicker IsVisible="False" Name="PART_DockingPicker" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <Grid ColumnDefinitions="*, *" RowDefinitions="*, *">
+                            <Border Classes="dockPreview" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Name="TopPreview"/>
+                            <Border Classes="dockPreview" Grid.Row="0" Grid.Column="0" Name="LeftPreview" Grid.RowSpan="2"/>
+                            <Border Classes="dockPreview" Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" Name="RightPreview"/>
+                            <Border Classes="dockPreview" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Name="BottomPreview"/>
+                            <Border Classes="dockPreview" Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="2" Name="CenterPreview"/>
+                        </Grid>
+                        <DockPanel>
+                            <Button DockPanel.Dock="Top" Command="{Binding RelativeSource={RelativeSource TemplatedParent},
                         Path=FloatCommand}" CommandParameter="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ActiveDockable}"/>
-                        <ContentPresenter DockPanel.Dock="Bottom" Content="{TemplateBinding ActiveDockable}"/>
-                    </DockPanel>
+                            <ContentPresenter DockPanel.Dock="Bottom" Content="{TemplateBinding ActiveDockable}"/>
+                        </DockPanel>
+                    </Grid>
                 </Border>
             </ControlTemplate>
         </Setter>
 
-        <Style Selector="^:dockableOver /template/ Border">
+        <Style Selector="^ /template/ Border.dockPreview">
             <Setter Property="Background" Value="Red"/>
+            <Setter Property="Opacity" Value="0.5"/>
+            <Setter Property="IsVisible" Value="False"/>
+        </Style>
+
+        <Style Selector="^:dockableOver /template/ controls|DockingPicker">
+            <Setter Property="IsVisible" Value="True"/>
+        </Style>
+        <Style Selector="^:top /template/ Border#TopPreview">
+            <Setter Property="IsVisible" Value="True"/>
+        </Style>
+        <Style Selector="^:bottom /template/ Border#BottomPreview">
+            <Setter Property="IsVisible" Value="True"/>
+        </Style>
+        <Style Selector="^:right /template/ Border#RightPreview">
+            <Setter Property="IsVisible" Value="True"/>
+        </Style>
+        <Style Selector="^:left /template/ Border#LeftPreview">
+            <Setter Property="IsVisible" Value="True"/>
+        </Style>
+        <Style Selector="^:center /template/ Border#CenterPreview">
+            <Setter Property="IsVisible" Value="True"/>
         </Style>
     </ControlTheme>
 </ResourceDictionary>

@@ -1,0 +1,22 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="using:PixiDocks.Avalonia.Controls">
+    <Design.PreviewWith>
+        <controls:DockingPicker />
+    </Design.PreviewWith>
+
+    <ControlTheme TargetType="controls:DockingPicker" x:Key="{x:Type controls:DockingPicker}">
+        <!-- Set Defaults -->
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Grid Name="DockDirections" HorizontalAlignment="Center" VerticalAlignment="Center" RowDefinitions="128, 20, 128" ColumnDefinitions="128, 20, 128">
+                    <Image Name="PART_Top" Grid.Row="0" Grid.Column="1" Source="/Images/up-dock.png" Width="64" Height="64"/>
+                    <Image Name="PART_Left" Grid.Row="1" Grid.Column="0" Source="/Images/left-dock.png" Width="64" Height="64"/>
+                    <Image Name="PART_Center" Grid.Row="1" Grid.Column="1" Source="/Images/center-dock.png" Width="64" Height="64"/>
+                    <Image Name="PART_Bottom" Grid.Row="2" Grid.Column="1" Source="/Images/bottom-dock.png" Width="64" Height="64"/>
+                    <Image Name="PART_Right" Grid.Row="1" Grid.Column="2" Source="/Images/right-dock.png" Width="64" Height="64"/>
+                </Grid>
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+</ResourceDictionary>

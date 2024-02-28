@@ -10,7 +10,7 @@ public interface IDockableHost
     public void AddDockable(IDockable dockable);
     public void RemoveDockable(IDockable dockable);
     public bool IsDockableWithin(int x, int y);
-    public void OnDockableEntered(IDockable dockable);
-    public void OnDockableOver(IDockable dockable);
-    public void OnDockableExited(IDockable dockable);
+    public void OnDockableEntered(IDockable dockable, int x, int y);
+    public void OnDockableOver(IDockable dockable, int x, int y);
+    public void OnDockableExited(IDockable dockable, int x, int y);
 }
