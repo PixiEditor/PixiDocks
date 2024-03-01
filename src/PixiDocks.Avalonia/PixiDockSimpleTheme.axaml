@@ -10,6 +10,8 @@
                 <MergeResourceInclude Source="Controls/HostWindowTitleBar.axaml"/>
                 <MergeResourceInclude Source="Controls/DockingPicker.axaml"/>
                 <MergeResourceInclude Source="Controls/DockableAreaRegion.axaml"/>
+                <MergeResourceInclude Source="Controls/DockableAreaTitleBar.axaml"/>
+                <MergeResourceInclude Source="Accents.axaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Styles.Resources>

@@ -22,8 +22,9 @@
                             <Border Classes="dockPreview" Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="2" Name="CenterPreview"/>
                         </Grid>
                         <DockPanel>
-                            <Button DockPanel.Dock="Top" Command="{Binding RelativeSource={RelativeSource TemplatedParent},
-                        Path=FloatCommand}" CommandParameter="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ActiveDockable}"/>
+                            <!--<Button DockPanel.Dock="Top" Command="{Binding RelativeSource={RelativeSource TemplatedParent},
+                        Path=FloatCommand}" CommandParameter="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ActiveDockable}"/>-->
+                            <controls:DockableAreaTitleBar DockPanel.Dock="Top" DockableArea="{Binding RelativeSource={RelativeSource AncestorType=controls:DockableArea}}"/>
                             <ContentPresenter DockPanel.Dock="Bottom" Content="{TemplateBinding ActiveDockable}"/>
                         </DockPanel>
                     </Grid>

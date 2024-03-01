@@ -70,7 +70,7 @@ public class HostWindow : Window, IHostWindow
         }
     }
 
-    private void MoveDrag(PointerPressedEventArgs e)
+    public void MoveDrag(PointerPressedEventArgs e)
     {
         _mouseDown = true;
 

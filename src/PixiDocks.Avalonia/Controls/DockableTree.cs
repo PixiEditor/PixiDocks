@@ -145,28 +145,36 @@ public class DockableTree : AvaloniaObject, ITreeElement
                 _grid.Children.Add(_second.FinalElement);
             }
         }
-        else if (SplitDirection == DockingDirection.Right || SplitDirection == DockingDirection.Left)
+        else if (SplitDirection is DockingDirection.Right or DockingDirection.Left)
         {
             _grid.ColumnDefinitions.Add(new ColumnDefinition(1, GridUnitType.Star));
+            _grid.ColumnDefinitions.Add(new ColumnDefinition(5, GridUnitType.Pixel));
             _grid.ColumnDefinitions.Add(new ColumnDefinition(1, GridUnitType.Star));
+            GridSplitter splitter = new() { ResizeDirection = GridResizeDirection.Columns, Width = 5 };
+            splitter.SetValue(Grid.ColumnProperty, 1);
+            _grid.Children.Add(splitter);
             _grid.Children.Add(_first.FinalElement);
             Grid.SetColumn(_first.FinalElement, 0);
             if (_second != null)
             {
                 _grid.Children.Add(_second.FinalElement);
-                Grid.SetColumn(_second.FinalElement, 1);
+                Grid.SetColumn(_second.FinalElement, 2);
             }
         }
         else if (SplitDirection == DockingDirection.Top || SplitDirection == DockingDirection.Bottom)
         {
             _grid.RowDefinitions.Add(new RowDefinition(1, GridUnitType.Star));
+            _grid.RowDefinitions.Add(new RowDefinition(5, GridUnitType.Pixel));
             _grid.RowDefinitions.Add(new RowDefinition(1, GridUnitType.Star));
+            GridSplitter splitter = new() { ResizeDirection = GridResizeDirection.Rows, Height = 5 };
+            _grid.Children.Add(splitter);
+            splitter.SetValue(Grid.RowProperty, 1);
             _grid.Children.Add(_first.FinalElement);
             Grid.SetRow(_first.FinalElement, 0);
             if (_second != null)
             {
                 _grid.Children.Add(_second.FinalElement);
-                Grid.SetRow(_second.FinalElement, 1);
+                Grid.SetRow(_second.FinalElement, 2);
             }
         }
     }

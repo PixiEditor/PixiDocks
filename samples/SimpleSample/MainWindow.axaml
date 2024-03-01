@@ -14,24 +14,24 @@
         <controls:DockableAreaRegion>
             <controls:DockableArea Context="{StaticResource DockContext}" Background="#252525" CornerRadius="5">
                 <controls:DockableArea.ActiveDockable>
-                    <controls:Dockable Id="SomeDockable">
+                    <controls:Dockable Id="SomeDockable" Title="Some Dockable">
                         <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
                             <Button Width="60" Height="30" Content="Hello"/>
                         </Grid>
                     </controls:Dockable>
                 </controls:DockableArea.ActiveDockable>
                 <controls:DockableArea.Dockables>
-                    <controls:Dockable Id="SomeDockable2">
+                    <controls:Dockable Id="SomeDockable2" Title="Dockable 2">
                         <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
                             <CheckBox Width="60" Height="30" Content="Hello2"/>
                         </Grid>
                     </controls:Dockable>
-                    <controls:Dockable Id="SomeDockable3">
+                    <controls:Dockable Id="SomeDockable3" Title="Roomba">
                         <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
                             <ToggleSwitch Width="60" Height="30" Content="Hello3"/>
                         </Grid>
                     </controls:Dockable>
-                    <controls:Dockable Id="SomeDockable4">
+                    <controls:Dockable Id="SomeDockable4" Title="4">
                         <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
                             <Calendar Width="60" Height="30" />
                         </Grid>

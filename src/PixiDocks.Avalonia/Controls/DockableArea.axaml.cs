@@ -202,12 +202,21 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
         if (args.NewValue is IDockable dockable)
         {
             dockable.Host = sender;
-            sender.FloatCommand = new RelayCommand<IDockable>(sender.Context.Float);
+            if (sender.FloatCommand == null)
+            {
+                sender.FloatCommand = new RelayCommand<IDockable>(sender.Float);
+            }
+
             if (!sender.Dockables.Contains(dockable))
             {
                 sender.Dockables.Add(dockable);
             }
         }
+    }
+
+    private void Float(IDockable dockable)
+    {
+        Context.Float(dockable);
     }
 
     private static void ContextChanged(DockableArea area, AvaloniaPropertyChangedEventArgs args)

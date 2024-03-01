@@ -31,16 +31,16 @@ public class DockContext : IDockContext
         allHosts.Remove(host);
     }
 
-    public void Float(IDockable dockable)
+    public IHostWindow Float(IDockable dockable)
     {
         if (floatingWindows.ContainsKey(dockable.Id))
         {
-            return;
+            return null;
         }
 
         PixelPoint pos = dockable switch
         {
-            Dockable dockableControl => dockableControl.PointToScreen(new Point(0, 0)),
+            Dockable dockableControl => dockableControl.PointToScreen(new Point(0, -30)),
             _ => new PixelPoint(0, 0)
         };
 
@@ -48,6 +48,8 @@ public class DockContext : IDockContext
         var hostWindow = new HostWindow(dockable, this, pos);
         floatingWindows.Add(dockable.Id, hostWindow);
         hostWindow.Show();
+
+        return hostWindow;
     }
 
     public void Dock(IDockable dockable, IDockableHost toHost)
