@@ -15,7 +15,7 @@ namespace PixiDocks.Avalonia.Controls;
 
 [TemplatePart("PART_Drop", typeof(AvaloniaObject))]
 [TemplatePart("PART_DockingPicker", typeof(DockingPicker))]
-public class DockableArea : TemplatedControl, IDockableHost
+public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
 {
     IDockContext IDockableHost.Context => Context;
 
@@ -148,7 +148,7 @@ public class DockableArea : TemplatedControl, IDockableHost
     public void OnDockableOver(IDockable dockable, int x, int y)
     {
         Point? pos = ToRelativePoint(x, y);
-        pos = Region.TranslatePoint(pos.Value, this);
+        pos = Region.TranslatePointRelative(pos.Value, this);
 
         pos -= _picker.Bounds.Position;
         _lastDirection = _picker.GetDockingDirection(pos.Value);
@@ -217,4 +217,6 @@ public class DockableArea : TemplatedControl, IDockableHost
             context.AddHost(area);
         }
     }
+
+    Control ITreeElement.FinalElement => this;
 }

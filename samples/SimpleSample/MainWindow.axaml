@@ -31,6 +31,11 @@
                             <ToggleSwitch Width="60" Height="30" Content="Hello3"/>
                         </Grid>
                     </controls:Dockable>
+                    <controls:Dockable Id="SomeDockable4">
+                        <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Calendar Width="60" Height="30" />
+                        </Grid>
+                    </controls:Dockable>
                 </controls:DockableArea.Dockables>
             </controls:DockableArea>
         </controls:DockableAreaRegion>
