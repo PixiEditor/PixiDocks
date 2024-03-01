@@ -113,8 +113,6 @@ public class DockableAreaRegion : TemplatedControl
 
         _occupiedRows.TryAdd(row, 0);
         _occupiedRows[row]++;
-
-        PrintGridTable();
     }
 
     private void IncrementColumn(int row)
@@ -126,8 +124,6 @@ public class DockableAreaRegion : TemplatedControl
 
         _occupiedColumns.TryAdd(row, 0);
         _occupiedColumns[row]++;
-
-        PrintGridTable();
     }
 
     private void DecrementRow(int row)
@@ -142,8 +138,6 @@ public class DockableAreaRegion : TemplatedControl
         {
             _occupiedRows.Remove(row);
         }
-
-        PrintGridTable();
     }
 
     private void DecrementColumn(int column)
@@ -158,29 +152,6 @@ public class DockableAreaRegion : TemplatedControl
         {
             _occupiedColumns.Remove(column);
         }
-
-        PrintGridTable();
-    }
-
-    private void PrintGridTable()
-    {
-        Console.WriteLine("Grid Table:");
-        for (int i = 0; i < OutputGrid.RowDefinitions.Count; i++)
-        {
-            for (int j = 0; j < OutputGrid.ColumnDefinitions.Count; j++)
-            {
-                if(_occupiedRows.ContainsKey(i) && _occupiedColumns.ContainsKey(j))
-                {
-                    int value = _occupiedRows[i] * _occupiedColumns[j];
-                    Console.Write(value);
-                }
-                else
-                {
-                    Console.Write("O");
-                }
-            }
-            Console.WriteLine();
-        }
     }
 
     private void ShiftRows(int newRow, int by)
@@ -193,13 +164,15 @@ public class DockableAreaRegion : TemplatedControl
                 int rowSpan = Grid.GetRowSpan(dockableAreaChild);
                 if (row >= newRow)
                 {
-                    Grid.SetRow(dockableAreaChild, row + by);
+                    int clampedRow = Math.Max(row + by, 0);
+                    Grid.SetRow(dockableAreaChild, clampedRow);
                     DecrementRow(row);
-                    IncrementRow(row + by);
+                    IncrementRow(clampedRow);
+                    Grid.SetRowSpan(dockableAreaChild, Math.Clamp(rowSpan, 1, OutputGrid.RowDefinitions.Count));
                 }
                 else if (row + rowSpan > newRow)
                 {
-                    Grid.SetRowSpan(dockableAreaChild, rowSpan + by);
+                    Grid.SetRowSpan(dockableAreaChild, Math.Max(rowSpan + by, 1));
                 }
             }
         }
@@ -215,13 +188,15 @@ public class DockableAreaRegion : TemplatedControl
                 int columnSpan = Grid.GetColumnSpan(dockableAreaChild);
                 if (column >= newColumn)
                 {
-                    Grid.SetColumn(dockableAreaChild, column + by);
+                    int clampedColumn = Math.Max(column + by, 0);
+                    Grid.SetColumn(dockableAreaChild, clampedColumn);
                     DecrementColumn(column);
-                    IncrementColumn(column + by);
+                    IncrementColumn(clampedColumn);
+                    Grid.SetColumnSpan(dockableAreaChild, Math.Clamp(columnSpan, 1, OutputGrid.ColumnDefinitions.Count));
                 }
                 else if (column + columnSpan > newColumn)
                 {
-                    Grid.SetColumnSpan(dockableAreaChild, columnSpan + by);
+                    Grid.SetColumnSpan(dockableAreaChild, Math.Max(columnSpan + by, 1));
                 }
             }
         }
@@ -236,11 +211,14 @@ public class DockableAreaRegion : TemplatedControl
         _occupiedRows[row]--;
         _occupiedColumns[column]--;
 
+        bool shifted = false;
+
         if (_occupiedRows[row] == 0)
         {
             OutputGrid.RowDefinitions.RemoveAt(row);
             _occupiedRows.Remove(row);
             ShiftRows(row, -1);
+            shifted = true;
         }
 
         if (_occupiedColumns[column] == 0)
@@ -248,6 +226,18 @@ public class DockableAreaRegion : TemplatedControl
             OutputGrid.ColumnDefinitions.RemoveAt(column);
             _occupiedColumns.Remove(column);
             ShiftColumns(column, -1);
+            shifted = true;
+        }
+
+        if (!shifted && _occupiedColumns.ContainsKey(column + 1) && _occupiedColumns[column] == _occupiedColumns[column + 1])
+        {
+            OutputGrid.ColumnDefinitions.RemoveAt(column);
+            ShiftColumns(column, -1);
+        }
+        else if (!shifted && _occupiedRows.ContainsKey(row + 1) && _occupiedRows[row] == _occupiedRows[row + 1])
+        {
+            OutputGrid.RowDefinitions.RemoveAt(row);
+            ShiftRows(row, -1);
         }
     }
 }
