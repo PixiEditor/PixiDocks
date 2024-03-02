@@ -1,6 +1,8 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:controls="using:PixiDocks.Avalonia.Controls">
+        xmlns:controls="using:PixiDocks.Avalonia.Controls"
+        xmlns:core="clr-namespace:PixiDocks.Core;assembly=PixiDocks.Core"
+        xmlns:converters="clr-namespace:PixiDocks.Avalonia.Converters">
     <Design.PreviewWith>
         <controls:DockableArea />
     </Design.PreviewWith>
@@ -9,11 +11,12 @@
         <!-- Set Defaults -->
         <Setter Property="Template">
             <ControlTemplate>
-                <Border Background="{TemplateBinding Background}" Name="PART_Drop" CornerRadius="{TemplateBinding CornerRadius}"
-                        BorderBrush="{TemplateBinding BorderBrush}" DragDrop.AllowDrop="True"
+                <Border Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}">
                     <Grid>
-                        <controls:DockingPicker IsVisible="False" Name="PART_DockingPicker" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <controls:DockingPicker IsVisible="False" Name="PART_DockingPicker" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                Dockables="{Binding Dockables, RelativeSource={RelativeSource TemplatedParent}}"/>
                         <Grid ColumnDefinitions="*, *" RowDefinitions="*, *">
                             <Border Classes="dockPreview" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Name="TopPreview"/>
                             <Border Classes="dockPreview" Grid.Row="0" Grid.Column="0" Name="LeftPreview" Grid.RowSpan="2"/>
@@ -22,10 +25,16 @@
                             <Border Classes="dockPreview" Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="2" Name="CenterPreview"/>
                         </Grid>
                         <DockPanel>
-                            <!--<Button DockPanel.Dock="Top" Command="{Binding RelativeSource={RelativeSource TemplatedParent},
-                        Path=FloatCommand}" CommandParameter="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ActiveDockable}"/>-->
-                            <controls:DockableAreaTitleBar DockPanel.Dock="Top" DockableArea="{Binding RelativeSource={RelativeSource AncestorType=controls:DockableArea}}"/>
-                            <ContentPresenter DockPanel.Dock="Bottom" Content="{TemplateBinding ActiveDockable}"/>
+                            <TabControl
+                                SelectedItem="{Binding Path=ActiveDockable, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                                ItemsSource="{TemplateBinding Dockables}"
+                                TabStripPlacement="{TemplateBinding TabPlacement}">
+                                <TabControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <controls:DockableAreaStripItem DockPanel.Dock="Top" Dockable="{Binding $parent[TabItem].Content}"/>
+                                    </DataTemplate>
+                                </TabControl.ItemTemplate>
+                            </TabControl>
                         </DockPanel>
                     </Grid>
                 </Border>

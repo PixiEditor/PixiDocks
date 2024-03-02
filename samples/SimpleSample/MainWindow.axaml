@@ -4,6 +4,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:controls="clr-namespace:PixiDocks.Avalonia.Controls;assembly=PixiDocks.Avalonia"
         xmlns:avalonia="clr-namespace:PixiDocks.Avalonia;assembly=PixiDocks.Avalonia"
+        xmlns:core="clr-namespace:PixiDocks.Core;assembly=PixiDocks.Core"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="SimpleSample.MainWindow"
         Title="SimpleSample">

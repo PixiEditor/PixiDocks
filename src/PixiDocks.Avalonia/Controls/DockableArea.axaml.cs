@@ -13,8 +13,8 @@ using PixiDocks.Core;
 
 namespace PixiDocks.Avalonia.Controls;
 
-[TemplatePart("PART_Drop", typeof(AvaloniaObject))]
 [TemplatePart("PART_DockingPicker", typeof(DockingPicker))]
+[PseudoClasses(":dockableOver", ":center", ":left", ":right", ":top", ":bottom")]
 public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
 {
     IDockContext IDockableHost.Context => Context;
@@ -45,6 +45,15 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
 
     public static readonly StyledProperty<DockableAreaRegion> RegionProperty = AvaloniaProperty.Register<DockableArea, DockableAreaRegion>(
         nameof(Region));
+
+    public static readonly StyledProperty<Dock> TabPlacementProperty = AvaloniaProperty.Register<DockableArea, Dock>(
+        nameof(TabPlacement), global::Avalonia.Controls.Dock.Top);
+
+    public Dock TabPlacement
+    {
+        get => GetValue(TabPlacementProperty);
+        set => SetValue(TabPlacementProperty, value);
+    }
 
     public DockableAreaRegion Region
     {
@@ -88,8 +97,6 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
     protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
     {
         base.OnApplyTemplate(e);
-        AvaloniaObject drop = e.NameScope.Find<AvaloniaObject>("PART_Drop");
-
         _picker = e.NameScope.Find<DockingPicker>("PART_DockingPicker");
     }
 
@@ -168,6 +175,14 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
 
             bool isBottom = _lastDirection.Value == DockingDirection.Bottom;
             PseudoClasses.Set(":bottom", isBottom);
+        }
+        else
+        {
+            PseudoClasses.Set(":center", false);
+            PseudoClasses.Set(":left", false);
+            PseudoClasses.Set(":right", false);
+            PseudoClasses.Set(":top", false);
+            PseudoClasses.Set(":bottom", false);
         }
     }
 

@@ -1,7 +1,10 @@
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Metadata;
 using Avalonia.Controls.Primitives;
+using PixiDocks.Core;
 
 namespace PixiDocks.Avalonia.Controls;
 
@@ -12,12 +15,46 @@ namespace PixiDocks.Avalonia.Controls;
 [TemplatePart("PART_Center", typeof(Image))]
 public class DockingPicker : TemplatedControl
 {
+    public static readonly StyledProperty<ObservableCollection<IDockable>> DockablesProperty = AvaloniaProperty.Register<DockingPicker, ObservableCollection<IDockable>>(
+        nameof(Dockables));
+
+    public ObservableCollection<IDockable> Dockables
+    {
+        get => GetValue(DockablesProperty);
+        set => SetValue(DockablesProperty, value);
+    }
     private Image _up;
     private Image _down;
     private Image _left;
     private Image _right;
     private Image _center;
     private bool _initialized;
+
+    static DockingPicker()
+    {
+        DockablesProperty.Changed.AddClassHandler<DockingPicker>((sender, args) =>
+        {
+            if (args.NewValue is ObservableCollection<IDockable> dockables)
+            {
+                dockables.CollectionChanged += (_, _) => DockablesOnCollectionChanged(sender);
+            }
+        });
+    }
+
+    private static void DockablesOnCollectionChanged(DockingPicker picker)
+    {
+        if (!picker._initialized)
+        {
+            return;
+        }
+
+        bool onlyCenter = picker.ShowOnlyCenter();
+
+        picker._left.IsVisible = !onlyCenter;
+        picker._right.IsVisible = !onlyCenter;
+        picker._up.IsVisible = !onlyCenter;
+        picker._down.IsVisible = !onlyCenter;
+    }
 
     protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
     {
@@ -33,6 +70,16 @@ public class DockingPicker : TemplatedControl
     public DockingDirection? GetDockingDirection(Point? relativePoint)
     {
         if (relativePoint == null || !_initialized)
+        {
+            return null;
+        }
+
+        if (_center.Bounds.Contains(relativePoint.Value))
+        {
+            return DockingDirection.Center;
+        }
+
+        if (ShowOnlyCenter())
         {
             return null;
         }
@@ -53,11 +100,12 @@ public class DockingPicker : TemplatedControl
         {
             return DockingDirection.Right;
         }
-        if (_center.Bounds.Contains(relativePoint.Value))
-        {
-            return DockingDirection.Center;
-        }
 
         return null;
+    }
+
+    private bool ShowOnlyCenter()
+    {
+        return Dockables != null && Dockables.Count == 0;
     }
 }

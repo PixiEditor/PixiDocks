@@ -10,7 +10,7 @@ namespace PixiDocks.Avalonia.Controls;
 public class DockableAreaRegion : TemplatedControl
 {
     public static readonly StyledProperty<DockableTree> OutputProperty = AvaloniaProperty.Register<DockableAreaRegion, DockableTree>(
-        nameof(Output), new DockableTree());
+        nameof(Output));
 
     public static readonly StyledProperty<DockableArea> DockableAreaProperty = AvaloniaProperty.Register<DockableAreaRegion, DockableArea>(
         nameof(DockableArea), new DockableArea());
@@ -43,6 +43,11 @@ public class DockableAreaRegion : TemplatedControl
         });
     }
 
+    public DockableAreaRegion()
+    {
+        Output = new DockableTree();
+    }
+
     public DockableArea SplitDockableArea(DockableArea dockableArea, DockingDirection direction)
     {
         if (direction == DockingDirection.Center)
@@ -60,6 +65,11 @@ public class DockableAreaRegion : TemplatedControl
     public void RemoveDockableArea(DockableArea dockableArea)
     {
         var tree = _dockableAreaToTree[dockableArea];
+        if (_dockableAreaToTree.Count == 1)
+        {
+            return;
+        }
+
         tree.RemoveDockableArea(dockableArea, _dockableAreaToTree);
     }
 

@@ -32,7 +32,7 @@ public class HostWindowState
         {
             if (Window.ActiveDockable != null)
             {
-                if (IsOverDockHost(position, out var host))
+                if (IsOverDockHost(Window.ActiveDockable.Host, position, out var host))
                 {
                     if (host != Window.ActiveDockable.Host)
                     {
@@ -72,12 +72,12 @@ public class HostWindowState
         }
     }
 
-    private bool IsOverDockHost(PixelPoint position, out IDockableHost? host)
+    private bool IsOverDockHost(IDockableHost? except, PixelPoint position, out IDockableHost? host)
     {
         host = null;
         foreach (IDockableHost dockHost in Context.AllHosts)
         {
-            if (dockHost.IsDockableWithin(position.X, position.Y))
+            if (dockHost.IsDockableWithin(position.X, position.Y) && dockHost != except)
             {
                 host = dockHost;
                 return true;

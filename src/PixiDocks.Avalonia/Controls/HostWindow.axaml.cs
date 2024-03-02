@@ -9,6 +9,8 @@ using PixiDocks.Core;
 namespace PixiDocks.Avalonia.Controls;
 
 [PseudoClasses(":dragging")]
+[TemplatePart("PART_TitleBar", typeof(HostWindowTitleBar))]
+[TemplatePart("PART_DockableArea", typeof(DockableArea))]
 public class HostWindow : Window, IHostWindow
 {
     public IDockable? ActiveDockable { get; }
@@ -27,7 +29,6 @@ public class HostWindow : Window, IHostWindow
     {
         ActiveDockable = activeDockable;
         Control dockableObj = ActiveDockable as Control;
-        Content = dockableObj;
         Width = dockableObj.Bounds.Width;
         Height = dockableObj.Bounds.Height;
         Position = pos;
@@ -54,6 +55,13 @@ public class HostWindow : Window, IHostWindow
     protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
     {
         base.OnApplyTemplate(e);
+
+        var dockable = e.NameScope.Find<DockableArea>("PART_DockableArea");
+        if (dockable is not null)
+        {
+            dockable.Context = _state.Context;
+            dockable.ActiveDockable = ActiveDockable;
+        }
 
         _hostWindowTitleBar = e.NameScope.Find<HostWindowTitleBar>("PART_TitleBar");
         if (_hostWindowTitleBar is not null)

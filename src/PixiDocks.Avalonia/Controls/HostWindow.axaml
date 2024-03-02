@@ -16,17 +16,14 @@
 
         <Setter Property="Template">
             <ControlTemplate>
-                <Panel>
+                <Panel Background="{DynamicResource ThemeBackgroundBrush}">
                     <VisualLayerManager>
                         <VisualLayerManager.ChromeOverlayLayer>
                             <controls:HostWindowTitleBar Name="PART_TitleBar" />
                         </VisualLayerManager.ChromeOverlayLayer>
-                        <ContentPresenter Name="PART_ContentPresenter"
-                                          ContentTemplate="{TemplateBinding ContentTemplate}"
-                                          Content="{TemplateBinding Content}"
-                                          Margin="{TemplateBinding Padding}"
-                                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+                        <controls:DockableAreaRegion>
+                            <controls:DockableArea Name="PART_DockableArea" />
+                        </controls:DockableAreaRegion>
                         </VisualLayerManager>
                 </Panel>
             </ControlTemplate>

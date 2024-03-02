@@ -2,6 +2,7 @@ using System.Collections;
 using System.ComponentModel;
 using Avalonia;
 using Avalonia.Controls;
+using PixiDocks.Core;
 
 namespace PixiDocks.Avalonia.Controls;
 
@@ -34,7 +35,7 @@ public class DockableTree : AvaloniaObject, ITreeElement
 
     public Control FinalElement => _grid;
 
-    private Grid _grid = new Grid();
+    private Grid _grid;
     private ITreeElement _first;
     private ITreeElement? _second;
 
@@ -42,6 +43,7 @@ public class DockableTree : AvaloniaObject, ITreeElement
 
     public DockableTree()
     {
+        _grid = new Grid();
     }
 
     public DockableArea Split(DockingDirection direction, Dictionary<DockableArea, DockableTree> dockableAreaToTree,

@@ -1,4 +1,5 @@
 using Avalonia;
+using Avalonia.Input;
 using PixiDocks.Avalonia.Controls;
 using PixiDocks.Core;
 
@@ -46,10 +47,22 @@ public class DockContext : IDockContext
 
         dockable.Host?.RemoveDockable(dockable);
         var hostWindow = new HostWindow(dockable, this, pos);
+        hostWindow.Activated += OnWindowActivated;
         floatingWindows.Add(dockable.Id, hostWindow);
         hostWindow.Show();
 
         return hostWindow;
+    }
+
+    private void OnWindowActivated(object sender, EventArgs e)
+    {
+        if (sender is not HostWindow hostWindow)
+        {
+            return;
+        }
+
+        allHosts.Remove(hostWindow.ActiveDockable.Host);
+        allHosts.Insert(0, hostWindow.ActiveDockable.Host);
     }
 
     public void Dock(IDockable dockable, IDockableHost toHost)
@@ -66,6 +79,7 @@ public class DockContext : IDockContext
             floatingWindows.Remove(dockable.Id);
         }
 
+        dockable.Host?.RemoveDockable(dockable);
         toHost.AddDockable(dockable);
         toHost.ActiveDockable = dockable;
     }

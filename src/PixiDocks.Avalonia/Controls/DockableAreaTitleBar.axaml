@@ -2,22 +2,19 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:controls="using:PixiDocks.Avalonia.Controls">
     <Design.PreviewWith>
-        <controls:DockableAreaTitleBar />
+        <controls:DockableAreaStripItem />
     </Design.PreviewWith>
 
-    <ControlTheme TargetType="controls:DockableAreaTitleBar" x:Key="{x:Type controls:DockableAreaTitleBar}">
+    <ControlTheme TargetType="controls:DockableAreaStripItem" x:Key="{x:Type controls:DockableAreaStripItem}">
         <!-- Set Defaults -->
         <Setter Property="Template">
             <ControlTemplate>
                 <Border>
                     <Border Padding="2.5" Background="{DynamicResource ThemeDockAccentBrush}" Name="PART_GrabBorder">
                         <DockPanel LastChildFill="False">
-                            <TextBlock DockPanel.Dock="Left"
-                                       Text="{Binding DockableArea.ActiveDockable.Title, FallbackValue=TITLE,
+                            <TextBlock DockPanel.Dock="Left" Foreground="{DynamicResource ThemeForegroundBrush}"
+                                       Text="{Binding Dockable.Title, FallbackValue=TITLE,
                                        RelativeSource={RelativeSource TemplatedParent}}"/>
-                            <!--<Button DockPanel.Dock="Right" Content="X" Command="{Binding DockableArea.FloatCommand,
-                                       RelativeSource={RelativeSource TemplatedParent}}"
-                                    CommandParameter="{Binding DockableArea.ActiveDockable, RelativeSource={RelativeSource TemplatedParent}}"/>-->
                         </DockPanel>
                     </Border>
                 </Border>
