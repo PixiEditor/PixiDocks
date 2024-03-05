@@ -147,19 +147,20 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
         return pos;
     }
 
-    public void OnDockableEntered(IDockable dockable, int x, int y)
+    public void OnDockableEntered(IDockableHostRegion region, int x, int y)
     {
+        if(!region.CanDock()) return;
         PseudoClasses.Set(":dockableOver", true);
     }
 
-    public void OnDockableOver(IDockable dockable, int x, int y)
+    public void OnDockableOver(IDockableHostRegion region, int x, int y)
     {
         Point? pos = ToRelativePoint(x, y);
         pos = Region.TranslatePointRelative(pos.Value, this);
 
         pos -= _picker.Bounds.Position;
         _lastDirection = _picker.GetDockingDirection(pos.Value);
-        if (_lastDirection.HasValue)
+        if (_lastDirection.HasValue && region.CanDock())
         {
             bool isCenter = _lastDirection.Value == DockingDirection.Center;
             PseudoClasses.Set(":center", isCenter);
@@ -186,7 +187,7 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
         }
     }
 
-    public void OnDockableExited(IDockable dockable, int x, int y)
+    public void OnDockableExited(IDockableHostRegion region, int x, int y)
     {
         PseudoClasses.Set(":dockableOver", false);
         PseudoClasses.Set(":center", false);
@@ -231,7 +232,7 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
 
     private void Float(IDockable dockable)
     {
-        Context.Float(dockable);
+        Context.Float(dockable, 0, 0);
     }
 
     private static void ContextChanged(DockableArea area, AvaloniaPropertyChangedEventArgs args)

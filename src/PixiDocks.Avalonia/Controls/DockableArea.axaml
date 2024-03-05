@@ -2,7 +2,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:controls="using:PixiDocks.Avalonia.Controls"
         xmlns:core="clr-namespace:PixiDocks.Core;assembly=PixiDocks.Core"
-        xmlns:converters="clr-namespace:PixiDocks.Avalonia.Converters">
+        xmlns:behaviors="clr-namespace:PixiDocks.Avalonia.Behaviors">
     <Design.PreviewWith>
         <controls:DockableArea />
     </Design.PreviewWith>
@@ -14,6 +14,31 @@
                 <Border Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}">
+                    <Border.Styles>
+                        <!--<StyleInclude Source="avares://Avalonia.Xaml.Interactions.Draggable/Styles.axaml" />-->
+                        <Style Selector=":is(TabControl).draggable">
+                            <Setter Property="ItemsPanel">
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal" />
+                                </ItemsPanelTemplate>
+                            </Setter>
+                        </Style>
+
+                        <Style Selector=":is(TabControl).draggable > :is(TabItem)">
+                            <Setter Property="ZIndex" Value="0" />
+                            <Setter Property="(Interaction.Behaviors)">
+                                <BehaviorCollectionTemplate>
+                                    <BehaviorCollection>
+                                        <behaviors:DockableTabDragBehavior HorizontalDragThreshold="3" VerticalDragThreshold="3" />
+                                    </BehaviorCollection>
+                                </BehaviorCollectionTemplate>
+                            </Setter>
+                        </Style>
+
+                        <Style Selector=":is(TabControl).draggable > :is(TabItem):pressed">
+                            <Setter Property="ZIndex" Value="1" />
+                        </Style>
+                    </Border.Styles>
                     <Grid>
                         <controls:DockingPicker IsVisible="False" Name="PART_DockingPicker" HorizontalAlignment="Center" VerticalAlignment="Center"
                                                 Dockables="{Binding Dockables, RelativeSource={RelativeSource TemplatedParent}}"/>
@@ -25,15 +50,42 @@
                             <Border Classes="dockPreview" Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="2" Name="CenterPreview"/>
                         </Grid>
                         <DockPanel>
-                            <TabControl
-                                SelectedItem="{Binding Path=ActiveDockable, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                            <TabControl Theme="{DynamicResource PixiDockTabControlTheme}" Classes="draggable"
+                                SelectedItem="{Binding Path=ActiveDockable, RelativeSource={RelativeSource TemplatedParent}}"
                                 ItemsSource="{TemplateBinding Dockables}"
                                 TabStripPlacement="{TemplateBinding TabPlacement}">
+                                <TabControl.Styles>
+                                    <Style Selector="TabItem:not(:dragging)">
+                                        <Setter Property="Transitions">
+                                            <Setter.Value>
+                                                <Transitions>
+                                                    <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.1" />
+                                                </Transitions>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </TabControl.Styles>
                                 <TabControl.ItemTemplate>
                                     <DataTemplate>
-                                        <controls:DockableAreaStripItem DockPanel.Dock="Top" Dockable="{Binding $parent[TabItem].Content}"/>
+                                        <controls:DockableAreaStripItem DockPanel.Dock="Top" Margin="5 0" Dockable="{Binding $parent[TabItem].Content}"/>
                                     </DataTemplate>
                                 </TabControl.ItemTemplate>
+                                <!--<TabControl.ContentTemplate>
+                                    <DataTemplate>
+                                        <Border BorderBrush="{DynamicResource ThemeDockAccentColor}" BorderThickness="0, 2, 0, 0">
+                                            <ContentPresenter
+                                                Content="{Binding ActiveDockable, RelativeSource={RelativeSource TemplatedParent}}"
+                                                ContentTemplate="{Binding ActiveDockable.Template, RelativeSource={RelativeSource TemplatedParent}}"/>
+                                        </Border>
+                                    </DataTemplate>
+                                </TabControl.ContentTemplate>-->
+                                <TabControl.Resources>
+                                    <ResourceDictionary>
+                                        <ResourceDictionary.MergedDictionaries>
+                                            <MergeResourceInclude Source="/Themes/PixiDockTabItem.axaml"/>
+                                        </ResourceDictionary.MergedDictionaries>
+                                    </ResourceDictionary>
+                                </TabControl.Resources>
                             </TabControl>
                         </DockPanel>
                     </Grid>

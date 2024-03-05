@@ -3,11 +3,12 @@ using Avalonia.Controls;
 using Avalonia.Controls.Metadata;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
+using Avalonia.Media;
+using Avalonia.VisualTree;
 using PixiDocks.Core;
 
 namespace PixiDocks.Avalonia.Controls;
 
-[TemplatePart("PART_GrabBorder", typeof(Border))]
 public class DockableAreaStripItem : TemplatedControl
 {
     public static readonly StyledProperty<IDockable> DockableProperty = AvaloniaProperty.Register<DockableAreaStripItem, IDockable>(
@@ -20,17 +21,18 @@ public class DockableAreaStripItem : TemplatedControl
     }
 
     private bool _isDragging;
-    private Border border;
     private PointerPressedEventArgs? _lastPointerPressedEventArgs;
     private Point? _clickPoint;
+    private Panel _parent;
+    private TabItem _tabItem;
 
     protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
     {
-        border = e.NameScope.Find<Border>("PART_GrabBorder");
-
-        border.PointerPressed += OnBorderOnPointerPressed;
-        border.PointerMoved += OnBorderOnPointerMoved;
-        border.PointerReleased += OnBorderOnPointerReleased;
+        _tabItem = this.FindAncestorOfType<TabItem>();
+        _tabItem.PointerPressed += OnBorderOnPointerPressed;
+        _tabItem.PointerMoved += OnBorderOnPointerMoved;
+        _tabItem.PointerReleased += OnBorderOnPointerReleased;
+        _parent = _tabItem.FindAncestorOfType<Panel>();
     }
 
     private void OnBorderOnPointerPressed(object? sender, PointerPressedEventArgs args)
@@ -38,35 +40,36 @@ public class DockableAreaStripItem : TemplatedControl
         if (args.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
         {
             _isDragging = true;
-            args.Pointer.Capture(border);
+            args.Pointer.Capture(_tabItem);
             _lastPointerPressedEventArgs = args;
-            _clickPoint = args.GetPosition(border);
+            _clickPoint = args.GetPosition(_parent);
         }
     }
 
     private void OnBorderOnPointerMoved(object? sender, PointerEventArgs e)
     {
-        if (_isDragging && DistanceFromClick(e) > 10)
+        if (_isDragging)
         {
-            var window = Dockable.Host?.Context.Float(Dockable);
-            if (window is HostWindow hostWindow)
+            if (IsOutsideStripBar(e))
             {
-                hostWindow.MoveDrag(_lastPointerPressedEventArgs);
+                Point pt = e.GetPosition(_parent);
+                Point diff = pt - _clickPoint!.Value;
+                var window = Dockable.Host?.Context.Float(Dockable, pt.X, pt.Y);
+                if (window is HostWindow hostWindow)
+                {
+                    hostWindow.MoveDrag(_lastPointerPressedEventArgs, diff);
+                }
+
+                e.Pointer.Capture(null);
+                _isDragging = false;
             }
-            _isDragging = false;
-            e.Pointer.Capture(null);
         }
     }
 
-    private float DistanceFromClick(PointerEventArgs pointerEventArgs)
+    private bool IsOutsideStripBar(PointerEventArgs pointerEventArgs)
     {
-        if (_clickPoint is null)
-        {
-            return 0;
-        }
-
-        var position = pointerEventArgs.GetPosition(border);
-        return (float) Math.Sqrt(Math.Pow(position.X - _clickPoint.Value.X, 2) + Math.Pow(position.Y - _clickPoint.Value.Y, 2));
+        var position = pointerEventArgs.GetPosition(_tabItem);
+        return position.X < 0 || position.X > _parent.Bounds.Width || position.Y < 0 || position.Y > _parent.Bounds.Height;
     }
 
     private void OnBorderOnPointerReleased(object? sender, PointerReleasedEventArgs e)

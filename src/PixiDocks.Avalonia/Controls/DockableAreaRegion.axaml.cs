@@ -7,7 +7,7 @@ using PixiDocks.Core;
 
 namespace PixiDocks.Avalonia.Controls;
 
-public class DockableAreaRegion : TemplatedControl
+public class DockableAreaRegion : TemplatedControl, IDockableHostRegion
 {
     public static readonly StyledProperty<DockableTree> OutputProperty = AvaloniaProperty.Register<DockableAreaRegion, DockableTree>(
         nameof(Output));
@@ -28,6 +28,10 @@ public class DockableAreaRegion : TemplatedControl
         set => SetValue(OutputProperty, value);
     }
 
+    public IReadOnlyCollection<IDockableHost> AllHosts => _dockableAreaToTree.Keys;
+
+    public IDockable ValidDockable => AllHosts.First().ActiveDockable;
+
     private Dictionary<DockableArea, DockableTree> _dockableAreaToTree = new();
 
     static DockableAreaRegion()
@@ -46,6 +50,11 @@ public class DockableAreaRegion : TemplatedControl
     public DockableAreaRegion()
     {
         Output = new DockableTree();
+    }
+
+    public bool CanDock()
+    {
+        return AllHosts.Count == 1 && AllHosts.First().Dockables.Count == 1;
     }
 
     public DockableArea SplitDockableArea(DockableArea dockableArea, DockingDirection direction)

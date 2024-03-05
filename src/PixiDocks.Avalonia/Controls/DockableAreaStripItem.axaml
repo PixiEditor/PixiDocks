@@ -10,13 +10,11 @@
         <Setter Property="Template">
             <ControlTemplate>
                 <Border>
-                    <Border Padding="2.5" Background="{DynamicResource ThemeDockAccentBrush}" Name="PART_GrabBorder">
-                        <DockPanel LastChildFill="False">
-                            <TextBlock DockPanel.Dock="Left" Foreground="{DynamicResource ThemeForegroundBrush}"
-                                       Text="{Binding Dockable.Title, FallbackValue=TITLE,
+                    <DockPanel LastChildFill="False">
+                        <TextBlock Padding="5" DockPanel.Dock="Left" Foreground="{DynamicResource ThemeForegroundBrush}"
+                                   Text="{Binding Dockable.Title, FallbackValue=TITLE,
                                        RelativeSource={RelativeSource TemplatedParent}}"/>
-                        </DockPanel>
-                    </Border>
+                    </DockPanel>
                 </Border>
             </ControlTemplate>
         </Setter>

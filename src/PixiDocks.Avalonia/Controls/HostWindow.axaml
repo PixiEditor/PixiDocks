@@ -21,10 +21,10 @@
                         <VisualLayerManager.ChromeOverlayLayer>
                             <controls:HostWindowTitleBar Name="PART_TitleBar" />
                         </VisualLayerManager.ChromeOverlayLayer>
-                        <controls:DockableAreaRegion>
-                            <controls:DockableArea Name="PART_DockableArea" />
-                        </controls:DockableAreaRegion>
                         </VisualLayerManager>
+                    <controls:DockableAreaRegion>
+                        <controls:DockableArea Name="PART_DockableArea" />
+                    </controls:DockableAreaRegion>
                 </Panel>
             </ControlTemplate>
         </Setter>

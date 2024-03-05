@@ -32,23 +32,27 @@ public class DockContext : IDockContext
         allHosts.Remove(host);
     }
 
-    public IHostWindow Float(IDockable dockable)
+    public IHostWindow Float(IDockable dockable, double x, double y)
     {
-        if (floatingWindows.ContainsKey(dockable.Id))
+        if (floatingWindows.TryGetValue(dockable.Id, out HostWindow? value) && value.Region.AllHosts.Sum(x => x.Dockables.Count) == 1)
         {
-            return null;
+            return value;
         }
 
         PixelPoint pos = dockable switch
         {
-            Dockable dockableControl => dockableControl.PointToScreen(new Point(0, -30)),
+            Dockable dockableControl => dockableControl.PointToScreen(new Point(0, -30) + new Point(x, y)),
             _ => new PixelPoint(0, 0)
         };
 
         dockable.Host?.RemoveDockable(dockable);
         var hostWindow = new HostWindow(dockable, this, pos);
         hostWindow.Activated += OnWindowActivated;
-        floatingWindows.Add(dockable.Id, hostWindow);
+        if (!floatingWindows.TryAdd(dockable.Id, hostWindow))
+        {
+            floatingWindows[dockable.Id] = hostWindow;
+        }
+
         hostWindow.Show();
 
         return hostWindow;
@@ -61,8 +65,12 @@ public class DockContext : IDockContext
             return;
         }
 
-        allHosts.Remove(hostWindow.ActiveDockable.Host);
-        allHosts.Insert(0, hostWindow.ActiveDockable.Host);
+        for (var i = 0; i < hostWindow.Region.AllHosts.Count; i++)
+        {
+            var host = hostWindow.Region.AllHosts.ElementAt(i);
+            allHosts.Remove(host);
+            allHosts.Insert(0, host);
+        }
     }
 
     public void Dock(IDockable dockable, IDockableHost toHost)
@@ -72,15 +80,33 @@ public class DockContext : IDockContext
             return;
         }
 
+        dockable.Host?.RemoveDockable(dockable);
+
         if (floatingWindows.ContainsKey(dockable.Id))
         {
             HostWindow hostWindow = floatingWindows[dockable.Id];
-            hostWindow.Close();
-            floatingWindows.Remove(dockable.Id);
+            if (hostWindow.Region.AllHosts.Sum(x => x.Dockables.Count) == 0)
+            {
+                hostWindow.Close();
+                floatingWindows.Remove(dockable.Id);
+            }
         }
 
-        dockable.Host?.RemoveDockable(dockable);
+        HostWindow? toHostWindow = TryGetHostWindow(toHost);
+        if (toHostWindow is not null)
+        {
+            if (!floatingWindows.TryAdd(dockable.Id, toHostWindow))
+            {
+                floatingWindows[dockable.Id] = toHostWindow;
+            }
+        }
+
         toHost.AddDockable(dockable);
         toHost.ActiveDockable = dockable;
+    }
+
+    private HostWindow? TryGetHostWindow(IDockableHost toHost)
+    {
+        return floatingWindows.Values.FirstOrDefault(window => window.Region.AllHosts.Contains(toHost));
     }
 }

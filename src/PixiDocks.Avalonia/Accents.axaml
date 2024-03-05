@@ -3,7 +3,10 @@
     <ResourceDictionary.ThemeDictionaries>
         <ResourceDictionary x:Key="Dark">
             <Color x:Key="ThemeDockAccentColor">#b00022</Color>
+            <Color x:Key="ThemeDockHighlightColor">#4b4b4b</Color>
+            <CornerRadius x:Key="ThemeDockTabStripCornerRadius">5,5,0,0</CornerRadius>
             <SolidColorBrush x:Key="ThemeDockAccentBrush" Color="{DynamicResource ThemeDockAccentColor}" />
+            <SolidColorBrush x:Key="ThemeDockHighlightBrush" Color="{DynamicResource ThemeDockHighlightColor}" />
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 </ResourceDictionary>

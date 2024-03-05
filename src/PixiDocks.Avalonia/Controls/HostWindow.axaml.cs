@@ -13,7 +13,7 @@ namespace PixiDocks.Avalonia.Controls;
 [TemplatePart("PART_DockableArea", typeof(DockableArea))]
 public class HostWindow : Window, IHostWindow
 {
-    public IDockable? ActiveDockable { get; }
+    public IDockableHostRegion Region => _dockableArea.Region;
 
     private HostWindowTitleBar? _hostWindowTitleBar;
 
@@ -22,19 +22,19 @@ public class HostWindow : Window, IHostWindow
     private Control? _chromeGrip;
     private HostWindowState _state;
     private Point _dragStartPoint;
+    private DockableArea _dockableArea;
 
     protected override Type StyleKeyOverride => typeof(HostWindow);
 
-    public HostWindow(IDockable activeDockable, IDockContext context, PixelPoint pos)
+    public HostWindow(IDockable dockable, IDockContext context, PixelPoint pos)
     {
-        ActiveDockable = activeDockable;
-        Control dockableObj = ActiveDockable as Control;
+        Control dockableObj = dockable as Control;
+        Content = dockableObj;
         Width = dockableObj.Bounds.Width;
         Height = dockableObj.Bounds.Height;
         Position = pos;
 
         _state = new HostWindowState(context, this);
-
         PositionChanged += OnPositionChanged;
     }
 
@@ -56,11 +56,11 @@ public class HostWindow : Window, IHostWindow
     {
         base.OnApplyTemplate(e);
 
-        var dockable = e.NameScope.Find<DockableArea>("PART_DockableArea");
-        if (dockable is not null)
+       _dockableArea = e.NameScope.Find<DockableArea>("PART_DockableArea");
+        if (_dockableArea is not null)
         {
-            dockable.Context = _state.Context;
-            dockable.ActiveDockable = ActiveDockable;
+            _dockableArea.Context = _state.Context;
+            _dockableArea.ActiveDockable = Content as IDockable;
         }
 
         _hostWindowTitleBar = e.NameScope.Find<HostWindowTitleBar>("PART_TitleBar");
@@ -72,19 +72,19 @@ public class HostWindow : Window, IHostWindow
             {
                 _hostWindowTitleBar.BackgroundControl.PointerPressed += (_, args) =>
                 {
-                    MoveDrag(args);
+                    MoveDrag(args, new Point(0, 0));
                 };
             }
         }
     }
 
-    public void MoveDrag(PointerPressedEventArgs e)
+    public void MoveDrag(PointerPressedEventArgs e, Point pt)
     {
         _mouseDown = true;
 
         PseudoClasses.Set(":dragging", true);
         _draggingWindow = true;
-        _dragStartPoint = e.GetPosition(this);
+        _dragStartPoint = e.GetPosition(this) + pt;
         BeginMoveDrag(e);
 
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
@@ -112,7 +112,7 @@ public class HostWindow : Window, IHostWindow
         {
             if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
             {
-                MoveDrag(e);
+                MoveDrag(e,  new Point(0, 0));
             }
         }
     }
