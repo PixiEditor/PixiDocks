@@ -12,7 +12,7 @@
                 <Border Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}">
-                    <ContentPresenter Content="{Binding Path=Output.FinalElement, RelativeSource={RelativeSource TemplatedParent}}" />
+                    <ContentPresenter Content="{Binding Path=Output, RelativeSource={RelativeSource TemplatedParent}}" />
                 </Border>
             </ControlTemplate>
         </Setter>

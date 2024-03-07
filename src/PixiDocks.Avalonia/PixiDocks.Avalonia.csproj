@@ -23,4 +23,10 @@
       <UpToDateCheckInput Remove="Styles\PreviewBorder.axaml" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Update="Controls\DockableTree.axaml.cs">
+        <DependentUpon>DockableTree.axaml.axaml</DependentUpon>
+      </Compile>
+    </ItemGroup>
+
 </Project>

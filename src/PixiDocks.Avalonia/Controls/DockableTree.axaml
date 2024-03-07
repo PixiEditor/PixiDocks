@@ -1,0 +1,71 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:controls="clr-namespace:PixiDocks.Avalonia.Controls">
+    <Design.PreviewWith>
+        <controls:DockableTree />
+    </Design.PreviewWith>
+
+    <ControlTheme TargetType="controls:DockableTree" x:Key="{x:Type controls:DockableTree}">
+        <!-- Set Defaults -->
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Grid Name="PART_Grid">
+                    <ContentPresenter Name="PART_FirstPresenter" Content="{TemplateBinding First}"/>
+                    <GridSplitter Name="PART_Splitter" IsVisible="False"/>
+                    <ContentPresenter Name="PART_SecondPresenter" Content="{TemplateBinding Second}"/>
+                </Grid>
+            </ControlTemplate>
+        </Setter>
+
+        <Style Selector="^:split /template/ GridSplitter#PART_Splitter">
+            <Setter Property="IsVisible" Value="True"/>
+        </Style>
+
+        <Style Selector="^:horizontal /template/ GridSplitter#PART_Splitter">
+            <Setter Property="Width" Value="2.5"/>
+            <Setter Property="ResizeDirection" Value="Columns"/>
+            <Setter Property="(Grid.Column)" Value="1"/>
+            <Setter Property="(Grid.Row)" Value="0"/>
+        </Style>
+
+        <Style Selector="^:vertical /template/ GridSplitter#PART_Splitter">
+            <Setter Property="Height" Value="2.5"/>
+            <Setter Property="ResizeDirection" Value="Rows"/>
+            <Setter Property="(Grid.Row)" Value="1"/>
+            <Setter Property="(Grid.Column)" Value="0"/>
+        </Style>
+
+        <Style Selector="^:right /template/ ContentPresenter#PART_FirstPresenter">
+            <Setter Property="(Grid.Column)" Value="0"/>
+        </Style>
+
+        <Style Selector="^:right /template/ ContentPresenter#PART_SecondPresenter">
+            <Setter Property="(Grid.Column)" Value="2"/>
+        </Style>
+
+        <Style Selector="^:bottom /template/ ContentPresenter#PART_FirstPresenter">
+            <Setter Property="(Grid.Row)" Value="0"/>
+        </Style>
+
+        <Style Selector="^:bottom /template/ ContentPresenter#PART_SecondPresenter">
+            <Setter Property="(Grid.Row)" Value="2"/>
+        </Style>
+
+        <Style Selector="^:left /template/ ContentPresenter#PART_FirstPresenter">
+            <Setter Property="(Grid.Column)" Value="2"/>
+        </Style>
+
+        <Style Selector="^:left /template/ ContentPresenter#PART_SecondPresenter">
+            <Setter Property="(Grid.Column)" Value="0"/>
+        </Style>
+
+        <Style Selector="^:top /template/ ContentPresenter#PART_FirstPresenter">
+            <Setter Property="(Grid.Row)" Value="2"/>
+        </Style>
+
+        <Style Selector="^:top /template/ ContentPresenter#PART_SecondPresenter">
+            <Setter Property="(Grid.Row)" Value="0"/>
+        </Style>
+
+    </ControlTheme>
+</ResourceDictionary>

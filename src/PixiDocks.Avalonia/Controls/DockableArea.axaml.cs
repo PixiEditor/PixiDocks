@@ -242,6 +242,4 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
             context.AddHost(area);
         }
     }
-
-    Control ITreeElement.FinalElement => this;
 }

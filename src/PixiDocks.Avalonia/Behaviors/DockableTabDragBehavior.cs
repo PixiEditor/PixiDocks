@@ -1,4 +1,31 @@
+/*
+ This is a modified version of AvaloniaXamlBehaviours ItemDragBehaviour https://github.com/AvaloniaUI/Avalonia.Xaml.Behaviors/blob/master/src/Avalonia.Xaml.Interactions.Draggable/ItemDragBehavior.cs
+Which is licensed under the MIT License:
+    The MIT License (MIT)
+
+    Copyright (c) Wiesław Šoltés
+
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the "Software"), to deal
+    in the Software without restriction, including without limitation the rights
+    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in all
+    copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+    SOFTWARE.
+ */
+
 using System.Collections;
+using System.Collections.Specialized;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
@@ -6,14 +33,13 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.Media.Transformation;
+using Avalonia.Threading;
 using Avalonia.Xaml.Interactions.Draggable;
 using Avalonia.Xaml.Interactivity;
 
 namespace PixiDocks.Avalonia.Behaviors;
 
-/// <summary>
-/// 
-/// </summary>
+
 public class DockableTabDragBehavior : Behavior<Control>
 {
     private bool _enableDrag;
@@ -108,7 +134,11 @@ public class DockableTabDragBehavior : Behavior<Control>
             _itemsControl = itemsControl;
             _itemsControl.Items.CollectionChanged += (s, e) =>
             {
-                Released(false);
+                if (e.Action == NotifyCollectionChangedAction.Remove)
+                {
+                    if (_itemsControl == null) return;
+                    _itemsControl.LayoutUpdated += UpdateLayout;
+                }
             };
 
             _draggedContainer = AssociatedObject;
@@ -122,6 +152,14 @@ public class DockableTabDragBehavior : Behavior<Control>
 
             _captured = true;
         }
+    }
+
+    private void UpdateLayout(object? sender, EventArgs e)
+    {
+        if(_itemsControl is not null)
+            _itemsControl.LayoutUpdated -= UpdateLayout;
+        Released(false);
+        _captured = false;
     }
 
     private void PointerReleased(object? sender, PointerReleasedEventArgs e)

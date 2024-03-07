@@ -112,7 +112,7 @@ public class HostWindow : Window, IHostWindow
         {
             if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
             {
-                MoveDrag(e,  new Point(0, 0));
+                MoveDrag(e, new Point(0, 0));
             }
         }
     }
