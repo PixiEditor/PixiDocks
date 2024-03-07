@@ -69,7 +69,7 @@ public class DockableTree : TemplatedControl, ITreeElement
         DockableArea second = new();
 
         DockableArea area = First as DockableArea;
-        DetachOldParents(area);
+        //DetachOldParents(area); UNCOMMENT TO ENABLE THE FIX
         First = new DockableTree() { First = area, DockableParent = this };
         dockableAreaToTree[area] = First as DockableTree;
 
@@ -91,7 +91,7 @@ public class DockableTree : TemplatedControl, ITreeElement
         {
             if (dockable is Dockable dockableControl)
             {
-               (dockableControl.Parent as TabItem).Content = null; // It's so weird that I have to do this, seems like a bug in Avalonia
+               (dockableControl.Parent as TabItem).Content = null; // This removes Dockable as a content from old tabitem which doesn't have any parent
             }
         }
     }
