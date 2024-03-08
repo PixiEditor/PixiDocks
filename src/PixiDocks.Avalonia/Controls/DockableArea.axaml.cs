@@ -4,6 +4,7 @@ using System.Windows.Input;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Metadata;
+using Avalonia.Controls.Presenters;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Rendering;
@@ -86,6 +87,7 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
     }
 
     private DockingPicker _picker;
+    private ItemsPresenter _strip;
     private DockingDirection? _lastDirection;
 
     static DockableArea()
@@ -98,6 +100,9 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
     {
         base.OnApplyTemplate(e);
         _picker = e.NameScope.Find<DockingPicker>("PART_DockingPicker");
+        TabControl tabControl = e.NameScope.Find<TabControl>("PART_TabControl");
+        tabControl.ApplyTemplate();
+        _strip = tabControl.Presenter;
     }
 
     public DockableArea()
@@ -158,8 +163,7 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
         Point? pos = ToRelativePoint(x, y);
         pos = Region.TranslatePointRelative(pos.Value, this);
 
-        pos -= _picker.Bounds.Position;
-        _lastDirection = _picker.GetDockingDirection(pos.Value);
+        _lastDirection = _picker.GetDockingDirection(pos.Value - _picker.Bounds.Position);
         if (_lastDirection.HasValue && region.CanDock())
         {
             bool isCenter = _lastDirection.Value == DockingDirection.Center;
@@ -177,6 +181,12 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
             bool isBottom = _lastDirection.Value == DockingDirection.Bottom;
             PseudoClasses.Set(":bottom", isBottom);
         }
+        else if (region.CanDock() && IsOverTabControl(pos))
+        {
+            _lastDirection = DockingDirection.Center;
+            bool isCenter = _lastDirection.Value == DockingDirection.Center;
+            PseudoClasses.Set(":center", isCenter);
+        }
         else
         {
             PseudoClasses.Set(":center", false);
@@ -185,6 +195,21 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
             PseudoClasses.Set(":top", false);
             PseudoClasses.Set(":bottom", false);
         }
+    }
+
+    private bool IsOverTabControl(Point? point)
+    {
+        if (_strip is null)
+        {
+            return false;
+        }
+
+        if (point is null)
+        {
+            return false;
+        }
+
+        return _strip.Bounds.Contains(point.Value);
     }
 
     public void OnDockableExited(IDockableHostRegion region, int x, int y)

@@ -1,15 +1,8 @@
-using System.Collections;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Metadata;
 using Avalonia.Controls.Presenters;
 using Avalonia.Controls.Primitives;
-using Avalonia.Controls.Templates;
-using Avalonia.Markup.Xaml.Templates;
-using Avalonia.VisualTree;
-using PixiDocks.Core;
 
 namespace PixiDocks.Avalonia.Controls;
 
@@ -45,9 +38,6 @@ public class DockableTree : TemplatedControl, ITreeElement
     public DockableTree? DockableParent { get; set; }
 
     private Grid _grid;
-    private ContentPresenter _firstPresenter;
-    private ContentPresenter _secondPresenter;
-    private GridSplitter _splitter;
 
     public DockableTree()
     {
@@ -58,9 +48,6 @@ public class DockableTree : TemplatedControl, ITreeElement
     {
         base.OnApplyTemplate(e);
         _grid = e.NameScope.Find<Grid>("PART_Grid");
-        _firstPresenter = e.NameScope.Find<ContentPresenter>("PART_FirstPresenter");
-        _secondPresenter = e.NameScope.Find<ContentPresenter>("PART_SecondPresenter");
-        _splitter = e.NameScope.Find<GridSplitter>("PART_Splitter");
     }
 
     public DockableArea Split(DockingDirection direction, Dictionary<DockableArea, DockableTree> dockableAreaToTree)
@@ -91,7 +78,10 @@ public class DockableTree : TemplatedControl, ITreeElement
         {
             if (dockable is Dockable dockableControl)
             {
-               (dockableControl.Parent as TabItem).Content = null; // It's so weird that I have to do this, seems like a bug in Avalonia
+                if (dockableControl.Parent is TabItem tabItem)
+                {
+                    tabItem.Content = null; // This removes Dockable as a content from old tabitem which doesn't have any parent
+                }
             }
         }
     }

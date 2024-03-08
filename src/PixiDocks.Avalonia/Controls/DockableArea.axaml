@@ -50,7 +50,7 @@
                             <Border Classes="dockPreview" Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="2" Name="CenterPreview"/>
                         </Grid>
                         <DockPanel>
-                            <TabControl Theme="{DynamicResource PixiDockTabControlTheme}" Classes="draggable"
+                            <TabControl Name="PART_TabControl" Theme="{DynamicResource PixiDockTabControlTheme}" Classes="draggable"
                                 SelectedItem="{Binding Path=ActiveDockable, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
                                 ItemsSource="{TemplateBinding Dockables}"
                                 TabStripPlacement="{TemplateBinding TabPlacement}">
