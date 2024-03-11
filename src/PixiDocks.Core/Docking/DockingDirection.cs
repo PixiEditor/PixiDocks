@@ -1,4 +1,4 @@
-namespace PixiDocks.Avalonia.Controls;
+namespace PixiDocks.Core.Docking;
 
 public enum DockingDirection
 {

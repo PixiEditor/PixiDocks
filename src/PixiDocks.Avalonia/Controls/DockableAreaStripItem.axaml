@@ -1,19 +1,74 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:controls="using:PixiDocks.Avalonia.Controls">
+        xmlns:controls="using:PixiDocks.Avalonia.Controls"
+        xmlns:core="clr-namespace:PixiDocks.Core;assembly=PixiDocks.Core"
+        xmlns:docking="clr-namespace:PixiDocks.Core.Docking;assembly=PixiDocks.Core">
     <Design.PreviewWith>
         <controls:DockableAreaStripItem />
     </Design.PreviewWith>
+
+    <ContextMenu x:Key="DockableAreaItemContextMenu" x:DataType="docking:IDockable" x:CompileBindings="True">
+        <MenuItem Header="_Float"
+                  Command="{Binding Host.Float}"
+                  CommandParameter="{Binding }"
+                  IsVisible="{Binding CanFloat}"/>
+        <MenuItem Header="_Close"
+                  Command="{Binding Host.Close}"
+                  CommandParameter="{Binding }"
+                  IsVisible="{Binding CanClose}"/>
+        <MenuItem Header="Close _All"
+                  Command="{Binding Host.CloseAll}"
+                  CommandParameter="{Binding }"/>
+        <MenuItem Header="Close _Other Tabs"
+                    Command="{Binding Host.CloseAllExcept}"
+                    CommandParameter="{Binding }"/>
+        <Separator/>
+        <MenuItem Header="Split _Down"
+                  Command="{Binding Host.SplitDown}"
+                  CommandParameter="{Binding }"
+                  IsVisible="{Binding CanSplit}">
+            <MenuItem.Icon>
+                <Image Source="/Images/bottom-dock.png" Width="16" Height="16"/>
+            </MenuItem.Icon>
+        </MenuItem>
+        <MenuItem Header="Split _Up"
+                  Command="{Binding Host.SplitUp}"
+                  CommandParameter="{Binding }"
+                  IsVisible="{Binding CanSplit}">
+            <MenuItem.Icon>
+                <Image Source="/Images/up-dock.png" Width="16" Height="16"/>
+            </MenuItem.Icon>
+        </MenuItem>
+        <MenuItem Header="Split _Left"
+                  Command="{Binding Host.SplitLeft}"
+                  CommandParameter="{Binding }"
+                  IsVisible="{Binding CanSplit}">
+            <MenuItem.Icon>
+                <Image Source="/Images/left-dock.png" Width="16" Height="16"/>
+            </MenuItem.Icon>
+        </MenuItem>
+        <MenuItem Header="Split _Right"
+                  Command="{Binding Host.SplitRight}"
+                  CommandParameter="{Binding }"
+                  IsVisible="{Binding CanSplit}">
+            <MenuItem.Icon>
+                <Image Source="/Images/right-dock.png" Width="16" Height="16"/>
+            </MenuItem.Icon>
+        </MenuItem>
+    </ContextMenu>
 
     <ControlTheme TargetType="controls:DockableAreaStripItem" x:Key="{x:Type controls:DockableAreaStripItem}">
         <!-- Set Defaults -->
         <Setter Property="Template">
             <ControlTemplate>
-                <Border>
+                <Border DataContext="{Binding Dockable, RelativeSource={RelativeSource TemplatedParent}}"
+                        ContextMenu="{StaticResource DockableAreaItemContextMenu}">
                     <DockPanel LastChildFill="False">
+                        <Image IsVisible="{Binding !!Icon}" Source="{Binding Icon}"
+                               RenderOptions.BitmapInterpolationMode="None"
+                               DockPanel.Dock="Left" Width="16" Height="16"/>
                         <TextBlock Padding="5" DockPanel.Dock="Left" Foreground="{DynamicResource ThemeForegroundBrush}"
-                                   Text="{Binding Dockable.Title, FallbackValue=TITLE,
-                                       RelativeSource={RelativeSource TemplatedParent}}"/>
+                                   Text="{Binding Title, FallbackValue=TITLE}"/>
                     </DockPanel>
                 </Border>
             </ControlTemplate>

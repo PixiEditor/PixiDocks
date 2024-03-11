@@ -1,9 +1,8 @@
-using Avalonia;
-using Avalonia.Controls;
+using PixiDocks.Core.Serialization;
 
 namespace PixiDocks.Avalonia.Controls;
 
-public interface ITreeElement
+public interface ITreeElement : IDockableLayoutElement
 {
 
 }

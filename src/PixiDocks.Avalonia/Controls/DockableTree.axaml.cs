@@ -1,8 +1,11 @@
+using System.Collections;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Metadata;
 using Avalonia.Controls.Presenters;
 using Avalonia.Controls.Primitives;
+using PixiDocks.Core.Docking;
+using PixiDocks.Core.Serialization;
 
 namespace PixiDocks.Avalonia.Controls;
 
@@ -151,5 +154,23 @@ public class DockableTree : TemplatedControl, ITreeElement
         PseudoClasses.Set(":bottom", SplitDirection is DockingDirection.Bottom);
         PseudoClasses.Set(":horizontal", SplitDirection is DockingDirection.Left or DockingDirection.Right);
         PseudoClasses.Set(":vertical", SplitDirection is DockingDirection.Top or DockingDirection.Bottom);
+    }
+
+    public IEnumerator<IDockableLayoutElement> GetEnumerator()
+    {
+        if (First is IDockableLayoutElement first)
+        {
+            yield return first;
+        }
+
+        if (Second is IDockableLayoutElement second)
+        {
+            yield return second;
+        }
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return GetEnumerator();
     }
 }

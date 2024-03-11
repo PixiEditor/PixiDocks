@@ -1,8 +1,8 @@
-using System.Windows.Input;
+using PixiDocks.Core.Serialization;
 
-namespace PixiDocks.Core;
+namespace PixiDocks.Core.Docking;
 
-public interface IDockableHost
+public interface IDockableHost : IDockableLayoutElement
 {
     public IDockContext Context { get; }
     public IReadOnlyCollection<IDockable> Dockables { get;}
@@ -14,4 +14,12 @@ public interface IDockableHost
     public void OnDockableOver(IDockableHostRegion region, int x, int y);
     public void OnDockableExited(IDockableHostRegion region, int x, int y);
     public void Dock(IDockable dockable);
+    public void Float(IDockable dockable);
+    public void Close(IDockable dockable);
+    public void CloseAll();
+    public void CloseAllExcept(IDockable dockable);
+    public void SplitDown(IDockable dockable);
+    public void SplitLeft(IDockable dockable);
+    public void SplitRight(IDockable dockable);
+    public void SplitUp(IDockable dockable);
 }

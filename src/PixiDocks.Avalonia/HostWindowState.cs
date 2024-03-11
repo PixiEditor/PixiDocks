@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using PixiDocks.Avalonia.Controls;
 using PixiDocks.Core;
+using PixiDocks.Core.Docking;
 
 namespace PixiDocks.Avalonia;
 

@@ -6,6 +6,7 @@ using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.VisualTree;
 using PixiDocks.Core;
+using PixiDocks.Core.Docking;
 
 namespace PixiDocks.Avalonia.Controls;
 

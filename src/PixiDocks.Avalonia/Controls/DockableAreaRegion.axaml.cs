@@ -1,9 +1,7 @@
-using System.Collections.ObjectModel;
 using Avalonia;
-using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Metadata;
-using PixiDocks.Core;
+using PixiDocks.Core.Docking;
 
 namespace PixiDocks.Avalonia.Controls;
 

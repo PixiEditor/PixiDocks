@@ -1,4 +1,4 @@
-namespace PixiDocks.Core;
+namespace PixiDocks.Core.Docking;
 
 public interface IDockContext
 {
@@ -7,4 +7,5 @@ public interface IDockContext
     public void RemoveHost(IDockableHost host);
     public IHostWindow Float(IDockable dockable, double x, double y);
     public void Dock(IDockable dockable, IDockableHost toHost);
+    public void Close(IDockable dockable);
 }

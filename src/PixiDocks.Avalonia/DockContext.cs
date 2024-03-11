@@ -1,7 +1,10 @@
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.VisualTree;
 using PixiDocks.Avalonia.Controls;
 using PixiDocks.Core;
+using PixiDocks.Core.Docking;
 
 namespace PixiDocks.Avalonia;
 
@@ -39,9 +42,14 @@ public class DockContext : IDockContext
             return value;
         }
 
+        if (dockable.Host != null)
+        {
+            dockable.Host.ActiveDockable = dockable;
+        }
+
         PixelPoint pos = dockable switch
         {
-            Dockable dockableControl => dockableControl.PointToScreen(new Point(0, -30) + new Point(x, y)),
+            Dockable dockableControl => dockableControl.IsAttachedToVisualTree() ? dockableControl.PointToScreen(new Point(0, -30) + new Point(x, y)) : new PixelPoint((int)x, (int)y),
             _ => new PixelPoint(0, 0)
         };
 
@@ -56,6 +64,19 @@ public class DockContext : IDockContext
         hostWindow.Show();
 
         return hostWindow;
+    }
+
+    public void Close(IDockable dockable)
+    {
+        if(!dockable.CanClose) return;
+
+        if (floatingWindows.TryGetValue(dockable.Id, out HostWindow? value))
+        {
+            value.Close();
+            floatingWindows.Remove(dockable.Id);
+        }
+
+        dockable.Host?.RemoveDockable(dockable);
     }
 
     private void OnWindowActivated(object sender, EventArgs e)

@@ -1,4 +1,4 @@
-namespace PixiDocks.Core;
+namespace PixiDocks.Core.Docking;
 
 public interface IHostWindow
 {

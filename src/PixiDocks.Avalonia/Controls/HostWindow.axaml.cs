@@ -5,6 +5,7 @@ using Avalonia.Controls.Metadata;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using PixiDocks.Core;
+using PixiDocks.Core.Docking;
 
 namespace PixiDocks.Avalonia.Controls;
 
@@ -32,6 +33,10 @@ public class HostWindow : Window, IHostWindow
         Content = dockableObj;
         Width = dockableObj.Bounds.Width;
         Height = dockableObj.Bounds.Height;
+
+        if (Width == 0) Width = 200;
+        if (Height == 0) Height = 200;
+
         Position = pos;
 
         _state = new HostWindowState(context, this);

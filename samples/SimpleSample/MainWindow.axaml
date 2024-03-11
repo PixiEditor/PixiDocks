@@ -12,10 +12,10 @@
         <avalonia:DockContext x:Key="DockContext"/>
     </Window.Resources>
     <Grid>
-        <controls:DockableAreaRegion>
+        <controls:DockableAreaRegion Name="RootRegion">
             <controls:DockableArea Context="{StaticResource DockContext}" Background="#252525" CornerRadius="5">
                 <controls:DockableArea.ActiveDockable>
-                    <controls:Dockable Id="SomeDockable" Title="Some Dockable">
+                    <controls:Dockable Id="SomeDockable" Title="Some Dockable" Icon="/curved-out.png">
                         <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
                             <Button Width="60" Height="30" Content="Hello"/>
                         </Grid>

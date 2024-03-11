@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Windows.Input;
@@ -11,6 +12,8 @@ using Avalonia.Rendering;
 using Avalonia.VisualTree;
 using PixiDocks.Avalonia.Helpers;
 using PixiDocks.Core;
+using PixiDocks.Core.Docking;
+using PixiDocks.Core.Serialization;
 
 namespace PixiDocks.Avalonia.Controls;
 
@@ -93,6 +96,7 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
     static DockableArea()
     {
         ActiveDockableProperty.Changed.AddClassHandler<DockableArea>(ActiveDockableChanged);
+        DockablesProperty.Changed.AddClassHandler<DockableArea>(DockablesChanged);
         ContextProperty.Changed.AddClassHandler<DockableArea>(ContextChanged);
     }
 
@@ -224,18 +228,73 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
 
     public void Dock(IDockable dockable)
     {
-        if (!Equals(dockable.Host, this))
+        Dock(dockable, _lastDirection);
+    }
+
+    public void Dock(IDockable dockable, DockingDirection? direction)
+    {
+        if (direction.HasValue && direction.Value != DockingDirection.Center)
         {
-            if (_lastDirection.HasValue && _lastDirection.Value != DockingDirection.Center)
+            DockableArea newArea = Region.SplitDockableArea(this, direction.Value);
+            Context.Dock(dockable, newArea);
+        }
+        else if (direction.HasValue && direction.Value == DockingDirection.Center)
+        {
+            Context.Dock(dockable, this);
+        }
+    }
+
+    public void Float(IDockable dockable)
+    {
+        Context.Float(dockable, 0, 0);
+    }
+
+    public void Close(IDockable dockable)
+    {
+        Context.Close(dockable);
+    }
+
+    public void CloseAll()
+    {
+        for (var i = 0; i < Dockables.Count; i++)
+        {
+            var dockable = Dockables[i];
+            Context.Close(dockable);
+            i--;
+        }
+    }
+
+    public void CloseAllExcept(IDockable dockable)
+    {
+        for (var i = 0; i < Dockables.Count; i++)
+        {
+            var d = Dockables[i];
+            if (d != dockable)
             {
-                DockableArea newArea = Region.SplitDockableArea(this, _lastDirection.Value);
-                Context.Dock(dockable, newArea);
-            }
-            else if (_lastDirection.HasValue && _lastDirection.Value == DockingDirection.Center)
-            {
-                Context.Dock(dockable, this);
+                Context.Close(d);
+                i--;
             }
         }
+    }
+
+    public void SplitDown(IDockable dockable)
+    {
+        Dock(dockable, DockingDirection.Bottom);
+    }
+
+    public void SplitLeft(IDockable dockable)
+    {
+        Dock(dockable, DockingDirection.Left);
+    }
+
+    public void SplitRight(IDockable dockable)
+    {
+        Dock(dockable, DockingDirection.Right);
+    }
+
+    public void SplitUp(IDockable dockable)
+    {
+        Dock(dockable, DockingDirection.Top);
     }
 
     private static void ActiveDockableChanged(DockableArea sender, AvaloniaPropertyChangedEventArgs args)
@@ -255,9 +314,21 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
         }
     }
 
-    private void Float(IDockable dockable)
+    private static void DockablesChanged(DockableArea sender, AvaloniaPropertyChangedEventArgs e)
     {
-        Context.Float(dockable, 0, 0);
+        if (e.NewValue is ObservableCollection<IDockable> dockables)
+        {
+            dockables.CollectionChanged += (s, args) =>
+            {
+                if (args.Action == NotifyCollectionChangedAction.Add)
+                {
+                    foreach (IDockable dockable in args.NewItems)
+                    {
+                        dockable.Host = sender;
+                    }
+                }
+            };
+        }
     }
 
     private static void ContextChanged(DockableArea area, AvaloniaPropertyChangedEventArgs args)
@@ -266,5 +337,15 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
         {
             context.AddHost(area);
         }
+    }
+
+    public IEnumerator<IDockableLayoutElement> GetEnumerator()
+    {
+        return Dockables.GetEnumerator();
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return GetEnumerator();
     }
 }
