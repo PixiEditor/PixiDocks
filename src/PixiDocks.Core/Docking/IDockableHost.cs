@@ -1,10 +1,12 @@
+using System.Text.Json.Serialization;
 using PixiDocks.Core.Serialization;
 
 namespace PixiDocks.Core.Docking;
 
+[JsonConverter(typeof(DockableHostConverter))]
 public interface IDockableHost : IDockableLayoutElement
 {
-    public IDockContext Context { get; }
+    public IDockContext Context { get; set; }
     public IReadOnlyCollection<IDockable> Dockables { get;}
     public IDockable ActiveDockable { get; set; }
     public void AddDockable(IDockable dockable);

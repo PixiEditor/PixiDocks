@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Text.Json.Serialization;
 using System.Windows.Input;
 using Avalonia;
 using Avalonia.Controls;
@@ -21,7 +22,11 @@ namespace PixiDocks.Avalonia.Controls;
 [PseudoClasses(":dockableOver", ":center", ":left", ":right", ":top", ":bottom")]
 public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
 {
-    IDockContext IDockableHost.Context => Context;
+    IDockContext IDockableHost.Context
+    {
+        get => Context;
+        set => Context = value;
+    }
 
     IReadOnlyCollection<IDockable> IDockableHost.Dockables => Dockables;
 

@@ -1,0 +1,19 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:controls="clr-namespace:PixiDocks.Avalonia.Controls;assembly=PixiDocks.Avalonia"
+        xmlns:avalonia="clr-namespace:PixiDocks.Avalonia;assembly=PixiDocks.Avalonia"
+        xmlns:core="clr-namespace:PixiDocks.Core;assembly=PixiDocks.Core"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="SerializeSample.MainWindow"
+        Title="SimpleSample">
+    <StackPanel Orientation="Vertical">
+        <StackPanel Orientation="Horizontal">
+            <Button Content="Save" Width="70"/>
+            <Button Content="Load" Width="70"/>
+        </StackPanel>
+        <controls:DockableAreaRegion Name="RootRegion">
+        </controls:DockableAreaRegion>
+    </StackPanel>
+</Window>

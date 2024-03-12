@@ -1,6 +1,6 @@
 using PixiDocks.Core.Serialization;
 
-namespace PixiDocks.Avalonia.Controls;
+namespace PixiDocks.Core.Docking;
 
 public interface ITreeElement : IDockableLayoutElement
 {

@@ -2,7 +2,6 @@ using System.Collections;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Metadata;
-using Avalonia.Controls.Presenters;
 using Avalonia.Controls.Primitives;
 using PixiDocks.Core.Docking;
 using PixiDocks.Core.Serialization;
@@ -10,7 +9,7 @@ using PixiDocks.Core.Serialization;
 namespace PixiDocks.Avalonia.Controls;
 
 [PseudoClasses(":split", ":left", ":right", ":top", ":bottom", ":horizontal", ":vertical")]
-public class DockableTree : TemplatedControl, ITreeElement
+public class DockableTree : TemplatedControl, ITreeElement, IDockableTree
 {
     public static readonly StyledProperty<ITreeElement?> FirstProperty = AvaloniaProperty.Register<DockableTree, ITreeElement>(
         nameof(First));
@@ -51,6 +50,7 @@ public class DockableTree : TemplatedControl, ITreeElement
     {
         base.OnApplyTemplate(e);
         _grid = e.NameScope.Find<Grid>("PART_Grid");
+        UpdateGrid();
     }
 
     public DockableArea Split(DockingDirection direction, Dictionary<DockableArea, DockableTree> dockableAreaToTree)
@@ -143,6 +143,30 @@ public class DockableTree : TemplatedControl, ITreeElement
         }
 
         SetPseudoClasses();
+    }
+
+
+    public void SetRegion(DockableAreaRegion sender)
+    {
+        if (First is DockableArea area)
+        {
+            area.Region = sender;
+        }
+
+        if (Second is DockableArea second)
+        {
+            second.Region = sender;
+        }
+
+        if (First is DockableTree first)
+        {
+            first.SetRegion(sender);
+        }
+
+        if (Second is DockableTree secondTree)
+        {
+            secondTree.SetRegion(sender);
+        }
     }
 
     private void SetPseudoClasses()

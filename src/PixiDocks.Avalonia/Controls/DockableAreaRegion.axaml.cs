@@ -43,6 +43,14 @@ public class DockableAreaRegion : TemplatedControl, IDockableHostRegion
                 sender.Output.First = dockableArea;
             }
         });
+
+        OutputProperty.Changed.AddClassHandler<DockableAreaRegion>((sender, args) =>
+        {
+            if (args.NewValue is DockableTree tree)
+            {
+                tree.SetRegion(sender);
+            }
+        });
     }
 
     public DockableAreaRegion()

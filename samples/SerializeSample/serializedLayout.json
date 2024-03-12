@@ -1,0 +1,43 @@
+{
+  "Root": {
+    "DockableTree": {
+      "SplitDirection": "Right",
+      "First": {
+        "DockableTree": {
+          "SplitDirection": "",
+          "First": {
+            "DockableArea": {
+              "Dockables": [
+                {
+                  "Id": "SomeDockable2"
+                },
+                {
+                  "Id": "SomeDockable3"
+                },
+                {
+                  "Id": "SomeDockable4"
+                }
+              ]
+            }
+          },
+          "Second": {}
+        }
+      },
+      "Second": {
+        "DockableTree": {
+          "SplitDirection": "",
+          "First": {
+            "DockableArea": {
+              "Dockables": [
+                {
+                  "Id": "SomeDockable"
+                }
+              ]
+            }
+          },
+          "Second": {}
+        }
+      }
+    }
+  }
+}

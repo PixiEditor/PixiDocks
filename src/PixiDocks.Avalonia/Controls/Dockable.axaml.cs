@@ -39,7 +39,11 @@ public class Dockable : ContentControl, IDockable
         set => SetValue(IconProperty, value);
     }
 
-    object? IDockable.Icon => Icon;
+    object? IDockable.Icon
+    {
+        get => Icon;
+        set => Icon = (IImage?)value;
+    }
 
     public bool CanClose
     {
