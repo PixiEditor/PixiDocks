@@ -47,21 +47,24 @@ public class DockableTreeConverter : JsonConverter<IDockableTree>
             Type type = LayoutTree.TypeResolver[propertyName];
 
             first = converter.Read(ref reader, LayoutTree.TypeMap[type], options);
-            reader.Read();
         }
 
-        reader.Read();
         reader.Read();
         reader.Read();
         reader.Read();
 
         IDockableLayoutElement second = null;
 
-        if (reader.TokenType != JsonTokenType.EndObject)
+        if (reader.TokenType == JsonTokenType.PropertyName)
         {
-            string propertyName = reader.GetString();
-            Type type = LayoutTree.TypeResolver[propertyName];
-            second = converter.Read(ref reader, LayoutTree.TypeMap[type], options);
+            reader.Read();
+            reader.Read();
+            if (reader.TokenType != JsonTokenType.EndObject)
+            {
+                string propertyName = reader.GetString();
+                Type type = LayoutTree.TypeResolver[propertyName];
+                second = converter.Read(ref reader, LayoutTree.TypeMap[type], options);
+            }
         }
 
         IDockableTree treeElement = Activator.CreateInstance(typeToConvert) as IDockableTree;

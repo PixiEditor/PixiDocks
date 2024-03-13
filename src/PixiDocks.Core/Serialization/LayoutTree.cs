@@ -38,6 +38,7 @@ public struct LayoutTree
                     var found = host.Dockables.FirstOrDefault(d => d.Id == dockable.Id);
                     if (found != null)
                     {
+                        dockable.Host?.RemoveDockable(dockable);
                         host.AddDockable(dockable);
                         host.RemoveDockable(found);
                     }

@@ -49,6 +49,13 @@ public class DockableAreaRegion : TemplatedControl, IDockableHostRegion
             if (args.NewValue is DockableTree tree)
             {
                 tree.SetRegion(sender);
+                tree.Traverse((element, parent) =>
+                {
+                    if (element is DockableArea area)
+                    {
+                        sender._dockableAreaToTree.Add(area, parent as DockableTree);
+                    }
+                });
             }
         });
     }

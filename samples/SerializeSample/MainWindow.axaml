@@ -10,10 +10,10 @@
         Title="SimpleSample">
     <StackPanel Orientation="Vertical">
         <StackPanel Orientation="Horizontal">
-            <Button Content="Save" Width="70"/>
-            <Button Content="Load" Width="70"/>
+            <Button Content="Save" Width="70" Click="Save_OnClick"/>
+            <Button Content="Load" Width="70" Click="Load_OnClick"/>
         </StackPanel>
-        <controls:DockableAreaRegion Name="RootRegion">
+        <controls:DockableAreaRegion Name="RootRegion" Height="400">
         </controls:DockableAreaRegion>
     </StackPanel>
 </Window>

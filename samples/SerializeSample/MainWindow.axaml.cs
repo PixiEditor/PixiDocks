@@ -51,4 +51,26 @@ public partial class MainWindow : Window
 
         RootRegion.Output = newTree.Root as DockableTree;
     }
+
+    private void Save_OnClick(object? sender, RoutedEventArgs e)
+    {
+        JsonSerializerOptions options = new JsonSerializerOptions
+        {
+            WriteIndented = true,
+        };
+
+        LayoutTree tree = new LayoutTree();
+        tree.Root = RootRegion.Output;
+
+        File.WriteAllText("runtimeSerializedLayout.json", JsonSerializer.Serialize(tree, options));
+    }
+
+    private void Load_OnClick(object? sender, RoutedEventArgs e)
+    {
+        LayoutTree newTree = JsonSerializer.Deserialize<LayoutTree>(File.ReadAllText("runtimeSerializedLayout.json"));
+        newTree.SetContext(new DockContext());
+        newTree.ApplyDockables(_dockables.Cast<IDockable>().ToList());
+
+        RootRegion.Output = newTree.Root as DockableTree;
+    }
 }

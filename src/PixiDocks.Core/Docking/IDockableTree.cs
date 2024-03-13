@@ -9,4 +9,5 @@ public interface IDockableTree : IDockableLayoutElement
     public ITreeElement First { get; set; }
     public ITreeElement Second { get; set; }
     public DockingDirection? SplitDirection { get; set; }
+    public void Traverse(Action<ITreeElement, IDockableTree> action);
 }

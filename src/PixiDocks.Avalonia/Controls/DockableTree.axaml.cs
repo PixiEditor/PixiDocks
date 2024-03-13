@@ -41,6 +41,20 @@ public class DockableTree : TemplatedControl, ITreeElement, IDockableTree
 
     private Grid _grid;
 
+    static DockableTree()
+    {
+        FirstProperty.Changed.AddClassHandler<DockableTree>(ElementAttached);
+        SecondProperty.Changed.AddClassHandler<DockableTree>(ElementAttached);
+    }
+
+    private static void ElementAttached(DockableTree sender, AvaloniaPropertyChangedEventArgs e)
+    {
+        if (e.NewValue is DockableTree tree)
+        {
+            tree.DockableParent = sender;
+        }
+    }
+
     public DockableTree()
     {
 
@@ -152,18 +166,16 @@ public class DockableTree : TemplatedControl, ITreeElement, IDockableTree
         {
             area.Region = sender;
         }
+        else if (First is DockableTree first)
+        {
+            first.SetRegion(sender);
+        }
 
         if (Second is DockableArea second)
         {
             second.Region = sender;
         }
-
-        if (First is DockableTree first)
-        {
-            first.SetRegion(sender);
-        }
-
-        if (Second is DockableTree secondTree)
+        else if (Second is DockableTree secondTree)
         {
             secondTree.SetRegion(sender);
         }
@@ -196,5 +208,27 @@ public class DockableTree : TemplatedControl, ITreeElement, IDockableTree
     IEnumerator IEnumerable.GetEnumerator()
     {
         return GetEnumerator();
+    }
+
+    public void Traverse(Action<ITreeElement, IDockableTree> action)
+    {
+        action(this, DockableParent);
+        if (First is IDockableTree first)
+        {
+            first.Traverse(action);
+        }
+        else if(First is not null)
+        {
+            action(First, this);
+        }
+
+        if (Second is IDockableTree second)
+        {
+            second.Traverse(action);
+        }
+        else if(Second is not null)
+        {
+            action(Second, this);
+        }
     }
 }
