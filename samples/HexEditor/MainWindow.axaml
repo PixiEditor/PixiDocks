@@ -1,0 +1,27 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:controls="clr-namespace:PixiDocks.Avalonia.Controls;assembly=PixiDocks.Avalonia"
+        xmlns:avalonia="clr-namespace:PixiDocks.Avalonia;assembly=PixiDocks.Avalonia"
+        xmlns:core="clr-namespace:PixiDocks.Core;assembly=PixiDocks.Core"
+        xmlns:viewModels="clr-namespace:HexEditor.ViewModels"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:DataType="viewModels:ViewModelMain"
+        x:Class="HexEditor.MainWindow"
+        Title="SimpleSample">
+    <Design.DataContext>
+        <viewModels:ViewModelMain/>
+    </Design.DataContext>
+    <Window.Resources>
+        <avalonia:DockContext x:Key="DockContext"/>
+    </Window.Resources>
+    <DockPanel>
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="File">
+                <MenuItem Header="Open" Command="{Binding OpenFileCommand}"/>
+            </MenuItem>
+        </Menu>
+        <controls:DockableAreaRegion Name="RootRegion" Root="{Binding LayoutManager.Layout.Root}"/>
+    </DockPanel>
+</Window>

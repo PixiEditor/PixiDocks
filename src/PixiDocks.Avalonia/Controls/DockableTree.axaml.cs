@@ -37,6 +37,16 @@ public class DockableTree : TemplatedControl, ITreeElement, IDockableTree
         get => GetValue(SecondProperty);
         set => SetValue(SecondProperty, value);
     }
+
+    public static readonly StyledProperty<string> IdProperty = AvaloniaProperty.Register<DockableTree, string>(
+        nameof(Id));
+
+    public string Id
+    {
+        get => GetValue(IdProperty);
+        set => SetValue(IdProperty, value);
+    }
+
     public DockableTree? DockableParent { get; set; }
 
     private Grid _grid;

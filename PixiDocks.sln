@@ -12,6 +12,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PixiDock.Tests", "PixiDock.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SerializeSample", "samples\SerializeSample\SerializeSample.csproj", "{CA0DADED-BED4-4813-A22D-B70760C5449B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HexEditor", "samples\HexEditor\HexEditor.csproj", "{8B0632B4-E86F-4AD7-A05C-1BBE3AC78C81}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -38,9 +40,14 @@ Global
 		{CA0DADED-BED4-4813-A22D-B70760C5449B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CA0DADED-BED4-4813-A22D-B70760C5449B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CA0DADED-BED4-4813-A22D-B70760C5449B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8B0632B4-E86F-4AD7-A05C-1BBE3AC78C81}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8B0632B4-E86F-4AD7-A05C-1BBE3AC78C81}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8B0632B4-E86F-4AD7-A05C-1BBE3AC78C81}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8B0632B4-E86F-4AD7-A05C-1BBE3AC78C81}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{918D2B17-7ECF-4F58-9487-29EB472EC4B6} = {76EC9626-3281-41D4-8232-1FE205CED30B}
 		{CA0DADED-BED4-4813-A22D-B70760C5449B} = {76EC9626-3281-41D4-8232-1FE205CED30B}
+		{8B0632B4-E86F-4AD7-A05C-1BBE3AC78C81} = {76EC9626-3281-41D4-8232-1FE205CED30B}
 	EndGlobalSection
 EndGlobal

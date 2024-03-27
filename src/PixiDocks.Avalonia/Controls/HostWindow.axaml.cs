@@ -14,7 +14,7 @@ namespace PixiDocks.Avalonia.Controls;
 [TemplatePart("PART_DockableArea", typeof(DockableArea))]
 public class HostWindow : Window, IHostWindow
 {
-    public IDockableHostRegion Region => _dockableArea.Region;
+    public IDockableHostRegion Region => _dockableRegion;
 
     private HostWindowTitleBar? _hostWindowTitleBar;
 
@@ -24,6 +24,7 @@ public class HostWindow : Window, IHostWindow
     private HostWindowState _state;
     private Point _dragStartPoint;
     private DockableArea _dockableArea;
+    private DockableAreaRegion _dockableRegion;
 
     protected override Type StyleKeyOverride => typeof(HostWindow);
 
@@ -61,6 +62,7 @@ public class HostWindow : Window, IHostWindow
     {
         base.OnApplyTemplate(e);
 
+        _dockableRegion = e.NameScope.Find<DockableAreaRegion>("PART_DockableRegion");
        _dockableArea = e.NameScope.Find<DockableArea>("PART_DockableArea");
         if (_dockableArea is not null)
         {

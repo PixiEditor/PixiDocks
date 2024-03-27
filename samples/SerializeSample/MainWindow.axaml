@@ -13,7 +13,7 @@
             <Button Content="Save" Width="70" Click="Save_OnClick"/>
             <Button Content="Load" Width="70" Click="Load_OnClick"/>
         </StackPanel>
-        <controls:DockableAreaRegion Name="RootRegion" Height="400">
+        <controls:DockableAreaRegion Id="RootRegion" Name="RootRegion" Height="400">
         </controls:DockableAreaRegion>
     </StackPanel>
 </Window>

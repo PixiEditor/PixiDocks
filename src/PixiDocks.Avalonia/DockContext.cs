@@ -1,18 +1,23 @@
+using System.Text.Json;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Media;
 using Avalonia.VisualTree;
 using PixiDocks.Avalonia.Controls;
 using PixiDocks.Core;
 using PixiDocks.Core.Docking;
+using PixiDocks.Core.Serialization;
 
 namespace PixiDocks.Avalonia;
 
 public class DockContext : IDockContext
 {
     private List<IDockableHost> allHosts = new();
-    private Dictionary<string, HostWindow> floatingWindows = new();
+    private List<IDockableHostRegion> allRegions = new();
 
+    private Dictionary<string, HostWindow> floatingWindows = new();
+    public IReadOnlyCollection<IDockableHostRegion> AllRegions => allRegions;
     public IReadOnlyCollection<IDockableHost> AllHosts => allHosts;
 
     public void AddHost(IDockableHost host)
@@ -35,6 +40,57 @@ public class DockContext : IDockContext
         allHosts.Remove(host);
     }
 
+    public void AddRegion(IDockableHostRegion sender)
+    {
+        if (allRegions.Contains(sender))
+        {
+            return;
+        }
+
+        allRegions.Add(sender);
+    }
+
+    public string Serialize()
+    {
+        SerializedLayout layout = new();
+        foreach (IDockableHostRegion region in allRegions)
+        {
+            LayoutTree tree = new()
+            {
+                Root = region.Root
+            };
+
+            layout.LayoutRegions.Add(region.Id, tree);
+        }
+
+        return JsonSerializer.Serialize(layout);
+    }
+
+    public void RemoveRegion(IDockableHostRegion sender)
+    {
+        if (!allRegions.Contains(sender))
+        {
+            return;
+        }
+
+        allRegions.Remove(sender);
+    }
+
+    public IDockable CreateDockable(IDockableContent content)
+    {
+        Dockable dockable = new()
+        {
+            Id = content.Id,
+            Title = content.Title,
+            CanFloat = content.CanFloat,
+            CanClose = content.CanClose,
+            Icon = (IImage)content.Icon,
+            Content = content
+        };
+
+        return dockable;
+    }
+
     public IHostWindow Float(IDockable dockable, double x, double y)
     {
         if (floatingWindows.TryGetValue(dockable.Id, out HostWindow? value) && value.Region.AllHosts.Sum(x => x.Dockables.Count) == 1)
@@ -55,6 +111,7 @@ public class DockContext : IDockContext
 
         dockable.Host?.RemoveDockable(dockable);
         var hostWindow = new HostWindow(dockable, this, pos);
+        hostWindow.Closing += HostWindowOnClosing;
         hostWindow.Activated += OnWindowActivated;
         if (!floatingWindows.TryAdd(dockable.Id, hostWindow))
         {
@@ -64,6 +121,24 @@ public class DockContext : IDockContext
         hostWindow.Show();
 
         return hostWindow;
+    }
+
+    private void HostWindowOnClosing(object? sender, WindowClosingEventArgs e)
+    {
+        if (sender is not HostWindow hostWindow)
+        {
+            return;
+        }
+
+        allRegions.Remove(hostWindow.Region);
+        hostWindow.Closing -= HostWindowOnClosing;
+        hostWindow.Activated -= OnWindowActivated;
+
+        var keys = floatingWindows.Where(x => x.Value == hostWindow).ToArray();
+        foreach (var key in keys)
+        {
+            floatingWindows.Remove(key.Key);
+        }
     }
 
     public void Close(IDockable dockable)
@@ -92,6 +167,8 @@ public class DockContext : IDockContext
             allHosts.Remove(host);
             allHosts.Insert(0, host);
         }
+
+        allRegions.Add(hostWindow.Region);
     }
 
     public void Dock(IDockable dockable, IDockableHost toHost)

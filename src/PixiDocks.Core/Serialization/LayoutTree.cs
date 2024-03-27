@@ -8,7 +8,24 @@ public struct LayoutTree
 {
     public static Dictionary<Type, Type> TypeMap = new Dictionary<Type, Type>();
     public static Dictionary<string, Type> TypeResolver = new Dictionary<string, Type>();
+
     public IDockableTree Root { get; set; }
+
+    public bool IsFloating { get; set; } = false;
+
+    public int? FloatingPositionX { get; set; }
+    public int? FloatingPositionY { get; set; }
+    public int? FloatingWidth { get; set; }
+    public int? FloatingHeight { get; set; }
+
+    public LayoutTree()
+    {
+        Root = null;
+        FloatingPositionX = null;
+        FloatingPositionY = null;
+        FloatingWidth = null;
+        FloatingHeight = null;
+    }
 
     public void Traverse(Action<IDockableLayoutElement> action)
     {

@@ -14,10 +14,12 @@ namespace SerializeSample;
 public partial class MainWindow : Window
 {
     private List<Dockable> _dockables = new List<Dockable>();
+    public DockContext DockContext { get; } = new DockContext();
 
     public MainWindow()
     {
         InitializeComponent();
+        RootRegion.Context = DockContext;
         Dockable someDockable = new Dockable();
         someDockable.Id = "SomeDockable";
         someDockable.Title = "Some Dockable";
@@ -49,7 +51,7 @@ public partial class MainWindow : Window
         newTree.SetContext(new DockContext());
         newTree.ApplyDockables(_dockables.Cast<IDockable>().ToList());
 
-        RootRegion.Output = newTree.Root as DockableTree;
+        RootRegion.Root = newTree.Root as DockableTree;
     }
 
     private void Save_OnClick(object? sender, RoutedEventArgs e)
@@ -60,7 +62,7 @@ public partial class MainWindow : Window
         };
 
         LayoutTree tree = new LayoutTree();
-        tree.Root = RootRegion.Output;
+        tree.Root = RootRegion.Root;
 
         File.WriteAllText("runtimeSerializedLayout.json", JsonSerializer.Serialize(tree, options));
     }
@@ -71,6 +73,6 @@ public partial class MainWindow : Window
         newTree.SetContext(new DockContext());
         newTree.ApplyDockables(_dockables.Cast<IDockable>().ToList());
 
-        RootRegion.Output = newTree.Root as DockableTree;
+        RootRegion.Root = newTree.Root as DockableTree;
     }
 }

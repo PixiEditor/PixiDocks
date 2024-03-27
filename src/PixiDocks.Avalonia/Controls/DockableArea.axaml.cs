@@ -88,6 +88,15 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
         set => SetValue(ActiveDockableProperty, value);
     }
 
+    public static readonly StyledProperty<string> IdProperty = AvaloniaProperty.Register<DockableArea, string>(
+        nameof(Id));
+
+    public string Id
+    {
+        get => GetValue(IdProperty);
+        set => SetValue(IdProperty, value);
+    }
+
     public ObservableCollection<IDockable> Dockables
     {
         get => GetValue(DockablesProperty);

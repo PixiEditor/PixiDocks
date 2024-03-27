@@ -1,0 +1,15 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:avalonia="clr-namespace:PixiDocks.Avalonia;assembly=PixiDocks.Avalonia"
+             xmlns:hexEditor="clr-namespace:HexEditor"
+             x:Class="HexEditor.App" RequestedThemeVariant="Dark">
+
+    <Application.DataTemplates>
+        <hexEditor:ViewLocator />
+    </Application.DataTemplates>
+
+    <Application.Styles>
+        <SimpleTheme />
+        <avalonia:PixiDockSimpleTheme/>
+    </Application.Styles>
+</Application>
