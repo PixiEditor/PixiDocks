@@ -24,8 +24,6 @@ public class DockableConverter : CustomConverter<IDockable>
                 case nameof(IDockable.Id):
                     id = ReadStringProperty(ref reader);
                     break;
-                default:
-                    break;
             }
         }
         IDockable dockable = Activator.CreateInstance(typeToConvert) as IDockable;

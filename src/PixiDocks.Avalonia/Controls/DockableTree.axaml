@@ -11,7 +11,7 @@
             <ControlTemplate>
                 <Grid Name="PART_Grid">
                     <ContentPresenter Name="PART_FirstPresenter" Content="{TemplateBinding First}"/>
-                    <GridSplitter Name="PART_Splitter" IsVisible="False"/>
+                    <GridSplitter Margin="0, 30, 0, 0" Name="PART_Splitter" IsVisible="False"/>
                     <ContentPresenter Name="PART_SecondPresenter" Content="{TemplateBinding Second}"/>
                 </Grid>
             </ControlTemplate>

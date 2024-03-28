@@ -14,6 +14,7 @@ using Avalonia.VisualTree;
 using PixiDocks.Avalonia.Helpers;
 using PixiDocks.Core;
 using PixiDocks.Core.Docking;
+using PixiDocks.Core.Docking.Events;
 using PixiDocks.Core.Serialization;
 
 namespace PixiDocks.Avalonia.Controls;
@@ -313,6 +314,14 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
 
     private static void ActiveDockableChanged(DockableArea sender, AvaloniaPropertyChangedEventArgs args)
     {
+        if(args.OldValue is IDockable oldDockable)
+        {
+            if (oldDockable is IDockableSelectionEvents selectionEvents)
+            {
+                selectionEvents.OnDeselected();
+            }
+        }
+
         if (args.NewValue is IDockable dockable)
         {
             dockable.Host = sender;
@@ -324,6 +333,11 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
             if (!sender.Dockables.Contains(dockable))
             {
                 sender.Dockables.Add(dockable);
+            }
+
+            if (dockable is IDockableSelectionEvents selectionEvents)
+            {
+                selectionEvents.OnSelected();
             }
         }
     }

@@ -1,15 +1,19 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using Avalonia.Media;
+using Avalonia.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using HexEditor.Models;
 using PixiDocks.Core.Docking;
+using PixiDocks.Core.Docking.Events;
 using PixiDocks.Core.Serialization;
 
 namespace HexEditor.ViewModels;
 
-public partial class DocumentViewModel : ObservableObject, IDockableContent
+public partial class DocumentViewModel : ObservableObject, IDockableContent, IDockableSelectionEvents
 {
     public string Id { get; set; }
     public string Title => _document.FileName;
@@ -33,6 +37,9 @@ public partial class DocumentViewModel : ObservableObject, IDockableContent
 
     public ObservableCollection<string> Lines { get; set; } = new();
 
+    public event Action Selected;
+    public event Action Deselected;
+
     public DocumentViewModel()
     {
     }
@@ -47,7 +54,27 @@ public partial class DocumentViewModel : ObservableObject, IDockableContent
     public void Load()
     {
         _document.Load();
+        if (_document.FilePath.EndsWith(".png") || _document.FilePath.EndsWith(".jpg") || _document.FilePath.EndsWith(".jpeg"))
+        {
+            Icon = LoadThumbnail();
+        }
+
         Lines = new ObservableCollection<string>(_document.ToLines());
         OnPropertyChanged(nameof(Data));
+    }
+
+    private IImage LoadThumbnail()
+    {
+        return new Bitmap(_document.FilePath);
+    }
+
+    void IDockableSelectionEvents.OnSelected()
+    {
+        Selected?.Invoke();
+    }
+
+    void IDockableSelectionEvents.OnDeselected()
+    {
+        Deselected?.Invoke();
     }
 }

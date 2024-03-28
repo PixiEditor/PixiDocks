@@ -31,4 +31,11 @@
         <None Remove="curved-out.png" />
         <AvaloniaResource Include="curved-out.png" />
     </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Views\CharactersView.axaml.cs">
+        <DependentUpon>CharactersView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+    </ItemGroup>
 </Project>

@@ -3,15 +3,17 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Metadata;
 using Avalonia.Controls.Primitives;
+using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml.Templates;
 using Avalonia.Media;
 using PixiDocks.Core;
 using PixiDocks.Core.Docking;
+using PixiDocks.Core.Docking.Events;
 using PixiDocks.Core.Serialization;
 
 namespace PixiDocks.Avalonia.Controls;
 
-public class Dockable : ContentControl, IDockable
+public class Dockable : ContentControl, IDockable, IDockableSelectionEvents
 {
     public IDockableHost? Host { get; set; }
 
@@ -32,6 +34,24 @@ public class Dockable : ContentControl, IDockable
 
     public static readonly StyledProperty<IImage?> IconProperty = AvaloniaProperty.Register<Dockable, IImage?>(
         nameof(Icon));
+
+    public static readonly RoutedEvent<RoutedEventArgs> SelectedEvent = RoutedEvent.Register<Dockable, RoutedEventArgs>(
+        nameof(Selected), RoutingStrategies.Bubble);
+
+    public static readonly RoutedEvent<RoutedEventArgs> DeselectedEvent = RoutedEvent.Register<Dockable, RoutedEventArgs>(
+        nameof(Deselected), RoutingStrategies.Bubble);
+
+    public event EventHandler<RoutedEventArgs>? Selected
+    {
+        add => AddHandler(SelectedEvent, value);
+        remove => RemoveHandler(SelectedEvent, value);
+    }
+
+    public event EventHandler<RoutedEventArgs>? Deselected
+    {
+        add => AddHandler(DeselectedEvent, value);
+        remove => RemoveHandler(DeselectedEvent, value);
+    }
 
     public IImage? Icon
     {
@@ -73,6 +93,26 @@ public class Dockable : ContentControl, IDockable
     {
         get => GetValue(IdProperty);
         set => SetValue(IdProperty, value);
+    }
+
+    void IDockableSelectionEvents.OnSelected()
+    {
+        if(Content is IDockableSelectionEvents selectionEvents)
+        {
+            selectionEvents.OnSelected();
+        }
+
+        RaiseEvent(new RoutedEventArgs(SelectedEvent));
+    }
+
+    void IDockableSelectionEvents.OnDeselected()
+    {
+        if(Content is IDockableSelectionEvents selectionEvents)
+        {
+            selectionEvents.OnSelected();
+        }
+
+        RaiseEvent(new RoutedEventArgs(DeselectedEvent));
     }
 
     public IEnumerator<IDockableLayoutElement> GetEnumerator()

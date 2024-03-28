@@ -4,9 +4,11 @@
         <ResourceDictionary x:Key="Dark">
             <Color x:Key="ThemeDockAccentColor">#b00022</Color>
             <Color x:Key="ThemeDockHighlightColor">#4b4b4b</Color>
+            <Color x:Key="ThemeDockForeground">#fff</Color>
             <CornerRadius x:Key="ThemeDockTabStripCornerRadius">5,5,0,0</CornerRadius>
             <SolidColorBrush x:Key="ThemeDockAccentBrush" Color="{DynamicResource ThemeDockAccentColor}" />
             <SolidColorBrush x:Key="ThemeDockHighlightBrush" Color="{DynamicResource ThemeDockHighlightColor}" />
+            <SolidColorBrush x:Key="ThemeDockForegroundBrush" Color="{DynamicResource ThemeDockForeground}" />
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 </ResourceDictionary>

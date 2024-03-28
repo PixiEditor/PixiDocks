@@ -68,7 +68,16 @@ public class DockableTree : TemplatedControl, ITreeElement, IDockableTree
         set
         {
             _queuedFirstSize = value;
-            _queuedFirstType = value <= 1 ? GridUnitType.Star : GridUnitType.Pixel;
+            if (_queuedFirstSize <= 1)
+            {
+                _queuedFirstType = GridUnitType.Star;
+                _queuedSecondSize = 1 - _queuedFirstSize;
+                _queuedSecondType = GridUnitType.Star;
+            }
+            else
+            {
+                _queuedFirstType = GridUnitType.Pixel;
+            }
         }
     }
 
@@ -88,7 +97,16 @@ public class DockableTree : TemplatedControl, ITreeElement, IDockableTree
         set
         {
            _queuedSecondSize = value;
-           _queuedSecondType = value <= 1 ? GridUnitType.Star : GridUnitType.Pixel;
+            if (_queuedSecondSize <= 1)
+            {
+                _queuedSecondType = GridUnitType.Star;
+                _queuedFirstSize = 1 - _queuedSecondSize;
+                _queuedFirstType = GridUnitType.Star;
+            }
+            else
+            {
+                _queuedSecondType = GridUnitType.Pixel;
+            }
         }
     }
 

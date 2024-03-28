@@ -1,11 +1,10 @@
 using Avalonia.Controls;
-using Avalonia.Input;
 
 namespace HexEditor.Views;
 
-public partial class DocumentView : UserControl
+public partial class CharactersView : UserControl
 {
-    public DocumentView()
+    public CharactersView()
     {
         InitializeComponent();
     }

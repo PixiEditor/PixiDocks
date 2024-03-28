@@ -56,7 +56,8 @@
                                 TabStripPlacement="{TemplateBinding TabPlacement}">
                                 <TabControl.ItemTemplate>
                                     <DataTemplate>
-                                        <controls:DockableAreaStripItem DockPanel.Dock="Top" Margin="5 0" Dockable="{Binding $parent[TabItem].Content}"/>
+                                        <controls:DockableAreaStripItem DockPanel.Dock="Top" Margin="5 0"
+                                                                        Dockable="{Binding $parent[TabItem].Content}"/>
                                     </DataTemplate>
                                 </TabControl.ItemTemplate>
                                 <TabControl.Resources>

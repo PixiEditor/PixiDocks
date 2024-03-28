@@ -20,6 +20,12 @@ public class LayoutManager
                 First = new DockableArea()
                 {
                     Id = "DocumentArea",
+                },
+                SplitDirection = DockingDirection.Right,
+                FirstSize = 0.75,
+                Second = new DockableArea()
+                {
+                    Id = "InspectorArea",
                 }
             }
         };

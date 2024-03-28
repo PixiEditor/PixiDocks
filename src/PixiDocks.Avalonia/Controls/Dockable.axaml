@@ -12,7 +12,8 @@
     <ControlTheme TargetType="controls:Dockable" x:Key="{x:Type controls:Dockable}">
         <Setter Property="Template">
             <ControlTemplate>
-                <ContentControl DockPanel.Dock="Bottom" Content="{TemplateBinding Content}"/>
+                <ContentControl DockPanel.Dock="Bottom"
+                                Content="{TemplateBinding Content}"/>
             </ControlTemplate>
         </Setter>
     </ControlTheme>
