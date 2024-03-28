@@ -12,7 +12,7 @@ namespace HexEditor.ViewModels;
 public partial class DocumentViewModel : ObservableObject, IDockableContent
 {
     public string Id { get; set; }
-    public string Title => _document.FilePath;
+    public string Title => _document.FileName;
     public bool CanFloat => true;
     public bool CanClose => true;
     public object? Icon { get; set; }

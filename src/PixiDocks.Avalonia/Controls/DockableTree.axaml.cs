@@ -2,6 +2,7 @@ using System.Collections;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Metadata;
+using Avalonia.Controls.Presenters;
 using Avalonia.Controls.Primitives;
 using PixiDocks.Core.Docking;
 using PixiDocks.Core.Serialization;
@@ -9,6 +10,8 @@ using PixiDocks.Core.Serialization;
 namespace PixiDocks.Avalonia.Controls;
 
 [PseudoClasses(":split", ":left", ":right", ":top", ":bottom", ":horizontal", ":vertical")]
+[TemplatePart(Name = "PART_FirstPresenter", Type = typeof(ContentPresenter))]
+[TemplatePart(Name = "PART_SecondPresenter", Type = typeof(ContentPresenter))]
 public class DockableTree : TemplatedControl, ITreeElement, IDockableTree
 {
     public static readonly StyledProperty<ITreeElement?> FirstProperty = AvaloniaProperty.Register<DockableTree, ITreeElement>(
@@ -49,7 +52,51 @@ public class DockableTree : TemplatedControl, ITreeElement, IDockableTree
 
     public DockableTree? DockableParent { get; set; }
 
+    public double FirstSize
+    {
+        get
+        {
+            if (SplitDirection.HasValue)
+            {
+                return SplitDirection is DockingDirection.Left or DockingDirection.Right
+                    ? _grid.ColumnDefinitions[0].Width.Value
+                    : _grid.RowDefinitions[0].Height.Value;
+            }
+
+            return 1;
+        }
+        set
+        {
+            _queuedFirstSize = value;
+            _queuedFirstType = value <= 1 ? GridUnitType.Star : GridUnitType.Pixel;
+        }
+    }
+
+    public double SecondSize
+    {
+        get
+        {
+            if (SplitDirection.HasValue)
+            {
+                return SplitDirection is DockingDirection.Left or DockingDirection.Right
+                    ? _grid.ColumnDefinitions[2].Width.Value
+                    : _grid.RowDefinitions[2].Height.Value;
+            }
+
+            return 1;
+        }
+        set
+        {
+           _queuedSecondSize = value;
+           _queuedSecondType = value <= 1 ? GridUnitType.Star : GridUnitType.Pixel;
+        }
+    }
+
     private Grid _grid;
+    private double _queuedFirstSize = 1;
+    private GridUnitType _queuedFirstType = GridUnitType.Star;
+    private double _queuedSecondSize = 1;
+    private GridUnitType _queuedSecondType = GridUnitType.Star;
 
     static DockableTree()
     {
@@ -145,8 +192,8 @@ public class DockableTree : TemplatedControl, ITreeElement, IDockableTree
             _grid.ColumnDefinitions.Clear();
             _grid.RowDefinitions.Clear();
 
-            _grid.ColumnDefinitions.Add(new ColumnDefinition(1, GridUnitType.Star));
-            _grid.RowDefinitions.Add(new RowDefinition(1, GridUnitType.Star));
+            _grid.ColumnDefinitions.Add(new ColumnDefinition(_queuedFirstSize, _queuedFirstType));
+            _grid.RowDefinitions.Add(new RowDefinition(_queuedSecondSize, _queuedSecondType));
             SetPseudoClasses();
             return;
         }
@@ -154,16 +201,16 @@ public class DockableTree : TemplatedControl, ITreeElement, IDockableTree
         if (SplitDirection is DockingDirection.Right or DockingDirection.Left)
         {
             _grid.ColumnDefinitions.Clear();
-            _grid.ColumnDefinitions.Add(new ColumnDefinition(1, GridUnitType.Star));
+            _grid.ColumnDefinitions.Add(new ColumnDefinition(_queuedFirstSize, _queuedFirstType));
             _grid.ColumnDefinitions.Add(new ColumnDefinition(5, GridUnitType.Pixel));
-            _grid.ColumnDefinitions.Add(new ColumnDefinition(1, GridUnitType.Star));
+            _grid.ColumnDefinitions.Add(new ColumnDefinition(_queuedSecondSize, _queuedSecondType));
         }
-        else if (SplitDirection == DockingDirection.Top || SplitDirection == DockingDirection.Bottom)
+        else if (SplitDirection is DockingDirection.Top or DockingDirection.Bottom)
         {
             _grid.RowDefinitions.Clear();
-            _grid.RowDefinitions.Add(new RowDefinition(1, GridUnitType.Star));
+            _grid.RowDefinitions.Add(new RowDefinition(_queuedFirstSize, _queuedFirstType));
             _grid.RowDefinitions.Add(new RowDefinition(5, GridUnitType.Pixel));
-            _grid.RowDefinitions.Add(new RowDefinition(1, GridUnitType.Star));
+            _grid.RowDefinitions.Add(new RowDefinition(_queuedSecondSize, _queuedSecondType));
         }
 
         SetPseudoClasses();

@@ -7,7 +7,9 @@ namespace PixiDocks.Core.Docking;
 public interface IDockableTree : IDockableLayoutElement
 {
     public ITreeElement First { get; set; }
+    public double FirstSize { get; set; }
     public ITreeElement Second { get; set; }
+    public double SecondSize { get; set; }
     public DockingDirection? SplitDirection { get; set; }
     public void Traverse(Action<ITreeElement, IDockableTree> action);
 }

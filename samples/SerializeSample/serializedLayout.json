@@ -2,6 +2,8 @@
   "Root": {
     "DockableTree": {
       "SplitDirection": "Right",
+      "FirstSize": 0.5,
+      "SecondSize": 0.5,
       "First": {
         "DockableTree": {
           "SplitDirection": "",

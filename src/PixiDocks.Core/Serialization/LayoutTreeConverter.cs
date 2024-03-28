@@ -4,7 +4,7 @@ using PixiDocks.Core.Docking;
 
 namespace PixiDocks.Core.Serialization;
 
-public class LayoutTreeConverter : JsonConverter<LayoutTree>
+public class LayoutTreeConverter : CustomConverter<LayoutTree>
 {
     public override void Write(Utf8JsonWriter writer, LayoutTree value, JsonSerializerOptions options)
     {
@@ -19,15 +19,18 @@ public class LayoutTreeConverter : JsonConverter<LayoutTree>
 
     public override LayoutTree Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
+        StartReadingScope(ref reader);
         LayoutTree tree = new LayoutTree();
-        reader.Read();
-        reader.Read();
         DockableTreeConverter converter = new DockableTreeConverter();
-        reader.Read();
-        tree.Root = converter.Read(ref reader, LayoutTree.TypeMap[typeof(IDockableTree)], options);
+        if (TryReadToNextProperty(ref reader, out string propName) && propName == "Root")
+        {
+            StartReadingScope(ref reader);
+            StartReadingProperty(ref reader);
+            tree.Root = converter.Read(ref reader, LayoutTree.TypeMap[typeof(IDockableTree)], options);
+        }
 
+        EndReadingScope(ref reader);
         while(reader.Read()){}
-
         return tree;
     }
 }

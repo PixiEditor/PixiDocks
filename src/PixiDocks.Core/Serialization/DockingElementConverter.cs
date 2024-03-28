@@ -4,21 +4,42 @@ using PixiDocks.Core.Docking;
 
 namespace PixiDocks.Core.Serialization;
 
-public class DockingElementConverter : JsonConverter<IDockableLayoutElement>
+public class DockingElementConverter : CustomConverter<IDockableLayoutElement>
 {
     public override IDockableLayoutElement? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-        if(typeToConvert.IsAssignableTo(typeof(IDockableHost)))
+        StartReadingScope(ref reader);
+
+        Type finalType = null;
+        while (TryReadToNextProperty(ref reader, out string propName))
         {
-            DockableHostConverter converter = new DockableHostConverter();
-            return converter.Read(ref reader, typeToConvert, options);
-        }
-        if (typeToConvert.IsAssignableTo(typeof(IDockableTree)))
-        {
-            DockableTreeConverter converter = new DockableTreeConverter();
-            return converter.Read(ref reader, typeToConvert, options);
+            if(LayoutTree.TypeResolver.TryGetValue(propName, out var value))
+            {
+                finalType = LayoutTree.TypeMap[value];
+                break;
+            }
         }
 
+        if (finalType != null)
+        {
+            if (finalType.IsAssignableTo(typeof(IDockableHost)))
+            {
+                DockableHostConverter converter = new DockableHostConverter();
+                var result = converter.Read(ref reader, finalType, options);
+                EndReadingScope(ref reader);
+                return result;
+            }
+
+            if (finalType.IsAssignableTo(typeof(IDockableTree)))
+            {
+                DockableTreeConverter converter = new DockableTreeConverter();
+                var result = converter.Read(ref reader, finalType, options);
+                EndReadingScope(ref reader);
+                return result;
+            }
+        }
+
+        EndReadingScope(ref reader);
         return null;
     }
 

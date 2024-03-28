@@ -4,7 +4,7 @@ using PixiDocks.Core.Docking;
 
 namespace PixiDocks.Core.Serialization;
 
-public class DockableConverter : JsonConverter<IDockable>
+public class DockableConverter : CustomConverter<IDockable>
 {
     public override void Write(Utf8JsonWriter writer, IDockable value, JsonSerializerOptions options)
     {
@@ -15,14 +15,23 @@ public class DockableConverter : JsonConverter<IDockable>
 
     public override IDockable? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-        reader.Read();
-        reader.Read();
-
-        string id = reader.GetString();
+        StartReadingScope(ref reader);
+        string id = "";
+        while (TryReadToNextProperty(ref reader, out string propName))
+        {
+            switch (propName)
+            {
+                case nameof(IDockable.Id):
+                    id = ReadStringProperty(ref reader);
+                    break;
+                default:
+                    break;
+            }
+        }
         IDockable dockable = Activator.CreateInstance(typeToConvert) as IDockable;
         dockable.Id = id;
 
-        reader.Read();
+        EndReadingScope(ref reader);
         return dockable;
     }
 }
