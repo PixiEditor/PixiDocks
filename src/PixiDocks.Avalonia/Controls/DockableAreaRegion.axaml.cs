@@ -109,7 +109,7 @@ public class DockableAreaRegion : TemplatedControl, IDockableHostRegion
         }
 
         var tree = _dockableAreaToTree[dockableArea];
-        var area = tree.Split(direction, _dockableAreaToTree);
+        var area = tree.Split(direction, _dockableAreaToTree, dockableArea);
         area.Region = this;
         area.Context = dockableArea.Context;
         return area;
@@ -124,15 +124,5 @@ public class DockableAreaRegion : TemplatedControl, IDockableHostRegion
         }
 
         tree.RemoveDockableArea(dockableArea, _dockableAreaToTree);
-    }
-
-    public Point? TranslatePointRelative(Point pos, DockableArea dockableArea)
-    {
-        if (_dockableAreaToTree.TryGetValue(dockableArea, out DockableTree? tree))
-        {
-            return tree.TranslatePoint(pos, dockableArea);
-        }
-
-        return this.TranslatePoint(pos, dockableArea);
     }
 }

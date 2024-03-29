@@ -12,7 +12,6 @@ public struct LayoutTree
     public IDockableTree Root { get; set; }
 
     public bool IsFloating { get; set; } = false;
-
     public int? FloatingPositionX { get; set; }
     public int? FloatingPositionY { get; set; }
     public int? FloatingWidth { get; set; }

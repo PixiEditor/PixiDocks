@@ -142,18 +142,33 @@ public class DockableTree : TemplatedControl, ITreeElement, IDockableTree
         UpdateGrid();
     }
 
-    public DockableArea Split(DockingDirection direction, Dictionary<DockableArea, DockableTree> dockableAreaToTree)
+    public DockableArea Split(DockingDirection direction, Dictionary<DockableArea, DockableTree> dockableAreaToTree,
+        DockableArea areaToSplit)
     {
-        SplitDirection = direction;
         DockableArea second = new();
 
-        DockableArea area = First as DockableArea;
-        DetachOldParents(area);
-        First = new DockableTree() { First = area, DockableParent = this };
-        dockableAreaToTree[area] = First as DockableTree;
+        DockableArea area;
+        DockableTree resultTree;
+        if (areaToSplit == Second)
+        {
+            area = Second as DockableArea;
+            DetachOldParents(area);
+            Second = new DockableTree() { First = area, DockableParent = this };
+            resultTree = Second as DockableTree;
+        }
+        else
+        {
+            area = First as DockableArea;
+            DetachOldParents(area);
+            First = new DockableTree() { First = area, DockableParent = this };
+            resultTree = First as DockableTree;
+        }
+        dockableAreaToTree[area] = resultTree;
 
-        Second = new DockableTree() { First = second, DockableParent = this };
-        dockableAreaToTree.Add(second, Second as DockableTree);
+        resultTree.Second = new DockableTree() { First = second, DockableParent = resultTree };
+        dockableAreaToTree.Add(second, resultTree.Second as DockableTree);
+
+        resultTree.SplitDirection = direction;
 
         UpdateGrid();
         return second;

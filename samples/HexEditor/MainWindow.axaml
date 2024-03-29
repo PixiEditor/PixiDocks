@@ -22,6 +22,16 @@
                 <MenuItem Header="Open" Command="{Binding OpenFileCommand}"/>
             </MenuItem>
         </Menu>
-        <controls:DockableAreaRegion Name="RootRegion" Root="{Binding LayoutManager.Layout.Root}"/>
+        <Grid ColumnDefinitions="0.75*, 5, 0.25*">
+            <controls:DockableAreaRegion Grid.Column="0" Name="DocumentsRegion"
+                                         Context="{Binding LayoutManager.DockContext}"
+                                         Id="DocumentsRegion"
+                                         Root="{Binding LayoutManager.DocumentsLayout.Root}"/>
+            <GridSplitter Grid.Column="1" Width="5"/>
+            <controls:DockableAreaRegion Grid.Column="2" Name="InspectorRegion"
+                                         Context="{Binding LayoutManager.DockContext}"
+                                         Id="InspectorRegion"
+                                         Root="{Binding LayoutManager.InspectorLayout.Root}"/>
+        </Grid>
     </DockPanel>
 </Window>

@@ -22,6 +22,8 @@ public partial class DocumentViewModel : ObservableObject, IDockableContent, IDo
     public object? Icon { get; set; }
 
     private readonly Document _document;
+    private int _selectionStart;
+    private int _selectionEnd;
 
     public string FilePath
     {
@@ -61,6 +63,12 @@ public partial class DocumentViewModel : ObservableObject, IDockableContent, IDo
 
         Lines = new ObservableCollection<string>(_document.ToLines());
         OnPropertyChanged(nameof(Data));
+    }
+
+    [RelayCommand]
+    public void GotFocus()
+    {
+        Selected?.Invoke();
     }
 
     private IImage LoadThumbnail()

@@ -9,11 +9,12 @@ namespace HexEditor.ViewModels;
 public class LayoutManager
 {
     public DockContext DockContext { get; } = new();
-    public LayoutTree Layout { get; private set; }
+    public LayoutTree DocumentsLayout { get; private set; }
+    public LayoutTree InspectorLayout { get; private set; }
 
     public LayoutManager()
     {
-        Layout = new LayoutTree()
+        DocumentsLayout = new LayoutTree()
         {
             Root = new DockableTree()
             {
@@ -21,15 +22,21 @@ public class LayoutManager
                 {
                     Id = "DocumentArea",
                 },
-                SplitDirection = DockingDirection.Right,
-                FirstSize = 0.75,
-                Second = new DockableArea()
-                {
-                    Id = "InspectorArea",
-                }
             }
         };
 
-        Layout.SetContext(DockContext);
+        InspectorLayout = new LayoutTree()
+        {
+            Root = new DockableTree()
+            {
+                First = new DockableArea()
+                {
+                    Id = "InspectorArea",
+                },
+            }
+        };
+
+        DocumentsLayout.SetContext(DockContext);
+        InspectorLayout.SetContext(DockContext);
     }
 }

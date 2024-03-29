@@ -53,13 +53,15 @@ public partial class ViewModelMain : ObservableObject
         document.Selected += () => SelectDocument(document);
         Documents.Add(document);
 
-        var documentArea = LayoutManager.DockContext.AllHosts.FirstOrDefault(x => x.Id == "DocumentArea");
+        var documentArea = LayoutManager.DockContext.AllRegions.FirstOrDefault(x => x.Id == "DocumentsRegion");
         if(documentArea == null)
         {
             throw new InvalidOperationException("Document area not found");
         }
 
-        LayoutManager.DockContext.Dock(LayoutManager.DockContext.CreateDockable(document), documentArea);
+        LayoutManager.DockContext.Dock(LayoutManager.DockContext.CreateDockable(document),
+            documentArea.AllHosts.First());
+
         SelectDocument(document);
     }
 

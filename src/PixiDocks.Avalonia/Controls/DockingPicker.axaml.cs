@@ -44,6 +44,11 @@ public class DockingPicker : TemplatedControl
 
     private static void DockablesOnCollectionChanged(DockingPicker picker)
     {
+        UpdateVisibleOnlyCenter(picker);
+    }
+
+    private static void UpdateVisibleOnlyCenter(DockingPicker picker)
+    {
         if (!picker._initialized)
         {
             return;
@@ -65,7 +70,9 @@ public class DockingPicker : TemplatedControl
         _left = e.NameScope.Get<Image>("PART_Left");
         _right = e.NameScope.Get<Image>("PART_Right");
         _center = e.NameScope.Get<Image>("PART_Center");
+
         _initialized = true;
+        UpdateVisibleOnlyCenter(this);
     }
 
     public DockingDirection? GetDockingDirection(Point? relativePoint)

@@ -180,7 +180,6 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
     public void OnDockableOver(IDockableHostRegion region, int x, int y)
     {
         Point? pos = ToRelativePoint(x, y);
-        pos = Region.TranslatePointRelative(pos.Value, this);
 
         _lastDirection = _picker.GetDockingDirection(pos.Value - _picker.Bounds.Position);
         if (_lastDirection.HasValue && region.CanDock())

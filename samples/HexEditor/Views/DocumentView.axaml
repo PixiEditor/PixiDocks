@@ -11,6 +11,11 @@
         <viewModels:DocumentViewModel/>
     </Design.DataContext>
     <Grid>
+        <Interaction.Behaviors>
+            <EventTriggerBehavior EventName="GotFocus">
+                <InvokeCommandAction Command="{Binding GotFocusCommand}"/>
+            </EventTriggerBehavior>
+        </Interaction.Behaviors>
         <ScrollViewer>
             <ItemsControl ItemsSource="{Binding Lines}">
                 <ItemsControl.ItemsPanel>

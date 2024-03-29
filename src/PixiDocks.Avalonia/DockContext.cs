@@ -121,7 +121,7 @@ public class DockContext : IDockContext
 
         if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            hostWindow.Show();
+            hostWindow.Show(desktop.MainWindow);
         }
         else
         {
