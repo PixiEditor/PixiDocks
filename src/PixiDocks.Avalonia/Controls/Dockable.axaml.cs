@@ -1,19 +1,15 @@
 using System.Collections;
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Controls.Metadata;
-using Avalonia.Controls.Primitives;
 using Avalonia.Interactivity;
-using Avalonia.Markup.Xaml.Templates;
 using Avalonia.Media;
-using PixiDocks.Core;
 using PixiDocks.Core.Docking;
 using PixiDocks.Core.Docking.Events;
 using PixiDocks.Core.Serialization;
 
 namespace PixiDocks.Avalonia.Controls;
 
-public class Dockable : ContentControl, IDockable, IDockableSelectionEvents
+public class Dockable : ContentControl, IDockable, IDockableSelectionEvents, IDockableCloseEvents
 {
     public IDockableHost? Host { get; set; }
 
@@ -41,6 +37,9 @@ public class Dockable : ContentControl, IDockable, IDockableSelectionEvents
     public static readonly RoutedEvent<RoutedEventArgs> DeselectedEvent = RoutedEvent.Register<Dockable, RoutedEventArgs>(
         nameof(Deselected), RoutingStrategies.Bubble);
 
+    public static readonly RoutedEvent<RoutedEventArgs> CloseEvent = RoutedEvent.Register<Dockable, RoutedEventArgs>(
+        nameof(Close), RoutingStrategies.Bubble);
+
     public event EventHandler<RoutedEventArgs>? Selected
     {
         add => AddHandler(SelectedEvent, value);
@@ -51,6 +50,12 @@ public class Dockable : ContentControl, IDockable, IDockableSelectionEvents
     {
         add => AddHandler(DeselectedEvent, value);
         remove => RemoveHandler(DeselectedEvent, value);
+    }
+
+    public event EventHandler<RoutedEventArgs>? Close
+    {
+        add => AddHandler(CloseEvent, value);
+        remove => RemoveHandler(CloseEvent, value);
     }
 
     public IImage? Icon
@@ -113,6 +118,18 @@ public class Dockable : ContentControl, IDockable, IDockableSelectionEvents
         }
 
         RaiseEvent(new RoutedEventArgs(DeselectedEvent));
+    }
+
+    bool IDockableCloseEvents.OnClose()
+    {
+        bool close = true;
+        if(Content is IDockableCloseEvents closeEvents)
+        {
+            close = closeEvents.OnClose();
+        }
+
+        RaiseEvent(new RoutedEventArgs(CloseEvent));
+        return close;
     }
 
     public IEnumerator<IDockableLayoutElement> GetEnumerator()

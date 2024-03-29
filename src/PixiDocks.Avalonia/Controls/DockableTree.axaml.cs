@@ -287,11 +287,21 @@ public class DockableTree : TemplatedControl, ITreeElement, IDockableTree
         if (First is IDockableLayoutElement first)
         {
             yield return first;
+
+            foreach (var element in first)
+            {
+                yield return element;
+            }
         }
 
         if (Second is IDockableLayoutElement second)
         {
             yield return second;
+
+            foreach (var element in second)
+            {
+                yield return element;
+            }
         }
     }
 

@@ -22,12 +22,18 @@
                 <MenuItem Header="Open" Command="{Binding OpenFileCommand}"/>
             </MenuItem>
         </Menu>
-        <Grid ColumnDefinitions="0.75*, 5, 0.25*">
-            <controls:DockableAreaRegion Grid.Column="0" Name="DocumentsRegion"
-                                         Context="{Binding LayoutManager.DockContext}"
-                                         Id="DocumentsRegion"
-                                         Root="{Binding LayoutManager.DocumentsLayout.Root}"/>
-            <GridSplitter Grid.Column="1" Width="5"/>
+        <Grid ColumnDefinitions="0.75*, 2.5, 0.25*">
+            <Grid>
+                <TextBlock IsVisible="{Binding !Documents.Count}"
+                    Text="Open a file to view it's hex"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"/>
+                <controls:DockableAreaRegion Grid.Column="0" Name="DocumentsRegion"
+                                             Context="{Binding LayoutManager.DockContext}"
+                                             Id="DocumentsRegion"
+                                             Root="{Binding LayoutManager.DocumentsLayout.Root}"/>
+            </Grid>
+            <GridSplitter Grid.Column="1" Width="2.5" Margin="0, 30, 0, 0"/>
             <controls:DockableAreaRegion Grid.Column="2" Name="InspectorRegion"
                                          Context="{Binding LayoutManager.DockContext}"
                                          Id="InspectorRegion"

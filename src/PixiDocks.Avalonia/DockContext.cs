@@ -8,6 +8,7 @@ using Avalonia.VisualTree;
 using PixiDocks.Avalonia.Controls;
 using PixiDocks.Core;
 using PixiDocks.Core.Docking;
+using PixiDocks.Core.Docking.Events;
 using PixiDocks.Core.Serialization;
 
 namespace PixiDocks.Avalonia;
@@ -79,6 +80,11 @@ public class DockContext : IDockContext
 
     public IDockable CreateDockable(IDockableContent content)
     {
+        if (content is null)
+        {
+            throw new ArgumentNullException(nameof(content));
+        }
+
         Dockable dockable = new()
         {
             Id = content.Id,
@@ -152,6 +158,14 @@ public class DockContext : IDockContext
     public void Close(IDockable dockable)
     {
         if(!dockable.CanClose) return;
+
+        if (dockable is IDockableCloseEvents closeEvents)
+        {
+            if (!closeEvents.OnClose())
+            {
+                return;
+            }
+        }
 
         if (floatingWindows.TryGetValue(dockable.Id, out HostWindow? value))
         {

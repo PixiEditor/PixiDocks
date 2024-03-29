@@ -1,18 +1,13 @@
 using System.Collections;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.Text.Json.Serialization;
 using System.Windows.Input;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Metadata;
 using Avalonia.Controls.Presenters;
 using Avalonia.Controls.Primitives;
-using Avalonia.Input;
-using Avalonia.Rendering;
-using Avalonia.VisualTree;
 using PixiDocks.Avalonia.Helpers;
-using PixiDocks.Core;
 using PixiDocks.Core.Docking;
 using PixiDocks.Core.Docking.Events;
 using PixiDocks.Core.Serialization;
@@ -50,7 +45,7 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
     public static readonly StyledProperty<IDockContext> ContextProperty = AvaloniaProperty.Register<DockableArea, IDockContext>(
         nameof(Context));
 
-    public static readonly StyledProperty<IDockable> ActiveDockableProperty = AvaloniaProperty.Register<DockableArea, IDockable>(
+    public static readonly StyledProperty<IDockable?> ActiveDockableProperty = AvaloniaProperty.Register<DockableArea, IDockable?>(
         nameof(ActiveDockable));
 
     public static readonly StyledProperty<DockableAreaRegion> RegionProperty = AvaloniaProperty.Register<DockableArea, DockableAreaRegion>(
@@ -83,7 +78,7 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
         set => SetValue(ContextProperty, value);
     }
 
-    public IDockable ActiveDockable
+    public IDockable? ActiveDockable
     {
         get => GetValue(ActiveDockableProperty);
         set => SetValue(ActiveDockableProperty, value);
