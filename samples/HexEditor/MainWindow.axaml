@@ -24,10 +24,6 @@
         </Menu>
         <Grid ColumnDefinitions="0.75*, 2.5, 0.25*">
             <Grid>
-                <TextBlock IsVisible="{Binding !Documents.Count}"
-                    Text="Open a file to view it's hex"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"/>
                 <controls:DockableAreaRegion Grid.Column="0" Name="DocumentsRegion"
                                              Context="{Binding LayoutManager.DockContext}"
                                              Id="DocumentsRegion"

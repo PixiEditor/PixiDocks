@@ -28,7 +28,7 @@ public class HostWindow : Window, IHostWindow
 
     protected override Type StyleKeyOverride => typeof(HostWindow);
 
-    public HostWindow(IDockable dockable, IDockContext context, PixelPoint pos)
+    public void Initialize(IDockable dockable, IDockContext context, PixelPoint pos)
     {
         Control dockableObj = dockable as Control;
         Content = dockableObj;

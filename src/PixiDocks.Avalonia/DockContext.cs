@@ -36,6 +36,8 @@ public class DockContext : IDockContext
         }
     }
 
+    public Func<HostWindow> HostWindowFactory { get; set; } = () => new HostWindow();
+
     public event Action<IDockableHost?>? FocusedHostChanged;
 
     public void AddHost(IDockableHost host)
@@ -134,7 +136,8 @@ public class DockContext : IDockContext
         };
 
         dockable.Host?.RemoveDockable(dockable);
-        var hostWindow = new HostWindow(dockable, this, pos);
+        var hostWindow = HostWindowFactory();
+        hostWindow.Initialize(dockable, this, pos);
         hostWindow.Closing += HostWindowOnClosing;
         hostWindow.Activated += OnWindowActivated;
         if (!floatingWindows.TryAdd(dockable.Id, hostWindow))

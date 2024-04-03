@@ -9,6 +9,10 @@ public interface IDockableHost : IDockableLayoutElement
     public IDockContext Context { get; set; }
     public IReadOnlyCollection<IDockable> Dockables { get;}
     public IDockable ActiveDockable { get; set; }
+    /// <summary>
+    ///     If set and there are no dockables, host won't collapse and will display this content instead.
+    /// </summary>
+    public object? FallbackContent { get; set; }
     public void AddDockable(IDockable dockable);
     public void RemoveDockable(IDockable dockable);
     public bool IsDockableWithin(int x, int y);

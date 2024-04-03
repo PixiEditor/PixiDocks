@@ -1,4 +1,6 @@
 using System.Collections.ObjectModel;
+using Avalonia.Controls;
+using Avalonia.Layout;
 using PixiDocks.Avalonia;
 using PixiDocks.Avalonia.Controls;
 using PixiDocks.Core.Docking;
@@ -21,6 +23,9 @@ public class LayoutManager
                 First = new DockableArea()
                 {
                     Id = "DocumentArea",
+                    FallbackContent = new TextBlock(){Text = "Open a file to view it's hex",
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        VerticalAlignment = VerticalAlignment.Center}
                 },
             }
         };

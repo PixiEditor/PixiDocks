@@ -60,6 +60,15 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
     public static readonly StyledProperty<string> IdProperty = AvaloniaProperty.Register<DockableArea, string>(
         nameof(Id));
 
+    public static readonly StyledProperty<object?> FallbackContentProperty = AvaloniaProperty.Register<DockableArea, object?>(
+        nameof(FallbackContent));
+
+    public object? FallbackContent
+    {
+        get => GetValue(FallbackContentProperty);
+        set => SetValue(FallbackContentProperty, value);
+    }
+
     public Dock TabPlacement
     {
         get => GetValue(TabPlacementProperty);
@@ -178,7 +187,14 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
 
         if (Dockables.Count == 0)
         {
-            Region.RemoveDockableArea(this);
+            if (FallbackContent == null)
+            {
+                Region.RemoveDockableArea(this);
+            }
+            else
+            {
+
+            }
         }
     }
 
