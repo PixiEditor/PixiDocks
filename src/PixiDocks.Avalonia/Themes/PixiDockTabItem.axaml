@@ -1,11 +1,12 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:controls="clr-namespace:PixiDocks.Avalonia.Controls">
     <ControlTheme TargetType="TabItem" x:Key="{x:Type TabItem}">
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="BorderBrush" Value="Transparent"/>
         <Setter Property="BorderThickness" Value="0"/>
-        <Setter Property="Padding" Value="0,0,0,0"/>
-        <Setter Property="Margin" Value="0,0,0,0"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="Margin" Value="0"/>
         <Setter Property="Foreground" Value="White"/>
         <Setter Property="HorizontalContentAlignment" Value="Center"/>
         <Setter Property="VerticalContentAlignment" Value="Center"/>
@@ -15,6 +16,7 @@
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
                         Padding="{TemplateBinding Padding}"
+                        Background="Transparent"
                         Margin="{TemplateBinding Margin}">
                     <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                       Content="{TemplateBinding Header}"
@@ -23,19 +25,5 @@
                 </Border>
             </ControlTemplate>
         </Setter>
-
-        <Style Selector="^ /template/ Border">
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="CornerRadius" Value="{DynamicResource ThemeDockTabStripCornerRadius}"/>
-        </Style>
-
-        <Style Selector="^:pointerover /template/ Border">
-            <Setter Property="Background" Value="{DynamicResource ThemeDockHighlightBrush}"/>
-        </Style>
-
-        <Style Selector="^:selected /template/ Border">
-            <Setter Property="Background" Value="{DynamicResource ThemeDockAccentBrush}"/>
-        </Style>
-
     </ControlTheme>
 </ResourceDictionary>

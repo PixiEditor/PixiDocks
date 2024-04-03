@@ -3,6 +3,7 @@
   <ControlTheme x:Key="PixiDockTabControlTheme"
                 TargetType="TabControl">
     <Setter Property="Padding" Value="0" />
+    <Setter Property="Margin" Value="0" />
     <Setter Property="Template">
       <ControlTemplate>
         <Border Padding="{TemplateBinding Padding}"
@@ -16,8 +17,6 @@
                             ItemsPanel="{TemplateBinding ItemsPanel}" />
             <ContentPresenter Name="PART_SelectedContentHost"
                               Margin="0"
-                              BorderBrush="{DynamicResource ThemeDockAccentBrush}"
-                              BorderThickness="0, 2, 0, 0"
                               HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
                               VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
                               Content="{TemplateBinding SelectedContent}"

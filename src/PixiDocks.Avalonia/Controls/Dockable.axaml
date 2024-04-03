@@ -13,8 +13,17 @@
         <Setter Property="Template">
             <ControlTemplate>
                 <ContentControl DockPanel.Dock="Bottom"
+                                BorderThickness="0, 2, 0, 0"
                                 Content="{TemplateBinding Content}"/>
             </ControlTemplate>
         </Setter>
+
+        <Style Selector="^ /template/ ContentControl">
+            <Setter Property="BorderBrush" Value="{DynamicResource ThemeDockSelectedBrush}"/>
+        </Style>
+
+        <Style Selector="^:focused /template/ ContentControl">
+            <Setter Property="BorderBrush" Value="{DynamicResource ThemeDockAccentBrush}"/>
+        </Style>
     </ControlTheme>
 </ResourceDictionary>

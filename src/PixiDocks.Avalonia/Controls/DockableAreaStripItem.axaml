@@ -61,9 +61,10 @@
         <!-- Set Defaults -->
         <Setter Property="Template">
             <ControlTemplate>
-                <Border DataContext="{Binding Dockable, RelativeSource={RelativeSource TemplatedParent}}"
+                <Border
+                        DataContext="{Binding Dockable, RelativeSource={RelativeSource TemplatedParent}}"
                         ContextMenu="{StaticResource DockableAreaItemContextMenu}">
-                    <DockPanel LastChildFill="False">
+                    <DockPanel LastChildFill="False" Margin="5, 0">
                         <Image IsVisible="{Binding !!Icon}" Source="{Binding Icon}"
                                RenderOptions.BitmapInterpolationMode="None"
                                DockPanel.Dock="Left" Width="16" Height="16"/>
@@ -73,5 +74,21 @@
                 </Border>
             </ControlTemplate>
         </Setter>
+
+        <Style Selector="^ /template/ Border">
+            <Setter Property="CornerRadius" Value="{DynamicResource ThemeDockTabStripCornerRadius}"/>
+        </Style>
+
+        <Style Selector="^:selected /template/ Border">
+            <Setter Property="Background" Value="{DynamicResource ThemeDockSelectedBrush}"/>
+        </Style>
+
+        <Style Selector="^:pointerover /template/ Border">
+            <Setter Property="Background" Value="{DynamicResource ThemeDockHighlightBrush}"/>
+        </Style>
+
+        <Style Selector="^:focused:selected /template/ Border">
+            <Setter Property="Background" Value="{DynamicResource ThemeDockAccentBrush}"/>
+        </Style>
     </ControlTheme>
 </ResourceDictionary>

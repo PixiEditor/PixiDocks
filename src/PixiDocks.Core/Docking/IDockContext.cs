@@ -2,6 +2,7 @@ namespace PixiDocks.Core.Docking;
 
 public interface IDockContext
 {
+    public IDockableHost? FocusedHost { get; set; }
     public IReadOnlyCollection<IDockableHostRegion> AllRegions { get; }
     public IReadOnlyCollection<IDockableHost> AllHosts { get; }
     public void AddHost(IDockableHost host);
@@ -13,4 +14,5 @@ public interface IDockContext
     public void RemoveRegion(IDockableHostRegion sender);
     public void AddRegion(IDockableHostRegion sender);
     public string Serialize();
+    public event Action<IDockableHost?> FocusedHostChanged;
 }

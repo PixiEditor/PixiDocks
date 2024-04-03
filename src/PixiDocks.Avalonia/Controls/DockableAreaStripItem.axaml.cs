@@ -26,6 +26,37 @@ public class DockableAreaStripItem : TemplatedControl
     private Point? _clickPoint;
     private Panel _parent;
     private TabItem _tabItem;
+    private TabControl _tabControl;
+
+    static DockableAreaStripItem()
+    {
+        DockableProperty.Changed.AddClassHandler<DockableAreaStripItem>(DockableChanged);
+    }
+
+    private static void DockableChanged(DockableAreaStripItem strip, AvaloniaPropertyChangedEventArgs e)
+    {
+        if (e.OldValue is IDockable oldDockable)
+        {
+            if (oldDockable.Host != null)
+            {
+                oldDockable.Host.Context.FocusedHostChanged -= strip.FocusedHostChanged;
+            }
+        }
+        if (e.NewValue is IDockable dockable)
+        {
+            if (dockable.Host != null)
+            {
+                dockable.Host.Context.FocusedHostChanged += strip.FocusedHostChanged;
+            }
+        }
+
+        strip.UpdateStripPseudoClasses();
+    }
+
+    private void FocusedHostChanged(IDockableHost? obj)
+    {
+        UpdateStripPseudoClasses();
+    }
 
     protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
     {
@@ -34,6 +65,9 @@ public class DockableAreaStripItem : TemplatedControl
         _tabItem.PointerMoved += OnBorderOnPointerMoved;
         _tabItem.PointerReleased += OnBorderOnPointerReleased;
         _parent = _tabItem.FindAncestorOfType<Panel>();
+        _tabControl = _tabItem.FindAncestorOfType<TabControl>();
+        _tabControl.SelectionChanged += (sender, args) => UpdateStripPseudoClasses();
+        UpdateStripPseudoClasses();
     }
 
     private void OnBorderOnPointerPressed(object? sender, PointerPressedEventArgs args)
@@ -80,5 +114,11 @@ public class DockableAreaStripItem : TemplatedControl
             _isDragging = false;
             e.Pointer.Capture(null);
         }
+    }
+
+    private void UpdateStripPseudoClasses()
+    {
+        PseudoClasses.Set(":selected", _tabItem != null && _tabItem.IsSelected);
+        PseudoClasses.Set(":focused", Dockable != null && Dockable.Host?.Context.FocusedHost == Dockable.Host);
     }
 }

@@ -56,7 +56,7 @@
                                 TabStripPlacement="{TemplateBinding TabPlacement}">
                                 <TabControl.ItemTemplate>
                                     <DataTemplate>
-                                        <controls:DockableAreaStripItem DockPanel.Dock="Top" Margin="5 0"
+                                        <controls:DockableAreaStripItem DockPanel.Dock="Top"
                                                                         Dockable="{Binding $parent[TabItem].Content}"/>
                                     </DataTemplate>
                                 </TabControl.ItemTemplate>
@@ -75,7 +75,7 @@
         </Setter>
 
         <Style Selector="^ /template/ Border.dockPreview">
-            <Setter Property="Background" Value="Red"/>
+            <Setter Property="Background" Value="{DynamicResource ThemeDockPreviewBackgroundBrush}"/>
             <Setter Property="Opacity" Value="0.5"/>
             <Setter Property="IsVisible" Value="False"/>
         </Style>

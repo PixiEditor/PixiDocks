@@ -1,6 +1,7 @@
 using System.Collections;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Metadata;
 using Avalonia.Interactivity;
 using Avalonia.Media;
 using PixiDocks.Core.Docking;
@@ -9,9 +10,9 @@ using PixiDocks.Core.Serialization;
 
 namespace PixiDocks.Avalonia.Controls;
 
+[PseudoClasses(":focused")]
 public class Dockable : ContentControl, IDockable, IDockableSelectionEvents, IDockableCloseEvents
 {
-    public IDockableHost? Host { get; set; }
 
     public static readonly StyledProperty<string> IdProperty = AvaloniaProperty.Register<Dockable, string>(
         nameof(Id));
@@ -39,6 +40,8 @@ public class Dockable : ContentControl, IDockable, IDockableSelectionEvents, IDo
 
     public static readonly RoutedEvent<RoutedEventArgs> CloseEvent = RoutedEvent.Register<Dockable, RoutedEventArgs>(
         nameof(Close), RoutingStrategies.Bubble);
+
+    public event Action<bool>? FocusChanged;
 
     public event EventHandler<RoutedEventArgs>? Selected
     {
@@ -98,6 +101,35 @@ public class Dockable : ContentControl, IDockable, IDockableSelectionEvents, IDo
     {
         get => GetValue(IdProperty);
         set => SetValue(IdProperty, value);
+    }
+
+    private IDockableHost? host;
+
+    public IDockableHost? Host
+    {
+        get => host;
+        set
+        {
+            if (host != value)
+            {
+                if (host != null)
+                {
+                    host.FocusedChanged -= OnFocusedChanged;
+                }
+
+                host = value;
+                if (host != null)
+                {
+                    OnFocusedChanged(host.Context?.FocusedHost == host);
+                    host.FocusedChanged += OnFocusedChanged;
+                }
+            }
+        }
+    }
+
+    private void OnFocusedChanged(bool focused)
+    {
+        PseudoClasses.Set(":focused", focused);
     }
 
     void IDockableSelectionEvents.OnSelected()

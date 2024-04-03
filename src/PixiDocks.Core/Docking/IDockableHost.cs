@@ -24,4 +24,5 @@ public interface IDockableHost : IDockableLayoutElement
     public void SplitLeft(IDockable dockable);
     public void SplitRight(IDockable dockable);
     public void SplitUp(IDockable dockable);
+    public event Action<bool> FocusedChanged;
 }
