@@ -4,6 +4,8 @@
                 TargetType="TabControl">
     <Setter Property="Padding" Value="0" />
     <Setter Property="Margin" Value="0" />
+    <Setter Property="BorderBrush" Value="{DynamicResource ThemeDockBorderBrush}" />
+    <Setter Property="BorderThickness" Value="{DynamicResource ThemeDockBorderThickness}" />
     <Setter Property="Template">
       <ControlTemplate>
         <Border
