@@ -1,4 +1,5 @@
 using System.Text;
+using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using PixiDocks.Core.Docking;
 
@@ -10,7 +11,7 @@ public class CharactersViewModel : ObservableObject, IDockableContent
     public string Title => "Inspector";
     public bool CanFloat => true;
     public bool CanClose => true;
-    public object? Icon { get; }
+    public TabCustomizationSettings TabCustomizationSettings { get; } = new();
 
     private byte[]? _rawData;
     public byte[]? RawData

@@ -1,0 +1,50 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Design.PreviewWith>
+        <Border Padding="20">
+            <!-- Add Controls for Previewer Here -->
+        </Border>
+    </Design.PreviewWith>
+
+    <Style Selector="Button.CloseDockableAreaButton">
+        <Setter Property="Content">
+                <Template>
+                    <Image Width="16" Height="16">
+                        <Image.Source>
+                            <SvgImage Source="/Assets/x.svg"/>
+                        </Image.Source>
+                    </Image>
+                </Template>
+        </Setter>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="CornerRadius" Value="{DynamicResource ThemeDockCloseButtonCornerRadius}"/>
+    </Style>
+
+    <Style Selector="Button.CloseTabButton">
+        <Setter Property="Content">
+                <Template>
+                    <Image Width="{TemplateBinding Width}" Height="{TemplateBinding Height}">
+                        <Image.Source>
+                            <SvgImage Source="/Assets/x.svg"/>
+                        </Image.Source>
+                    </Image>
+                </Template>
+        </Setter>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="CornerRadius" Value="{DynamicResource ThemeDockCloseButtonCornerRadius}"/>
+        <Setter Property="Padding" Value="2"/>
+    </Style>
+
+    <Style Selector="Border.TabStripBorder Button.CloseTabButton Image">
+        <Setter Property="IsVisible" Value="False"/>
+    </Style>
+
+    <Style Selector="Border.TabStripBorder:pointerover Button.CloseTabButton Image">
+        <Setter Property="IsVisible" Value="True"/>
+    </Style>
+
+    <Style Selector="Button.CloseTabButton:pointerover">
+        <Setter Property="Background" Value="{DynamicResource ThemeDockHighlightBrush}"/>
+    </Style>
+</Styles>

@@ -10,6 +10,8 @@ using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.VisualTree;
+using Avalonia.Xaml.Interactivity;
+using PixiDocks.Avalonia.Behaviors;
 using PixiDocks.Avalonia.Helpers;
 using PixiDocks.Core.Docking;
 using PixiDocks.Core.Docking.Events;
@@ -17,7 +19,6 @@ using PixiDocks.Core.Serialization;
 
 namespace PixiDocks.Avalonia.Controls;
 
-[TemplatePart("PART_DockingPicker", typeof(DockingPicker))]
 [PseudoClasses(":dockableOver", ":center", ":left", ":right", ":top", ":bottom", ":focused")]
 public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
 {
@@ -111,7 +112,6 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
         set => SetValue(DockablesProperty, value);
     }
 
-    private DockingPicker _picker;
     private ItemsPresenter _strip;
     private TabControl tab;
     private DockingDirection? _lastDirection;
@@ -134,7 +134,6 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
     protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
     {
         base.OnApplyTemplate(e);
-        _picker = e.NameScope.Find<DockingPicker>("PART_DockingPicker");
         tab = e.NameScope.Find<TabControl>("PART_TabControl");
         tab.ApplyTemplate();
         _strip = tab.Presenter;
@@ -191,10 +190,6 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
             {
                 Region.RemoveDockableArea(this);
             }
-            else
-            {
-
-            }
         }
     }
 
@@ -228,7 +223,7 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
     {
         Point? pos = ToRelativePoint(x, y);
 
-        _lastDirection = _picker.GetDockingDirection(pos.Value - _picker.Bounds.Position);
+        _lastDirection = GetDockingDirection(pos.Value);
         if (_lastDirection.HasValue && region.CanDock())
         {
             bool isCenter = _lastDirection.Value == DockingDirection.Center;
@@ -246,11 +241,30 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
             bool isBottom = _lastDirection.Value == DockingDirection.Bottom;
             PseudoClasses.Set(":bottom", isBottom);
         }
-        else if (region.CanDock() && IsOverTabControl(pos))
+        else if (IsOverStrip(pos) && region.CanDock())
         {
             _lastDirection = DockingDirection.Center;
-            bool isCenter = _lastDirection.Value == DockingDirection.Center;
-            PseudoClasses.Set(":center", isCenter);
+            PseudoClasses.Set(":center", true);
+
+            /*if (region.ValidDockable == null)
+            {
+                PseudoClasses.Set(":center", true);
+            }
+            else
+            {
+                var dockable = region.ValidDockable;
+                Dock(dockable, DockingDirection.Center);
+                tab.SelectedItem = dockable;
+                var container = tab.ContainerFromItem(dockable);
+                var behaviors = Interaction.GetBehaviors(container);
+                foreach (var behavior in behaviors)
+                {
+                    if (behavior is DockableTabDragBehavior tabItemBehavior)
+                    {
+                        tabItemBehavior.BeginDrag(new Point(x, y) - Bounds.Position);
+                    }
+                }
+            }*/
         }
         else
         {
@@ -262,19 +276,59 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
         }
     }
 
-    private bool IsOverTabControl(Point? point)
+    private bool IsOverStrip(Point? pos)
     {
-        if (_strip is null)
+        if(_strip is null)
         {
             return false;
         }
 
-        if (point is null)
+        if(pos is null)
         {
             return false;
         }
 
-        return _strip.Bounds.Contains(point.Value);
+        return _strip.Bounds.Contains(pos.Value);
+    }
+
+    private DockingDirection? GetDockingDirection(Point pos)
+    {
+        Rect top = new Rect(0, 0, Bounds.Width, Bounds.Height / 3);
+        Rect bottom = new Rect(0, Bounds.Height - Bounds.Height / 3, Bounds.Width, Bounds.Height / 3);
+        Rect left = new Rect(0, 0, Bounds.Width / 3, Bounds.Height);
+        Rect right = new Rect(Bounds.Width - Bounds.Width / 3, 0, Bounds.Width / 3, Bounds.Height);
+
+        if(_strip != null && _strip.Bounds.Contains(pos))
+        {
+            return null;
+        }
+
+        if (top.Contains(pos))
+        {
+            return DockingDirection.Top;
+        }
+
+        if (bottom.Contains(pos))
+        {
+            return DockingDirection.Bottom;
+        }
+
+        if (left.Contains(pos))
+        {
+            return DockingDirection.Left;
+        }
+
+        if (right.Contains(pos))
+        {
+            return DockingDirection.Right;
+        }
+
+        if (Bounds.Contains(pos))
+        {
+            return DockingDirection.Center;
+        }
+
+        return null;
     }
 
     public void OnDockableExited(IDockableHostRegion region, int x, int y)
@@ -299,7 +353,7 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
             DockableArea newArea = Region.SplitDockableArea(this, direction.Value);
             Context.Dock(dockable, newArea);
         }
-        else if (direction.HasValue && direction.Value == DockingDirection.Center)
+        else if (direction is DockingDirection.Center)
         {
             Context.Dock(dockable, this);
         }
@@ -308,6 +362,11 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
     public void Float(IDockable dockable)
     {
         Context.Float(dockable, 0, 0);
+    }
+
+    public void CloseHost()
+    {
+        Region.RemoveDockableArea(this);
     }
 
     public void Close(IDockable dockable)

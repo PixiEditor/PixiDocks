@@ -60,16 +60,26 @@
     <ControlTheme TargetType="controls:DockableAreaStripItem" x:Key="{x:Type controls:DockableAreaStripItem}">
         <!-- Set Defaults -->
         <Setter Property="Template">
-            <ControlTemplate>
+            <ControlTemplate x:CompileBindings="True">
                 <Border
+                    Classes="TabStripBorder"
                         DataContext="{Binding Dockable, RelativeSource={RelativeSource TemplatedParent}}"
                         ContextMenu="{StaticResource DockableAreaItemContextMenu}">
                     <DockPanel LastChildFill="False" Margin="5, 0">
                         <Image IsVisible="{Binding !!Icon}" Source="{Binding Icon}"
+                               VerticalAlignment="Center"
                                RenderOptions.BitmapInterpolationMode="None"
                                DockPanel.Dock="Left" Width="16" Height="16"/>
                         <TextBlock Padding="5" DockPanel.Dock="Left" Foreground="{DynamicResource ThemeForegroundBrush}"
+                                   VerticalAlignment="Center"
                                    Text="{Binding Title, FallbackValue=TITLE}"/>
+                        <Button Classes="CloseTabButton"
+                                Height="16" Width="16" Margin="5, 0, 0, 0"
+                                VerticalAlignment="Center"
+                                Command="{Binding Host.Close}"
+                                CommandParameter="{Binding .}"
+                                IsVisible="{Binding ShowCloseButton}"
+                                IsEnabled="{Binding CanClose}"/>
                     </DockPanel>
                 </Border>
             </ControlTemplate>

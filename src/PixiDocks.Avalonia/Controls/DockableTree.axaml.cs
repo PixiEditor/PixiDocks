@@ -139,6 +139,18 @@ public class DockableTree : TemplatedControl, ITreeElement, IDockableTree
     {
         base.OnApplyTemplate(e);
         _grid = e.NameScope.Find<Grid>("PART_Grid");
+        if(_queuedFirstSize == 1 && _queuedSecondSize == 1)
+        {
+            if (SplitDirection is DockingDirection.Right or DockingDirection.Bottom)
+            {
+                FirstSize = 0.66;
+            }
+            else
+            {
+                SecondSize = 0.66;
+            }
+        }
+
         UpdateGrid();
     }
 

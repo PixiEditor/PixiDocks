@@ -8,7 +8,7 @@
         xmlns:viewModels="clr-namespace:HexEditor.ViewModels"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:DataType="viewModels:ViewModelMain"
-        x:Class="HexEditor.MainWindow"
+        x:Class="HexEditor.MainWindow" Background="#202020"
         Title="SimpleSample">
     <Design.DataContext>
         <viewModels:ViewModelMain/>
@@ -22,18 +22,9 @@
                 <MenuItem Header="Open" Command="{Binding OpenFileCommand}"/>
             </MenuItem>
         </Menu>
-        <Grid ColumnDefinitions="0.75*, 2.5, 0.25*">
-            <Grid>
-                <controls:DockableAreaRegion Grid.Column="0" Name="DocumentsRegion"
-                                             Context="{Binding LayoutManager.DockContext}"
-                                             Id="DocumentsRegion"
-                                             Root="{Binding LayoutManager.DocumentsLayout.Root}"/>
-            </Grid>
-            <GridSplitter Grid.Column="1" Width="2.5" Margin="0, 30, 0, 0"/>
-            <controls:DockableAreaRegion Grid.Column="2" Name="InspectorRegion"
-                                         Context="{Binding LayoutManager.DockContext}"
-                                         Id="InspectorRegion"
-                                         Root="{Binding LayoutManager.InspectorLayout.Root}"/>
-        </Grid>
+        <controls:DockableAreaRegion Name="DocumentsRegion"
+                                     Context="{Binding LayoutManager.DockContext}"
+                                     Id="DocumentsRegion"
+                                     Root="{Binding LayoutManager.Layout.Root}"/>
     </DockPanel>
 </Window>

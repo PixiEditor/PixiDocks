@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Windows.Input;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -19,7 +20,7 @@ public partial class DocumentViewModel : ObservableObject, IDockableContent, IDo
     public string Title => _document.FileName;
     public bool CanFloat => true;
     public bool CanClose => true;
-    public object? Icon { get; set; }
+    public TabCustomizationSettings TabCustomizationSettings { get; } = new(showCloseButton: true);
 
     private readonly Document _document;
     private int _selectionStart;
@@ -58,7 +59,7 @@ public partial class DocumentViewModel : ObservableObject, IDockableContent, IDo
         _document.Load();
         if (_document.FilePath.EndsWith(".png") || _document.FilePath.EndsWith(".jpg") || _document.FilePath.EndsWith(".jpeg"))
         {
-            Icon = LoadThumbnail();
+            TabCustomizationSettings.Icon = LoadThumbnail();
         }
 
         Lines = new ObservableCollection<string>(_document.ToLines());

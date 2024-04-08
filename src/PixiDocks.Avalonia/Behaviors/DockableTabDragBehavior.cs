@@ -126,32 +126,41 @@ public class DockableTabDragBehavior : Behavior<Control>
         if (properties.IsLeftButtonPressed 
             && AssociatedObject?.Parent is ItemsControl itemsControl)
         {
-            _enableDrag = true;
-            _dragStarted = false;
-            _start = e.GetPosition(itemsControl);
-            _draggedIndex = -1;
-            _targetIndex = -1;
-            _itemsControl = itemsControl;
-            _itemsControl.Items.CollectionChanged += (s, e) =>
-            {
-                if (e.Action == NotifyCollectionChangedAction.Remove)
-                {
-                    if (_itemsControl == null) return;
-                    _itemsControl.LayoutUpdated += UpdateLayout;
-                }
-            };
-
-            _draggedContainer = AssociatedObject;
-
-            if (_draggedContainer is not null)
-            {
-                SetDraggingPseudoClasses(_draggedContainer, true);
-            }
-
-            AddTransforms(_itemsControl);
-
-            _captured = true;
+            BeginDrag(e.GetPosition(itemsControl));
         }
+    }
+
+    public void BeginDrag(Point point)
+    {
+        if(_dragStarted)
+            return;
+
+        ItemsControl itemsControl = (ItemsControl)AssociatedObject.Parent;
+        _enableDrag = true;
+        _dragStarted = false;
+        _start = point;
+        _draggedIndex = -1;
+        _targetIndex = -1;
+        _itemsControl = itemsControl;
+        _itemsControl.Items.CollectionChanged += (s, e) =>
+        {
+            if (e.Action == NotifyCollectionChangedAction.Remove)
+            {
+                if (_itemsControl == null) return;
+                _itemsControl.LayoutUpdated += UpdateLayout;
+            }
+        };
+
+        _draggedContainer = AssociatedObject;
+
+        if (_draggedContainer is not null)
+        {
+            SetDraggingPseudoClasses(_draggedContainer, true);
+        }
+
+        AddTransforms(_itemsControl);
+
+        _captured = true;
     }
 
     private void UpdateLayout(object? sender, EventArgs e)

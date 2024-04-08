@@ -6,17 +6,18 @@
     <Setter Property="Margin" Value="0" />
     <Setter Property="Template">
       <ControlTemplate>
-        <Border Padding="{TemplateBinding Padding}"
+        <Border
                 HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
                 VerticalAlignment="{TemplateBinding VerticalAlignment}"
                 BorderBrush="{TemplateBinding BorderBrush}"
-                BorderThickness="{TemplateBinding BorderThickness}"
-                CornerRadius="{TemplateBinding CornerRadius}">
+                BorderThickness="{TemplateBinding BorderThickness}">
           <DockPanel>
             <ItemsPresenter Name="PART_ItemsPresenter"
                             ItemsPanel="{TemplateBinding ItemsPanel}" />
             <ContentPresenter Name="PART_SelectedContentHost"
                               Margin="0"
+                              Background="{DynamicResource ThemeDockBackgroundBrush}"
+                              CornerRadius="{DynamicResource ThemeDockAreaRadius}"
                               HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
                               VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
                               Content="{TemplateBinding SelectedContent}"

@@ -12,8 +12,10 @@
         <!-- Set Defaults -->
         <Setter Property="Template">
             <ControlTemplate>
-                <Border Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}"
+                <Border Background="{DynamicResource ThemeDockBackgroundLowColor}"
+                        CornerRadius="{DynamicResource ThemeDockAreaRadius}"
                         BorderBrush="{TemplateBinding BorderBrush}"
+                        ClipToBounds="True"
                         BorderThickness="{TemplateBinding BorderThickness}">
                     <Border.Styles>
                         <Style Selector=":is(TabControl).draggable">
@@ -40,14 +42,12 @@
                         </Style>
                     </Border.Styles>
                     <Grid>
-                        <controls:DockingPicker ZIndex="9999" IsVisible="False" Name="PART_DockingPicker" HorizontalAlignment="Center" VerticalAlignment="Center"
-                                                Dockables="{Binding Dockables, RelativeSource={RelativeSource TemplatedParent}}"/>
-                        <Grid ColumnDefinitions="*, *" RowDefinitions="*, *" ZIndex="9999">
-                            <Border Classes="dockPreview" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Name="TopPreview"/>
-                            <Border Classes="dockPreview" Grid.Row="0" Grid.Column="0" Name="LeftPreview" Grid.RowSpan="2"/>
-                            <Border Classes="dockPreview" Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" Name="RightPreview"/>
-                            <Border Classes="dockPreview" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Name="BottomPreview"/>
-                            <Border Classes="dockPreview" Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="2" Name="CenterPreview"/>
+                        <Grid ColumnDefinitions="*, *, *" RowDefinitions="*, *, *" ZIndex="9999">
+                            <Border Classes="dockPreview" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Name="TopPreview"/>
+                            <Border Classes="dockPreview" Grid.Row="0" Grid.Column="0" Grid.RowSpan="3" Name="LeftPreview" />
+                            <Border Classes="dockPreview" Grid.Row="0" Grid.Column="2" Grid.RowSpan="3" Name="RightPreview"/>
+                            <Border Classes="dockPreview" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" Name="BottomPreview"/>
+                            <Border Classes="dockPreview" Grid.Row="0" Grid.Column="0" Grid.RowSpan="3" Grid.ColumnSpan="3" Name="CenterPreview"/>
                         </Grid>
                         <Grid>
                             <TabControl Name="PART_TabControl" Theme="{DynamicResource PixiDockTabControlTheme}" Classes="draggable"
@@ -68,8 +68,14 @@
                                     </ResourceDictionary>
                                 </TabControl.Resources>
                             </TabControl>
-                            <ContentPresenter Content="{Binding FallbackContent, RelativeSource={RelativeSource TemplatedParent}}"
-                                              IsVisible="{Binding !Dockables.Count, RelativeSource={RelativeSource TemplatedParent}}"/>
+                            <Grid IsVisible="{Binding !Dockables.Count, RelativeSource={RelativeSource TemplatedParent}}">
+                                <Button HorizontalAlignment="Right" VerticalAlignment="Top" Margin="5"
+                                        IsVisible="{Binding !!FallbackContent, RelativeSource={RelativeSource TemplatedParent}}"
+                                        Classes="CloseDockableAreaButton"
+                                        Command="{Binding CloseHost, RelativeSource={RelativeSource TemplatedParent}}">
+                                </Button>
+                                <ContentPresenter Content="{Binding FallbackContent, RelativeSource={RelativeSource TemplatedParent}}"/>
+                            </Grid>
                         </Grid>
                     </Grid>
                 </Border>
@@ -82,9 +88,10 @@
             <Setter Property="IsVisible" Value="False"/>
         </Style>
 
-        <Style Selector="^:dockableOver /template/ controls|DockingPicker">
+        <Style Selector="^:dockableOver /template/ Border#Preview">
             <Setter Property="IsVisible" Value="True"/>
         </Style>
+
         <Style Selector="^:top /template/ Border#TopPreview">
             <Setter Property="IsVisible" Value="True"/>
         </Style>

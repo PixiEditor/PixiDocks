@@ -21,6 +21,7 @@ public interface IDockableHost : IDockableLayoutElement
     public void OnDockableExited(IDockableHostRegion region, int x, int y);
     public void Dock(IDockable dockable);
     public void Float(IDockable dockable);
+    public void CloseHost();
     public void Close(IDockable dockable);
     public void CloseAll();
     public void CloseAllExcept(IDockable dockable);

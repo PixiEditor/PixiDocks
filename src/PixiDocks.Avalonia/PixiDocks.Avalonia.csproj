@@ -8,6 +8,7 @@
 
     <ItemGroup>
       <PackageReference Include="Avalonia" Version="11.0.10" />
+      <PackageReference Include="Avalonia.Svg.Skia" Version="11.0.0.17" />
       <PackageReference Include="Avalonia.Xaml.Behaviors" Version="11.0.9.2" />
     </ItemGroup>
 
@@ -17,16 +18,8 @@
 
     <ItemGroup>
       <AvaloniaResource Include="Images\*" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <UpToDateCheckInput Remove="Styles\PreviewBorder.axaml" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Compile Update="Controls\DockableTree.axaml.cs">
-        <DependentUpon>DockableTree.axaml.axaml</DependentUpon>
-      </Compile>
+      <None Remove="Assets\x.svg" />
+      <AvaloniaResource Include="Assets\x.svg" />
     </ItemGroup>
 
 </Project>

@@ -110,8 +110,9 @@ public class DockContext : IDockContext
             Title = content.Title,
             CanFloat = content.CanFloat,
             CanClose = content.CanClose,
-            Icon = (IImage)content.Icon,
-            Content = content
+            Icon = content.TabCustomizationSettings.Icon as IImage,
+            ShowCloseButton = content.TabCustomizationSettings.ShowCloseButton,
+            Content = content,
         };
 
         return dockable;

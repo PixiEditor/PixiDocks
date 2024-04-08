@@ -11,7 +11,7 @@
             <ControlTemplate>
                 <Grid Name="PART_Grid">
                     <ContentPresenter Name="PART_FirstPresenter" Content="{TemplateBinding First}"/>
-                    <GridSplitter Margin="0, 30, 0, 0" Name="PART_Splitter" IsVisible="False"/>
+                    <GridSplitter Name="PART_Splitter" IsVisible="False" Background="Transparent"/>
                     <ContentPresenter Name="PART_SecondPresenter" Content="{TemplateBinding Second}"/>
                 </Grid>
             </ControlTemplate>
@@ -22,14 +22,14 @@
         </Style>
 
         <Style Selector="^:horizontal /template/ GridSplitter#PART_Splitter">
-            <Setter Property="Width" Value="2.5"/>
+            <Setter Property="Width" Value="2"/>
             <Setter Property="ResizeDirection" Value="Columns"/>
             <Setter Property="(Grid.Column)" Value="1"/>
             <Setter Property="(Grid.Row)" Value="0"/>
         </Style>
 
         <Style Selector="^:vertical /template/ GridSplitter#PART_Splitter">
-            <Setter Property="Height" Value="2.5"/>
+            <Setter Property="Height" Value="2"/>
             <Setter Property="ResizeDirection" Value="Rows"/>
             <Setter Property="(Grid.Row)" Value="1"/>
             <Setter Property="(Grid.Column)" Value="0"/>

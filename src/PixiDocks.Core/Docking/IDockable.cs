@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Text.Json.Serialization;
+using System.Windows.Input;
 using PixiDocks.Core.Serialization;
 
 namespace PixiDocks.Core.Docking;
@@ -13,6 +14,7 @@ public interface IDockable : IDockableLayoutElement
     object? Icon { get; set; }
     public IDockableHost? Host { get; set; }
     public bool CanSplit => Host?.Dockables.Count > 1;
+    public bool ShowCloseButton { get; }
 
     IEnumerator IEnumerable.GetEnumerator()
     {

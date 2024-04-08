@@ -1,7 +1,10 @@
 using System.Collections;
+using System.ComponentModel;
+using System.Windows.Input;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Metadata;
+using Avalonia.Data;
 using Avalonia.Interactivity;
 using Avalonia.Media;
 using PixiDocks.Core.Docking;
@@ -32,6 +35,9 @@ public class Dockable : ContentControl, IDockable, IDockableSelectionEvents, IDo
     public static readonly StyledProperty<IImage?> IconProperty = AvaloniaProperty.Register<Dockable, IImage?>(
         nameof(Icon));
 
+    public static readonly StyledProperty<bool> ShowCloseButtonProperty = AvaloniaProperty.Register<Dockable, bool>(
+        nameof(ShowCloseButton), defaultValue: false);
+
     public static readonly RoutedEvent<RoutedEventArgs> SelectedEvent = RoutedEvent.Register<Dockable, RoutedEventArgs>(
         nameof(Selected), RoutingStrategies.Bubble);
 
@@ -40,8 +46,6 @@ public class Dockable : ContentControl, IDockable, IDockableSelectionEvents, IDo
 
     public static readonly RoutedEvent<RoutedEventArgs> CloseEvent = RoutedEvent.Register<Dockable, RoutedEventArgs>(
         nameof(Close), RoutingStrategies.Bubble);
-
-    public event Action<bool>? FocusChanged;
 
     public event EventHandler<RoutedEventArgs>? Selected
     {
@@ -101,6 +105,12 @@ public class Dockable : ContentControl, IDockable, IDockableSelectionEvents, IDo
     {
         get => GetValue(IdProperty);
         set => SetValue(IdProperty, value);
+    }
+
+    public bool ShowCloseButton
+    {
+        get => GetValue(ShowCloseButtonProperty);
+        set => SetValue(ShowCloseButtonProperty, value);
     }
 
     private IDockableHost? host;

@@ -1,3 +1,5 @@
+using System.Windows.Input;
+
 namespace PixiDocks.Core.Docking;
 
 public interface IDockableContent
@@ -6,5 +8,5 @@ public interface IDockableContent
     string Title { get;  }
     bool CanFloat { get; }
     bool CanClose { get; }
-    object? Icon { get; }
+    TabCustomizationSettings TabCustomizationSettings { get; }
 }
