@@ -1,4 +1,5 @@
-﻿using Avalonia.Controls;
+﻿using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Controls.Chrome;
 using Avalonia.Controls.Primitives;
 
@@ -20,5 +21,10 @@ public class HostWindowTitleBar : TitleBar
         base.OnApplyTemplate(e);
 
         BackgroundControl = e.NameScope.Find<Control>("PART_Background");
+    }
+
+    public bool IsOverTab()
+    {
+        return BackgroundControl?.IsPointerOver ?? false;
     }
 }

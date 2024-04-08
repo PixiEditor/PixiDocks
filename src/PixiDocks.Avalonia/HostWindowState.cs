@@ -13,6 +13,7 @@ public class HostWindowState
     public HostWindow Window { get; }
 
     private IDockableHost? _lastHost;
+    private bool isDraggingTab;
 
     public HostWindowState(IDockContext context, HostWindow window)
     {
@@ -27,7 +28,11 @@ public class HostWindowState
 
     public void ProcessDragEvent(PixelPoint position, EventType type)
     {
-        if (type == EventType.DragMove)
+        if (type == EventType.DragStart && Window.DockableArea.IsPointerOverTab(position))
+        {
+            isDraggingTab = true;
+        }
+        if (type == EventType.DragMove && isDraggingTab)
         {
             if (IsOverDockHost(Window.Region.AllHosts, position, out var host))
             {
@@ -65,6 +70,8 @@ public class HostWindowState
                     _lastHost = null;
                 }
             }
+
+            isDraggingTab = false;
         }
     }
 

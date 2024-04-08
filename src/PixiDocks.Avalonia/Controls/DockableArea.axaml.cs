@@ -113,7 +113,7 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
     }
 
     private ItemsPresenter _strip;
-    private TabControl tab;
+    private TabControl tabControl;
     private DockingDirection? _lastDirection;
 
     static DockableArea()
@@ -134,13 +134,13 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
     protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
     {
         base.OnApplyTemplate(e);
-        tab = e.NameScope.Find<TabControl>("PART_TabControl");
-        tab.ApplyTemplate();
-        _strip = tab.Presenter;
-        tab.PointerPressed += OnTabPointerPressed;
+        tabControl = e.NameScope.Find<TabControl>("PART_TabControl");
+        tabControl.ApplyTemplate();
+        _strip = tabControl.Presenter;
+        tabControl.PointerPressed += OnTabControlPointerPressed;
     }
 
-    private void OnTabPointerPressed(object? sender, PointerPressedEventArgs e)
+    private void OnTabControlPointerPressed(object? sender, PointerPressedEventArgs e)
     {
         FocusHost();
     }
@@ -148,9 +148,9 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
     protected override void OnTemplateChanged(AvaloniaPropertyChangedEventArgs e)
     {
         base.OnTemplateChanged(e);
-        if(tab != null)
+        if(tabControl != null)
         {
-            tab.PointerPressed += OnTabPointerPressed;
+            tabControl.PointerPressed += OnTabControlPointerPressed;
         }
     }
 
@@ -245,6 +245,10 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
         {
             _lastDirection = DockingDirection.Center;
             PseudoClasses.Set(":center", true);
+            PseudoClasses.Set(":left", false);
+            PseudoClasses.Set(":right", false);
+            PseudoClasses.Set(":top", false);
+            PseudoClasses.Set(":bottom", false);
 
             /*if (region.ValidDockable == null)
             {
@@ -293,10 +297,10 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
 
     private DockingDirection? GetDockingDirection(Point pos)
     {
-        Rect top = new Rect(0, 0, Bounds.Width, Bounds.Height / 3);
-        Rect bottom = new Rect(0, Bounds.Height - Bounds.Height / 3, Bounds.Width, Bounds.Height / 3);
-        Rect left = new Rect(0, 0, Bounds.Width / 3, Bounds.Height);
-        Rect right = new Rect(Bounds.Width - Bounds.Width / 3, 0, Bounds.Width / 3, Bounds.Height);
+        Rect top = new Rect(0, 0, Bounds.Width, Bounds.Height / 4);
+        Rect bottom = new Rect(0, Bounds.Height - Bounds.Height / 4, Bounds.Width, Bounds.Height / 4);
+        Rect left = new Rect(0, 0, Bounds.Width / 4, Bounds.Height);
+        Rect right = new Rect(Bounds.Width - Bounds.Width / 4, 0, Bounds.Width / 4, Bounds.Height);
 
         if(_strip != null && _strip.Bounds.Contains(pos))
         {
@@ -323,7 +327,7 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
             return DockingDirection.Right;
         }
 
-        if (Bounds.Contains(pos))
+        if (Dockables.Count == 0 && Bounds.Contains(pos))
         {
             return DockingDirection.Center;
         }
@@ -415,6 +419,17 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
     public void SplitUp(IDockable dockable)
     {
         Dock(dockable, DockingDirection.Top);
+    }
+
+    public bool IsPointerOverTab(PixelPoint position)
+    {
+        if(tabControl is null)
+        {
+            return false;
+        }
+
+        Point pos = this.PointToClient(position);
+        return tabControl.GetRealizedContainers().Any(x => x.Bounds.Contains(pos));
     }
 
     public event Action<bool>? FocusedChanged;

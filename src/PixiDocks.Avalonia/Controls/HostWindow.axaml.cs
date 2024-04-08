@@ -16,14 +16,13 @@ public class HostWindow : Window, IHostWindow
 {
     public IDockableHostRegion Region => _dockableRegion;
 
-    private HostWindowTitleBar? _hostWindowTitleBar;
+    public HostWindowTitleBar? TitleBar { get; private set; }
+    public DockableArea DockableArea { get; private set; }
 
     private bool _mouseDown, _draggingWindow;
 
-    private Control? _chromeGrip;
     private HostWindowState _state;
     private Point _dragStartPoint;
-    private DockableArea _dockableArea;
     private DockableAreaRegion _dockableRegion;
 
     protected override Type StyleKeyOverride => typeof(HostWindow);
@@ -63,21 +62,21 @@ public class HostWindow : Window, IHostWindow
         base.OnApplyTemplate(e);
 
         _dockableRegion = e.NameScope.Find<DockableAreaRegion>("PART_DockableRegion");
-       _dockableArea = e.NameScope.Find<DockableArea>("PART_DockableArea");
-        if (_dockableArea is not null)
+       DockableArea = e.NameScope.Find<DockableArea>("PART_DockableArea");
+        if (DockableArea is not null)
         {
-            _dockableArea.Context = _state.Context;
-            _dockableArea.ActiveDockable = Content as IDockable;
+            DockableArea.Context = _state.Context;
+            DockableArea.ActiveDockable = Content as IDockable;
         }
 
-        _hostWindowTitleBar = e.NameScope.Find<HostWindowTitleBar>("PART_TitleBar");
-        if (_hostWindowTitleBar is not null)
+        TitleBar = e.NameScope.Find<HostWindowTitleBar>("PART_TitleBar");
+        if (TitleBar is not null)
         {
-            _hostWindowTitleBar.ApplyTemplate();
+            TitleBar.ApplyTemplate();
 
-            if (_hostWindowTitleBar.BackgroundControl is not null)
+            if (TitleBar.BackgroundControl is not null)
             {
-                _hostWindowTitleBar.BackgroundControl.PointerPressed += (_, args) =>
+                TitleBar.BackgroundControl.PointerPressed += (_, args) =>
                 {
                     MoveDrag(args, new Point(0, 0));
                 };
@@ -92,6 +91,7 @@ public class HostWindow : Window, IHostWindow
         PseudoClasses.Set(":dragging", true);
         _draggingWindow = true;
         _dragStartPoint = e.GetPosition(this) + pt;
+        _state.ProcessDragEvent(this.PointToScreen(_dragStartPoint), EventType.DragStart);
         BeginMoveDrag(e);
 
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
@@ -115,7 +115,7 @@ public class HostWindow : Window, IHostWindow
     {
         base.OnPointerPressed(e);
 
-        if (_chromeGrip is not null && _chromeGrip.IsPointerOver)
+        if (TitleBar is not null && TitleBar.IsPointerOver)
         {
             if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
             {
