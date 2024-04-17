@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.Windows.Input;
 
 namespace PixiDocks.Core.Docking;

@@ -2,6 +2,7 @@ using System.Text.Json;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Data;
 using Avalonia.Media;
 using Avalonia.VisualTree;
 using PixiDocks.Avalonia.Controls;
@@ -112,10 +113,35 @@ public class DockContext : IDockContext
             CanClose = content.CanClose,
             Icon = content.TabCustomizationSettings.Icon as IImage,
             ShowCloseButton = content.TabCustomizationSettings.ShowCloseButton,
+            DockableContent = content,
             Content = content,
         };
 
+        CreateBindings(dockable);
+
         return dockable;
+    }
+
+    private void CreateBindings(Dockable dockable)
+    {
+        Binding titleBinding = new(nameof(dockable.DockableContent.Title), BindingMode.TwoWay)
+        {
+            Source = dockable.DockableContent,
+        };
+
+        Binding iconBinding = new(nameof(dockable.DockableContent.TabCustomizationSettings.Icon), BindingMode.TwoWay)
+        {
+            Source = dockable.DockableContent.TabCustomizationSettings,
+        };
+
+        Binding showCloseButtonBinding = new(nameof(dockable.DockableContent.TabCustomizationSettings.ShowCloseButton), BindingMode.TwoWay)
+        {
+            Source = dockable.DockableContent.TabCustomizationSettings,
+        };
+
+        dockable.Bind(Dockable.TitleProperty, titleBinding);
+        dockable.Bind(Dockable.IconProperty, iconBinding);
+        dockable.Bind(Dockable.ShowCloseButtonProperty, showCloseButtonBinding);
     }
 
     public IHostWindow Float(IDockable dockable, double x, double y)

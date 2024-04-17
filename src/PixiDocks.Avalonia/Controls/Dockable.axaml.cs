@@ -23,7 +23,7 @@ public class Dockable : ContentControl, IDockable, IDockableSelectionEvents, IDo
     public static readonly StyledProperty<string> TitleProperty = AvaloniaProperty.Register<Dockable, string>(
         nameof(Title));
 
-    public static readonly StyledProperty<Control> DockableContentProperty = AvaloniaProperty.Register<Dockable, Control>(
+    public static readonly StyledProperty<IDockableContent> DockableContentProperty = AvaloniaProperty.Register<Dockable, IDockableContent>(
         nameof(DockableContent));
 
     public static readonly StyledProperty<bool> CanFloatProperty = AvaloniaProperty.Register<Dockable, bool>(
@@ -89,7 +89,7 @@ public class Dockable : ContentControl, IDockable, IDockableSelectionEvents, IDo
         set => SetValue(CanFloatProperty, value);
     }
 
-    public Control DockableContent
+    public IDockableContent DockableContent
     {
         get => GetValue(DockableContentProperty);
         set => SetValue(DockableContentProperty, value);
