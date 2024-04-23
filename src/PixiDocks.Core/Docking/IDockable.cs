@@ -11,10 +11,9 @@ public interface IDockable : IDockableLayoutElement
     string Title { get;  }
     bool CanFloat { get; }
     bool CanClose { get; }
-    object? Icon { get; set; }
     public IDockableHost? Host { get; set; }
     public bool CanSplit => Host?.Dockables.Count > 1;
-    public bool ShowCloseButton { get; }
+    public TabCustomizationSettings TabCustomizationSettings { get; }
 
     IEnumerator IEnumerable.GetEnumerator()
     {

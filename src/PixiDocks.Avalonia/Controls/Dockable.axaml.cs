@@ -32,11 +32,14 @@ public class Dockable : ContentControl, IDockable, IDockableSelectionEvents, IDo
     public static readonly StyledProperty<bool> CanCloseProperty = AvaloniaProperty.Register<Dockable, bool>(
         nameof(CanClose), true);
 
-    public static readonly StyledProperty<IImage?> IconProperty = AvaloniaProperty.Register<Dockable, IImage?>(
-        nameof(Icon));
+    public static readonly StyledProperty<TabCustomizationSettings> TabCustomizationSettingsProperty = AvaloniaProperty.Register<Dockable, TabCustomizationSettings>(
+        nameof(TabCustomizationSettings));
 
-    public static readonly StyledProperty<bool> ShowCloseButtonProperty = AvaloniaProperty.Register<Dockable, bool>(
-        nameof(ShowCloseButton), defaultValue: false);
+    public TabCustomizationSettings TabCustomizationSettings
+    {
+        get => GetValue(TabCustomizationSettingsProperty);
+        set => SetValue(TabCustomizationSettingsProperty, value);
+    }
 
     public static readonly RoutedEvent<RoutedEventArgs> SelectedEvent = RoutedEvent.Register<Dockable, RoutedEventArgs>(
         nameof(Selected), RoutingStrategies.Bubble);
@@ -63,18 +66,6 @@ public class Dockable : ContentControl, IDockable, IDockableSelectionEvents, IDo
     {
         add => AddHandler(CloseEvent, value);
         remove => RemoveHandler(CloseEvent, value);
-    }
-
-    public IImage? Icon
-    {
-        get => GetValue(IconProperty);
-        set => SetValue(IconProperty, value);
-    }
-
-    object? IDockable.Icon
-    {
-        get => Icon;
-        set => Icon = (IImage?)value;
     }
 
     public bool CanClose
@@ -107,12 +98,6 @@ public class Dockable : ContentControl, IDockable, IDockableSelectionEvents, IDo
         set => SetValue(IdProperty, value);
     }
 
-    public bool ShowCloseButton
-    {
-        get => GetValue(ShowCloseButtonProperty);
-        set => SetValue(ShowCloseButtonProperty, value);
-    }
-
     private IDockableHost? host;
 
     public IDockableHost? Host
@@ -135,6 +120,11 @@ public class Dockable : ContentControl, IDockable, IDockableSelectionEvents, IDo
                 }
             }
         }
+    }
+
+    public void CloseDockable()
+    {
+        Host?.Close(this);
     }
 
     private void OnFocusedChanged(bool focused)

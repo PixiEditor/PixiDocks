@@ -1,8 +1,9 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:controls="using:PixiDocks.Avalonia.Controls"
-        xmlns:core="clr-namespace:PixiDocks.Core;assembly=PixiDocks.Core"
-        xmlns:docking="clr-namespace:PixiDocks.Core.Docking;assembly=PixiDocks.Core">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:controls="using:PixiDocks.Avalonia.Controls"
+                    xmlns:core="clr-namespace:PixiDocks.Core;assembly=PixiDocks.Core"
+                    xmlns:docking="clr-namespace:PixiDocks.Core.Docking;assembly=PixiDocks.Core"
+                    xmlns:avalonia="clr-namespace:PixiDocks.Avalonia">
     <Design.PreviewWith>
         <controls:DockableAreaStripItem />
     </Design.PreviewWith>
@@ -11,24 +12,24 @@
         <MenuItem Header="_Float"
                   Command="{Binding Host.Float}"
                   CommandParameter="{Binding }"
-                  IsVisible="{Binding CanFloat}"/>
+                  IsVisible="{Binding CanFloat}" />
         <MenuItem Header="_Close"
                   Command="{Binding Host.Close}"
                   CommandParameter="{Binding }"
-                  IsVisible="{Binding CanClose}"/>
+                  IsVisible="{Binding CanClose}" />
         <MenuItem Header="Close _All"
                   Command="{Binding Host.CloseAll}"
-                  CommandParameter="{Binding }"/>
+                  CommandParameter="{Binding }" />
         <MenuItem Header="Close _Other Tabs"
-                    Command="{Binding Host.CloseAllExcept}"
-                    CommandParameter="{Binding }"/>
-        <Separator/>
+                  Command="{Binding Host.CloseAllExcept}"
+                  CommandParameter="{Binding }" />
+        <Separator />
         <MenuItem Header="Split _Down"
                   Command="{Binding Host.SplitDown}"
                   CommandParameter="{Binding }"
                   IsVisible="{Binding CanSplit}">
             <MenuItem.Icon>
-                <Image Source="/Images/bottom-dock.png" Width="16" Height="16"/>
+                <Image Source="/Images/bottom-dock.png" Width="16" Height="16" />
             </MenuItem.Icon>
         </MenuItem>
         <MenuItem Header="Split _Up"
@@ -36,7 +37,7 @@
                   CommandParameter="{Binding }"
                   IsVisible="{Binding CanSplit}">
             <MenuItem.Icon>
-                <Image Source="/Images/up-dock.png" Width="16" Height="16"/>
+                <Image Source="/Images/up-dock.png" Width="16" Height="16" />
             </MenuItem.Icon>
         </MenuItem>
         <MenuItem Header="Split _Left"
@@ -44,7 +45,7 @@
                   CommandParameter="{Binding }"
                   IsVisible="{Binding CanSplit}">
             <MenuItem.Icon>
-                <Image Source="/Images/left-dock.png" Width="16" Height="16"/>
+                <Image Source="/Images/left-dock.png" Width="16" Height="16" />
             </MenuItem.Icon>
         </MenuItem>
         <MenuItem Header="Split _Right"
@@ -52,7 +53,7 @@
                   CommandParameter="{Binding }"
                   IsVisible="{Binding CanSplit}">
             <MenuItem.Icon>
-                <Image Source="/Images/right-dock.png" Width="16" Height="16"/>
+                <Image Source="/Images/right-dock.png" Width="16" Height="16" />
             </MenuItem.Icon>
         </MenuItem>
     </ContextMenu>
@@ -63,42 +64,31 @@
             <ControlTemplate x:CompileBindings="True">
                 <Border
                     Classes="TabStripBorder"
-                        DataContext="{Binding Dockable, RelativeSource={RelativeSource TemplatedParent}}"
-                        ContextMenu="{StaticResource DockableAreaItemContextMenu}">
-                    <DockPanel LastChildFill="False" Margin="5, 0">
-                        <Image IsVisible="{Binding !!Icon}" Source="{Binding Icon}"
-                               VerticalAlignment="Center"
-                               RenderOptions.BitmapInterpolationMode="None"
-                               DockPanel.Dock="Left" Width="16" Height="16"/>
-                        <TextBlock Padding="5" DockPanel.Dock="Left" Foreground="{DynamicResource ThemeForegroundBrush}"
-                                   VerticalAlignment="Center"
-                                   Text="{Binding Title, FallbackValue=TITLE}"/>
-                        <Button Classes="CloseTabButton"
-                                Height="16" Width="16" Margin="5, 0, 0, 0"
-                                VerticalAlignment="Center"
-                                Command="{Binding Host.Close}"
-                                CommandParameter="{Binding .}"
-                                IsVisible="{Binding ShowCloseButton}"
-                                IsEnabled="{Binding CanClose}"/>
-                    </DockPanel>
+                    DataContext="{Binding Dockable, RelativeSource={RelativeSource TemplatedParent}}"
+                    ContextMenu="{StaticResource DockableAreaItemContextMenu}">
+                    <ContentControl Tag="{Binding}" Content="{ReflectionBinding TabCustomizationSettings}">
+                        <ContentControl.DataTemplates>
+                            <avalonia:TabDataTemplateResolver/>
+                        </ContentControl.DataTemplates>
+                    </ContentControl>
                 </Border>
             </ControlTemplate>
         </Setter>
 
         <Style Selector="^ /template/ Border">
-            <Setter Property="CornerRadius" Value="{DynamicResource ThemeDockTabStripCornerRadius}"/>
+            <Setter Property="CornerRadius" Value="{DynamicResource ThemeDockTabStripCornerRadius}" />
         </Style>
 
         <Style Selector="^:selected /template/ Border">
-            <Setter Property="Background" Value="{DynamicResource ThemeDockSelectedBrush}"/>
+            <Setter Property="Background" Value="{DynamicResource ThemeDockSelectedBrush}" />
         </Style>
 
         <Style Selector="^:pointerover /template/ Border">
-            <Setter Property="Background" Value="{DynamicResource ThemeDockHighlightBrush}"/>
+            <Setter Property="Background" Value="{DynamicResource ThemeDockHighlightBrush}" />
         </Style>
 
         <Style Selector="^:focused:selected /template/ Border">
-            <Setter Property="Background" Value="{DynamicResource ThemeDockAccentBrush}"/>
+            <Setter Property="Background" Value="{DynamicResource ThemeDockAccentBrush}" />
         </Style>
     </ControlTheme>
 </ResourceDictionary>

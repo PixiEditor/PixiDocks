@@ -111,8 +111,7 @@ public class DockContext : IDockContext
             Title = content.Title,
             CanFloat = content.CanFloat,
             CanClose = content.CanClose,
-            Icon = content.TabCustomizationSettings.Icon as IImage,
-            ShowCloseButton = content.TabCustomizationSettings.ShowCloseButton,
+            TabCustomizationSettings = content.TabCustomizationSettings,
             DockableContent = content,
             Content = content,
         };
@@ -129,19 +128,13 @@ public class DockContext : IDockContext
             Source = dockable.DockableContent,
         };
 
-        Binding iconBinding = new(nameof(dockable.DockableContent.TabCustomizationSettings.Icon), BindingMode.TwoWay)
+        Binding tabCustomizationSettingsBinding = new(nameof(dockable.DockableContent.TabCustomizationSettings), BindingMode.TwoWay)
         {
-            Source = dockable.DockableContent.TabCustomizationSettings,
-        };
-
-        Binding showCloseButtonBinding = new(nameof(dockable.DockableContent.TabCustomizationSettings.ShowCloseButton), BindingMode.TwoWay)
-        {
-            Source = dockable.DockableContent.TabCustomizationSettings,
+            Source = dockable.DockableContent,
         };
 
         dockable.Bind(Dockable.TitleProperty, titleBinding);
-        dockable.Bind(Dockable.IconProperty, iconBinding);
-        dockable.Bind(Dockable.ShowCloseButtonProperty, showCloseButtonBinding);
+        dockable.Bind(Dockable.TabCustomizationSettingsProperty, tabCustomizationSettingsBinding);
     }
 
     public IHostWindow Float(IDockable dockable, double x, double y)
