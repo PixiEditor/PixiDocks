@@ -3,7 +3,8 @@
         xmlns:controls="using:PixiDocks.Avalonia.Controls"
         xmlns:core="clr-namespace:PixiDocks.Core;assembly=PixiDocks.Core"
         xmlns:behaviors="clr-namespace:PixiDocks.Avalonia.Behaviors"
-        xmlns:avalonia="clr-namespace:PixiDocks.Avalonia">
+        xmlns:avalonia="clr-namespace:PixiDocks.Avalonia"
+        xmlns:panels="clr-namespace:PixiDocks.Avalonia.Panels">
     <Design.PreviewWith>
         <controls:DockableArea />
     </Design.PreviewWith>
@@ -18,14 +19,6 @@
                         ClipToBounds="True"
                         BorderThickness="{TemplateBinding BorderThickness}">
                     <Border.Styles>
-                        <Style Selector=":is(TabControl).draggable">
-                            <Setter Property="ItemsPanel">
-                                <ItemsPanelTemplate>
-                                    <StackPanel Orientation="Horizontal" />
-                                </ItemsPanelTemplate>
-                            </Setter>
-                        </Style>
-
                         <Style Selector=":is(TabControl).draggable > :is(TabItem)">
                             <Setter Property="ZIndex" Value="0" />
                             <Setter Property="(Interaction.Behaviors)">
@@ -50,10 +43,16 @@
                             <Border Classes="dockPreview" Grid.Row="0" Grid.Column="0" Grid.RowSpan="3" Grid.ColumnSpan="3" Name="CenterPreview"/>
                         </Grid>
                         <Grid>
-                            <TabControl Name="PART_TabControl" Theme="{DynamicResource PixiDockTabControlTheme}" Classes="draggable"
+                            <TabControl Name="PART_TabControl" Theme="{DynamicResource PixiDockTabControlTheme}"
+                                        Classes="draggable"
                                         SelectedItem="{Binding Path=ActiveDockable, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
                                         ItemsSource="{TemplateBinding Dockables}"
                                         TabStripPlacement="{TemplateBinding TabPlacement}">
+                                <TabControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <panels:TabGrid HorizontalAlignment="Left" />
+                                    </ItemsPanelTemplate>
+                                </TabControl.ItemsPanel>
                                 <TabControl.ItemTemplate>
                                     <DataTemplate>
                                         <controls:DockableAreaStripItem DockPanel.Dock="Top"

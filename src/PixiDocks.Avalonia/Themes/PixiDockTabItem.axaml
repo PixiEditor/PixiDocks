@@ -8,7 +8,9 @@
         <Setter Property="Padding" Value="0"/>
         <Setter Property="Margin" Value="0"/>
         <Setter Property="Foreground" Value="White"/>
-        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        <Setter Property="MinWidth" Value="10"/>
+        <!--<Setter Property="MaxWidth" Value="250"/>-->
         <Setter Property="VerticalContentAlignment" Value="Center"/>
         <Setter Property="Template">
             <ControlTemplate>
@@ -18,7 +20,7 @@
                         Padding="{TemplateBinding Padding}"
                         Background="Transparent"
                         Margin="{TemplateBinding Margin}">
-                    <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                    <ContentPresenter Name="Presenter" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                       Content="{TemplateBinding Header}"
                                       ContentTemplate="{TemplateBinding HeaderTemplate}"
                                       VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
