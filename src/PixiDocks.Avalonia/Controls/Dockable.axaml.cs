@@ -146,7 +146,7 @@ public class Dockable : ContentControl, IDockable, IDockableSelectionEvents, IDo
     {
         if(Content is IDockableSelectionEvents selectionEvents)
         {
-            selectionEvents.OnSelected();
+            selectionEvents.OnDeselected();
         }
 
         RaiseEvent(new RoutedEventArgs(DeselectedEvent));
