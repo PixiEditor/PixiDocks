@@ -33,6 +33,14 @@
                         <Style Selector=":is(TabControl).draggable > :is(TabItem):pressed">
                             <Setter Property="ZIndex" Value="1" />
                         </Style>
+
+                        <Style Selector=":is(TabControl).draggable">
+                            <Setter Property="ItemsPanel">
+                                <ItemsPanelTemplate>
+                                    <panels:TabGrid HorizontalAlignment="Left" />
+                                </ItemsPanelTemplate>
+                            </Setter>
+                        </Style>
                     </Border.Styles>
                     <Grid>
                         <Grid ColumnDefinitions="*, *, *" RowDefinitions="*, *, *" ZIndex="9999">
