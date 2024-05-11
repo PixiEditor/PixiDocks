@@ -12,7 +12,7 @@ public class HostWindowState
     public IDockContext Context { get; }
     public HostWindow Window { get; }
 
-    private IDockableHost? _lastHost;
+    private IDockableTarget? _lastHost;
     private bool isDraggingTab;
 
     public HostWindowState(IDockContext context, HostWindow window)
@@ -34,7 +34,7 @@ public class HostWindowState
         }
         if (type == EventType.DragMove && isDraggingTab)
         {
-            if (IsOverDockHost(Window.Region.AllHosts, position, out var host))
+            if (IsOverDockTarget(Window.Region.AllTargets, position, out var host))
             {
                 if(_lastHost != null && _lastHost != host)
                 {
@@ -64,7 +64,7 @@ public class HostWindowState
             if(_lastHost != null)
             {
                 _lastHost.OnDockableExited(Window.Region, position.X, position.Y);
-                if (Window.Region.CanDock())
+                if (_lastHost.CanDock())
                 {
                     _lastHost.Dock(Window.Region.ValidDockable);
                     _lastHost = null;
@@ -75,12 +75,12 @@ public class HostWindowState
         }
     }
 
-    private bool IsOverDockHost(IReadOnlyCollection<IDockableHost> except, PixelPoint position, out IDockableHost? host)
+    private bool IsOverDockTarget(IReadOnlyCollection<IDockableTarget> except, PixelPoint position, out IDockableTarget? host)
     {
         host = null;
-        foreach (IDockableHost dockHost in Context.AllHosts)
+        foreach (IDockableTarget dockHost in Context.AllTargets.OrderByDescending(x => x.DockingOrder))
         {
-            if (dockHost.IsDockableWithin(position.X, position.Y) && !except.Contains(dockHost))
+            if (dockHost.IsPointWithin(position.X, position.Y) && !except.Contains(dockHost))
             {
                 host = dockHost;
                 return true;

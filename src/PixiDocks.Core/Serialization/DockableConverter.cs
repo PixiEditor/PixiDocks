@@ -6,7 +6,7 @@ namespace PixiDocks.Core.Serialization;
 
 public class DockableConverter : CustomConverter<IDockable>
 {
-    public override void Write(Utf8JsonWriter writer, IDockable value, JsonSerializerOptions options)
+    public override void Write(Utf8JsonWriter writer, IDockable? value, JsonSerializerOptions options)
     {
         writer.WriteStartObject();
         writer.WriteString("Id", value.Id);

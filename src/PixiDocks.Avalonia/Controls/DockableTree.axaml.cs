@@ -4,6 +4,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.Metadata;
 using Avalonia.Controls.Presenters;
 using Avalonia.Controls.Primitives;
+using PixiDocks.Avalonia.Utils;
 using PixiDocks.Core.Docking;
 using PixiDocks.Core.Serialization;
 
@@ -14,14 +15,19 @@ namespace PixiDocks.Avalonia.Controls;
 [TemplatePart(Name = "PART_SecondPresenter", Type = typeof(ContentPresenter))]
 public class DockableTree : TemplatedControl, ITreeElement, IDockableTree
 {
-    public static readonly StyledProperty<ITreeElement?> FirstProperty = AvaloniaProperty.Register<DockableTree, ITreeElement>(
-        nameof(First));
+    public const int DockBorderThickness = 25;
 
-    public static readonly StyledProperty<ITreeElement?> SecondProperty = AvaloniaProperty.Register<DockableTree, ITreeElement?>(
-        nameof(Second));
+    public static readonly StyledProperty<ITreeElement> FirstProperty =
+        AvaloniaProperty.Register<DockableTree, ITreeElement>(
+            nameof(First));
 
-    public static readonly StyledProperty<DockingDirection?> SplitDirectionProperty = AvaloniaProperty.Register<DockableTree, DockingDirection?>(
-        nameof(SplitDirection));
+    public static readonly StyledProperty<ITreeElement?> SecondProperty =
+        AvaloniaProperty.Register<DockableTree, ITreeElement?>(
+            nameof(Second));
+
+    public static readonly StyledProperty<DockingDirection?> SplitDirectionProperty =
+        AvaloniaProperty.Register<DockableTree, DockingDirection?>(
+            nameof(SplitDirection));
 
     public DockingDirection? SplitDirection
     {
@@ -50,6 +56,21 @@ public class DockableTree : TemplatedControl, ITreeElement, IDockableTree
         set => SetValue(IdProperty, value);
     }
 
+    int IDockableTarget.DockingOrder => 50;
+    IReadOnlyCollection<IDockable?> IDockableTarget.Dockables { get; } = new List<IDockable?>();
+    IDockable? IDockableTarget.ActiveDockable { get; set; }
+
+    public static readonly StyledProperty<IDockContext> ContextProperty =
+        AvaloniaProperty.Register<DockableTree, IDockContext>(
+            nameof(DockContext));
+
+    public IDockContext Context
+    {
+        get => GetValue(ContextProperty);
+        set => SetValue(ContextProperty, value);
+    }
+
+    public DockableAreaRegion Region { get; set; }
     public DockableTree? DockableParent { get; set; }
 
     public double FirstSize
@@ -96,7 +117,7 @@ public class DockableTree : TemplatedControl, ITreeElement, IDockableTree
         }
         set
         {
-           _queuedSecondSize = value;
+            _queuedSecondSize = value;
             if (_queuedSecondSize <= 1)
             {
                 _queuedSecondType = GridUnitType.Star;
@@ -116,30 +137,24 @@ public class DockableTree : TemplatedControl, ITreeElement, IDockableTree
     private double _queuedSecondSize = 1;
     private GridUnitType _queuedSecondType = GridUnitType.Star;
 
+    private DockingDirection? _lastDirection = null;
+
     static DockableTree()
     {
         FirstProperty.Changed.AddClassHandler<DockableTree>(ElementAttached);
         SecondProperty.Changed.AddClassHandler<DockableTree>(ElementAttached);
-    }
-
-    private static void ElementAttached(DockableTree sender, AvaloniaPropertyChangedEventArgs e)
-    {
-        if (e.NewValue is DockableTree tree)
-        {
-            tree.DockableParent = sender;
-        }
+        ContextProperty.Changed.AddClassHandler<DockableTree>(ContextChanged);
     }
 
     public DockableTree()
     {
-
     }
 
     protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
     {
         base.OnApplyTemplate(e);
         _grid = e.NameScope.Find<Grid>("PART_Grid");
-        if(_queuedFirstSize == 1 && _queuedSecondSize == 1)
+        if (_queuedFirstSize == 1 && _queuedSecondSize == 1)
         {
             if (SplitDirection is DockingDirection.Right or DockingDirection.Bottom)
             {
@@ -154,8 +169,8 @@ public class DockableTree : TemplatedControl, ITreeElement, IDockableTree
         UpdateGrid();
     }
 
-    public DockableArea Split(DockingDirection direction, Dictionary<DockableArea, DockableTree> dockableAreaToTree,
-        DockableArea areaToSplit)
+    public DockableArea Split(DockingDirection direction,
+        IDockableTarget areaToSplit)
     {
         DockableArea second = new();
 
@@ -165,20 +180,39 @@ public class DockableTree : TemplatedControl, ITreeElement, IDockableTree
         {
             area = Second as DockableArea;
             DetachOldParents(area);
-            Second = new DockableTree() { First = area, DockableParent = this };
+            Second = new DockableTree()
+            {
+                First = area,
+                DockableParent = this,
+                Context = Context,
+                Region = Region
+            };
             resultTree = Second as DockableTree;
         }
-        else
+        else if (areaToSplit == First)
         {
             area = First as DockableArea;
             DetachOldParents(area);
-            First = new DockableTree() { First = area, DockableParent = this };
+            First = new DockableTree()
+            {
+                First = area,
+                DockableParent = this,
+                Context = Context,
+                Region = Region
+            };
             resultTree = First as DockableTree;
         }
-        dockableAreaToTree[area] = resultTree;
+        else if (Equals(areaToSplit, this))
+        {
+            resultTree = SplitThis(direction);
+        }
+        else
+        {
+            throw new InvalidOperationException("Area to split is not a child of this tree");
+        }
 
-        resultTree.Second = new DockableTree() { First = second, DockableParent = resultTree };
-        dockableAreaToTree.Add(second, resultTree.Second as DockableTree);
+        resultTree.Second = new DockableTree()
+            { First = second, DockableParent = resultTree, Context = Context, Region = Region };
 
         resultTree.SplitDirection = direction;
 
@@ -186,26 +220,54 @@ public class DockableTree : TemplatedControl, ITreeElement, IDockableTree
         return second;
     }
 
-    private void DetachOldParents(DockableArea? area)
+    private DockableTree SplitThis(DockingDirection direction)
     {
-        if (area is null)
+        DockableTree resultTree;
+        var firstElement = First;
+        DetachOldParents(firstElement);
+        var secondElement = Second;
+        DetachOldParents(secondElement);
+
+        DockableTree newTree = new DockableTree
+        {
+            Context = Context, Region = Region, DockableParent = this,
+            First = firstElement,
+            Second = secondElement,
+            SplitDirection = SplitDirection
+        };
+
+        First = newTree;
+        resultTree = this;
+        return resultTree;
+    }
+
+    private void DetachOldParents(ITreeElement? element)
+    {
+        if (element is null)
         {
             return;
         }
 
-        foreach (var dockable in area.Dockables)
+        if (element is DockableTree tree)
         {
-            if (dockable is Dockable dockableControl)
+            tree.DetachOldParents(tree.First);
+            tree.DetachOldParents(tree.Second);
+        }
+
+        if (element is IDockableTarget target)
+        {
+            foreach (var dockable in target.Dockables)
             {
-                if (dockableControl.Parent is TabItem tabItem)
+                if (dockable is Dockable { Parent: TabItem tabItem })
                 {
-                    tabItem.Content = null; // This removes Dockable as a content from old tabitem which doesn't have any parent
+                    tabItem.Content =
+                        null; // This removes Dockable as a content from old tabitem which doesn't have any parent
                 }
             }
         }
     }
 
-    public void RemoveDockableArea(ITreeElement element, Dictionary<DockableArea, DockableTree> cache)
+    public void RemoveDockableArea(ITreeElement element)
     {
         if (First == element)
         {
@@ -216,14 +278,9 @@ public class DockableTree : TemplatedControl, ITreeElement, IDockableTree
             Second = null;
         }
 
-        if (element is DockableArea area)
-        {
-            cache.Remove(area);
-        }
-
         if (First == null && Second == null)
         {
-            DockableParent?.RemoveDockableArea(this, cache);
+            DockableParent?.RemoveDockableArea(this);
         }
 
         SplitDirection = null;
@@ -243,16 +300,17 @@ public class DockableTree : TemplatedControl, ITreeElement, IDockableTree
             return;
         }
 
+        _grid.ColumnDefinitions.Clear();
+        _grid.RowDefinitions.Clear();
+
         if (SplitDirection is DockingDirection.Right or DockingDirection.Left)
         {
-            _grid.ColumnDefinitions.Clear();
             _grid.ColumnDefinitions.Add(new ColumnDefinition(_queuedFirstSize, _queuedFirstType));
             _grid.ColumnDefinitions.Add(new ColumnDefinition(5, GridUnitType.Pixel));
             _grid.ColumnDefinitions.Add(new ColumnDefinition(_queuedSecondSize, _queuedSecondType));
         }
         else if (SplitDirection is DockingDirection.Top or DockingDirection.Bottom)
         {
-            _grid.RowDefinitions.Clear();
             _grid.RowDefinitions.Add(new RowDefinition(_queuedFirstSize, _queuedFirstType));
             _grid.RowDefinitions.Add(new RowDefinition(5, GridUnitType.Pixel));
             _grid.RowDefinitions.Add(new RowDefinition(_queuedSecondSize, _queuedSecondType));
@@ -264,6 +322,7 @@ public class DockableTree : TemplatedControl, ITreeElement, IDockableTree
 
     public void SetRegion(DockableAreaRegion sender)
     {
+        Region = sender;
         if (First is DockableArea area)
         {
             area.Region = sender;
@@ -283,19 +342,125 @@ public class DockableTree : TemplatedControl, ITreeElement, IDockableTree
         }
     }
 
-    private void SetPseudoClasses()
+    public void Dock(IDockable? dockable)
     {
-        PseudoClasses.Set(":split", SplitDirection.HasValue);
-        PseudoClasses.Set(":left", SplitDirection is DockingDirection.Left);
-        PseudoClasses.Set(":right", SplitDirection is DockingDirection.Right);
-        PseudoClasses.Set(":top", SplitDirection is DockingDirection.Top);
-        PseudoClasses.Set(":bottom", SplitDirection is DockingDirection.Bottom);
-        PseudoClasses.Set(":horizontal", SplitDirection is DockingDirection.Left or DockingDirection.Right);
-        PseudoClasses.Set(":vertical", SplitDirection is DockingDirection.Top or DockingDirection.Bottom);
+        if (_lastDirection.HasValue)
+        {
+            var target = Region.SplitDockableArea(this, _lastDirection.Value);
+            Context.Dock(dockable, target);
+        }
+    }
+
+    void IDockableTarget.AddDockable(IDockable? dockable)
+    {
+
+    }
+
+    void IDockableTarget.RemoveDockable(IDockable? dockable)
+    {
+    }
+
+    public bool IsPointWithin(int x, int y)
+    {
+        Point point = CoordinatesUtil.ToRelativePoint(this, x, y);
+        if (First is IDockableTarget target)
+        {
+            if(target.IsPointWithin(x, y)) return false;
+        }
+        if (Second is IDockableTarget target2)
+        {
+            if(target2.IsPointWithin(x, y)) return false;
+        }
+
+        return Bounds.Contains(point) && !Bounds.Deflate(DockBorderThickness).Contains(point);
+    }
+
+    public void OnDockableEntered(IDockableHostRegion region, int x, int y)
+    {
+        if (!CanDock()) return;
+        PseudoClasses.Set(":dockableOver", true);
+    }
+
+    public void OnDockableOver(IDockableHostRegion region, int x, int y)
+    {
+        Point? pos = CoordinatesUtil.ToRelativePoint(this, x, y);
+
+        _lastDirection = GetDockingDirection(pos.Value);
+        if (_lastDirection.HasValue && CanDock())
+        {
+            bool isCenter = _lastDirection.Value == DockingDirection.Center;
+            PseudoClasses.Set(":centerPreview", isCenter);
+
+            bool isLeft = _lastDirection.Value == DockingDirection.Left;
+            PseudoClasses.Set(":leftPreview", isLeft);
+
+            bool isRight = _lastDirection.Value == DockingDirection.Right;
+            PseudoClasses.Set(":rightPreview", isRight);
+
+            bool isTop = _lastDirection.Value == DockingDirection.Top;
+            PseudoClasses.Set(":topPreview", isTop);
+
+            bool isBottom = _lastDirection.Value == DockingDirection.Bottom;
+            PseudoClasses.Set(":bottomPreview", isBottom);
+        }
+        else
+        {
+            PseudoClasses.Set(":centerPreview", false);
+            PseudoClasses.Set(":leftPreview", false);
+            PseudoClasses.Set(":rightPreview", false);
+            PseudoClasses.Set(":topPreview", false);
+            PseudoClasses.Set(":bottomPreview", false);
+        }
+    }
+
+    private DockingDirection? GetDockingDirection(Point pos)
+    {
+        Rect top = new Rect(0, 0, Bounds.Width, Bounds.Height / 4);
+        Rect bottom = new Rect(0, Bounds.Height - Bounds.Height / 4, Bounds.Width, Bounds.Height / 4);
+        Rect left = new Rect(0, 0, Bounds.Width / 4, Bounds.Height);
+        Rect right = new Rect(Bounds.Width - Bounds.Width / 4, 0, Bounds.Width / 4, Bounds.Height);
+
+        if (top.Contains(pos))
+        {
+            return DockingDirection.Top;
+        }
+
+        if (bottom.Contains(pos))
+        {
+            return DockingDirection.Bottom;
+        }
+
+        if (left.Contains(pos))
+        {
+            return DockingDirection.Left;
+        }
+
+        if (right.Contains(pos))
+        {
+            return DockingDirection.Right;
+        }
+
+        return null;
+    }
+
+    public void OnDockableExited(IDockableHostRegion region, int x, int y)
+    {
+        PseudoClasses.Set(":dockableOver", false);
+        PseudoClasses.Set(":centerPreview", false);
+        PseudoClasses.Set(":leftPreview", false);
+        PseudoClasses.Set(":rightPreview", false);
+        PseudoClasses.Set(":topPreview", false);
+        PseudoClasses.Set(":bottomPreview", false);
+    }
+
+    public bool CanDock()
+    {
+        return true;
     }
 
     public IEnumerator<IDockableLayoutElement> GetEnumerator()
     {
+        yield return this;
         if (First is IDockableLayoutElement first)
         {
             yield return first;
@@ -329,7 +494,7 @@ public class DockableTree : TemplatedControl, ITreeElement, IDockableTree
         {
             first.Traverse(action);
         }
-        else if(First is not null)
+        else if (First is not null)
         {
             action(First, this);
         }
@@ -338,9 +503,41 @@ public class DockableTree : TemplatedControl, ITreeElement, IDockableTree
         {
             second.Traverse(action);
         }
-        else if(Second is not null)
+        else if (Second is not null)
         {
             action(Second, this);
+        }
+    }
+
+    private void SetPseudoClasses()
+    {
+        PseudoClasses.Set(":split", SplitDirection.HasValue);
+        PseudoClasses.Set(":left", SplitDirection is DockingDirection.Left);
+        PseudoClasses.Set(":right", SplitDirection is DockingDirection.Right);
+        PseudoClasses.Set(":top", SplitDirection is DockingDirection.Top);
+        PseudoClasses.Set(":bottom", SplitDirection is DockingDirection.Bottom);
+        PseudoClasses.Set(":horizontal", SplitDirection is DockingDirection.Left or DockingDirection.Right);
+        PseudoClasses.Set(":vertical", SplitDirection is DockingDirection.Top or DockingDirection.Bottom);
+    }
+
+    private static void ElementAttached(DockableTree sender, AvaloniaPropertyChangedEventArgs e)
+    {
+        if (e.NewValue is DockableTree tree)
+        {
+            tree.DockableParent = sender;
+        }
+    }
+
+    private static void ContextChanged(DockableTree sender, AvaloniaPropertyChangedEventArgs e)
+    {
+        if (e.OldValue is IDockContext oldDockContext)
+        {
+            oldDockContext.RemoveDockableTarget(sender);
+        }
+
+        if (e.NewValue is IDockContext dockContext)
+        {
+            dockContext.AddDockableTarget(sender);
         }
     }
 }

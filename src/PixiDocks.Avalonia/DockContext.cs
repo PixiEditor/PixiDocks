@@ -14,15 +14,15 @@ namespace PixiDocks.Avalonia;
 
 public class DockContext : IDockContext
 {
-    private IDockableHost? _focusedHost;
-    private List<IDockableHost> allHosts = new();
+    private IDockableTarget? _focusedHost;
+    private List<IDockableTarget> allTargets = new();
     private List<IDockableHostRegion> allRegions = new();
     private Dictionary<string, HostWindow> floatingWindows = new();
 
     public IReadOnlyCollection<IDockableHostRegion> AllRegions => allRegions;
-    public IReadOnlyCollection<IDockableHost> AllHosts => allHosts;
+    public IReadOnlyCollection<IDockableTarget> AllTargets => allTargets;
 
-    public IDockableHost? FocusedHost
+    public IDockableTarget? FocusedTarget
     {
         get => _focusedHost;
         set
@@ -39,26 +39,26 @@ public class DockContext : IDockContext
 
     public Func<HostWindow> HostWindowFactory { get; set; } = () => new HostWindow();
 
-    public event Action<IDockableHost?>? FocusedHostChanged;
+    public event Action<IDockableTarget?>? FocusedHostChanged;
 
-    public void AddHost(IDockableHost host)
+    public void AddDockableTarget(IDockableTarget target)
     {
-        if (allHosts.Contains(host))
+        if (allTargets.Contains(target))
         {
             return;
         }
 
-        allHosts.Add(host);
+        allTargets.Add(target);
     }
 
-    public void RemoveHost(IDockableHost host)
+    public void RemoveDockableTarget(IDockableTarget target)
     {
-        if (!allHosts.Contains(host))
+        if (!allTargets.Contains(target))
         {
             return;
         }
 
-        allHosts.Remove(host);
+        allTargets.Remove(target);
     }
 
     public void AddRegion(IDockableHostRegion sender)
@@ -98,14 +98,14 @@ public class DockContext : IDockContext
         allRegions.Remove(sender);
     }
 
-    public IDockable CreateDockable(IDockableContent content)
+    public IDockable? CreateDockable(IDockableContent content)
     {
         if (content is null)
         {
             throw new ArgumentNullException(nameof(content));
         }
 
-        Dockable dockable = new()
+        Dockable? dockable = new()
         {
             Id = content.Id,
             Title = content.Title,
@@ -121,7 +121,7 @@ public class DockContext : IDockContext
         return dockable;
     }
 
-    private void CreateBindings(Dockable dockable)
+    private void CreateBindings(Dockable? dockable)
     {
         Binding titleBinding = new(nameof(dockable.DockableContent.Title), BindingMode.TwoWay)
         {
@@ -137,9 +137,9 @@ public class DockContext : IDockContext
         dockable.Bind(Dockable.TabCustomizationSettingsProperty, tabCustomizationSettingsBinding);
     }
 
-    public IHostWindow Float(IDockable dockable, double x, double y)
+    public IHostWindow Float(IDockable? dockable, double x, double y)
     {
-        if (floatingWindows.TryGetValue(dockable.Id, out HostWindow? value) && value.Region.AllHosts.Sum(x => x.Dockables.Count) == 1)
+        if (floatingWindows.TryGetValue(dockable.Id, out HostWindow? value) && value.Region.AllTargets.Sum(x => x.Dockables.Count) == 1)
         {
             return value;
         }
@@ -195,7 +195,7 @@ public class DockContext : IDockContext
         }
     }
 
-    public void Close(IDockable dockable)
+    public void Close(IDockable? dockable)
     {
         if(!dockable.CanClose) return;
 
@@ -223,17 +223,17 @@ public class DockContext : IDockContext
             return;
         }
 
-        for (var i = 0; i < hostWindow.Region.AllHosts.Count; i++)
+        for (var i = 0; i < hostWindow.Region.AllTargets.Count; i++)
         {
-            var host = hostWindow.Region.AllHosts.ElementAt(i);
-            allHosts.Remove(host);
-            allHosts.Insert(0, host);
+            var host = hostWindow.Region.AllTargets.ElementAt(i);
+            allTargets.Remove(host);
+            allTargets.Insert(0, host);
         }
 
         allRegions.Add(hostWindow.Region);
     }
 
-    public void Dock(IDockable dockable, IDockableHost toHost)
+    public void Dock(IDockable? dockable, IDockableTarget toHost)
     {
         if (toHost == null)
         {
@@ -245,7 +245,7 @@ public class DockContext : IDockContext
         if (floatingWindows.ContainsKey(dockable.Id))
         {
             HostWindow hostWindow = floatingWindows[dockable.Id];
-            if (hostWindow.Region.AllHosts.Sum(x => x.Dockables.Count) == 0)
+            if (hostWindow.Region.AllTargets.Sum(x => x.Dockables.Count) == 0)
             {
                 hostWindow.Close();
                 floatingWindows.Remove(dockable.Id);
@@ -263,11 +263,11 @@ public class DockContext : IDockContext
 
         toHost.AddDockable(dockable);
         toHost.ActiveDockable = dockable;
-        FocusedHost = toHost;
+        FocusedTarget = toHost;
     }
 
-    private HostWindow? TryGetHostWindow(IDockableHost toHost)
+    private HostWindow? TryGetHostWindow(IDockableTarget toHost)
     {
-        return floatingWindows.Values.FirstOrDefault(window => window.Region.AllHosts.Contains(toHost));
+        return floatingWindows.Values.FirstOrDefault(window => window.Region.AllTargets.Contains(toHost));
     }
 }

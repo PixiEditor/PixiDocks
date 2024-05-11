@@ -47,7 +47,7 @@ public class DockableHostConverter : CustomConverter<IDockableHost>
 
         while (reader.TokenType != JsonTokenType.EndArray)
         {
-            IDockable dockable = converter.Read(ref reader, LayoutTree.TypeMap[typeof(IDockable)], options);
+            IDockable? dockable = converter.Read(ref reader, LayoutTree.TypeMap[typeof(IDockable)], options);
             host.AddDockable(dockable);
         }
 

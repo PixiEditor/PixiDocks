@@ -12,10 +12,10 @@ namespace PixiDocks.Avalonia.Controls;
 
 public class DockableAreaStripItem : TemplatedControl
 {
-    public static readonly StyledProperty<IDockable> DockableProperty = AvaloniaProperty.Register<DockableAreaStripItem, IDockable>(
+    public static readonly StyledProperty<IDockable?> DockableProperty = AvaloniaProperty.Register<DockableAreaStripItem, IDockable>(
         nameof(Dockable));
 
-    public IDockable Dockable
+    public IDockable? Dockable
     {
         get => GetValue(DockableProperty);
         set => SetValue(DockableProperty, value);
@@ -53,7 +53,7 @@ public class DockableAreaStripItem : TemplatedControl
         strip.UpdateStripPseudoClasses();
     }
 
-    private void FocusedHostChanged(IDockableHost? obj)
+    private void FocusedHostChanged(IDockableTarget? obj)
     {
         UpdateStripPseudoClasses();
     }
@@ -119,6 +119,6 @@ public class DockableAreaStripItem : TemplatedControl
     private void UpdateStripPseudoClasses()
     {
         PseudoClasses.Set(":selected", _tabItem != null && _tabItem.IsSelected);
-        PseudoClasses.Set(":focused", Dockable != null && Dockable.Host?.Context.FocusedHost == Dockable.Host);
+        PseudoClasses.Set(":focused", Dockable != null && Dockable.Host?.Context.FocusedTarget == Dockable.Host);
     }
 }

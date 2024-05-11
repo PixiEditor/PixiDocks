@@ -9,62 +9,112 @@
         <!-- Set Defaults -->
         <Setter Property="Template">
             <ControlTemplate>
-                <Grid Name="PART_Grid">
-                    <ContentPresenter Name="PART_FirstPresenter" Content="{TemplateBinding First}"/>
-                    <GridSplitter Name="PART_Splitter" IsVisible="False" Background="Transparent"/>
-                    <ContentPresenter Name="PART_SecondPresenter" Content="{TemplateBinding Second}"/>
+                <Grid>
+                    <Grid ColumnDefinitions="*, *, *" RowDefinitions="*, *, *" ZIndex="9999" Name="PreviewGrid"
+                          IsVisible="False">
+                        <Border Classes="dockPreview" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3"
+                                Name="TopPreview" />
+                        <Border Classes="dockPreview" Grid.Row="0" Grid.Column="0" Grid.RowSpan="3"
+                                Name="LeftPreview" />
+                        <Border Classes="dockPreview" Grid.Row="0" Grid.Column="2" Grid.RowSpan="3"
+                                Name="RightPreview" />
+                        <Border Classes="dockPreview" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3"
+                                Name="BottomPreview" />
+                        <Border Classes="dockPreview" Grid.Row="0" Grid.Column="0" Grid.RowSpan="3"
+                                Grid.ColumnSpan="3" Name="CenterPreview" />
+                    </Grid>
+                    <Grid Name="PART_Grid">
+                        <ContentPresenter Name="PART_FirstPresenter" Content="{TemplateBinding First}" />
+                        <GridSplitter Name="PART_Splitter" IsVisible="False" Background="Transparent" />
+                        <ContentPresenter Name="PART_SecondPresenter" Content="{TemplateBinding Second}" />
+                    </Grid>
                 </Grid>
+
             </ControlTemplate>
         </Setter>
 
         <Style Selector="^:split /template/ GridSplitter#PART_Splitter">
-            <Setter Property="IsVisible" Value="True"/>
+            <Setter Property="IsVisible" Value="True" />
         </Style>
 
         <Style Selector="^:horizontal /template/ GridSplitter#PART_Splitter">
-            <Setter Property="Width" Value="2"/>
-            <Setter Property="ResizeDirection" Value="Columns"/>
-            <Setter Property="(Grid.Column)" Value="1"/>
-            <Setter Property="(Grid.Row)" Value="0"/>
+            <Setter Property="Width" Value="2" />
+            <Setter Property="ResizeDirection" Value="Columns" />
+            <Setter Property="(Grid.Column)" Value="1" />
+            <Setter Property="(Grid.Row)" Value="0" />
         </Style>
 
         <Style Selector="^:vertical /template/ GridSplitter#PART_Splitter">
-            <Setter Property="Height" Value="2"/>
-            <Setter Property="ResizeDirection" Value="Rows"/>
-            <Setter Property="(Grid.Row)" Value="1"/>
-            <Setter Property="(Grid.Column)" Value="0"/>
+            <Setter Property="Height" Value="2" />
+            <Setter Property="ResizeDirection" Value="Rows" />
+            <Setter Property="(Grid.Row)" Value="1" />
+            <Setter Property="(Grid.Column)" Value="0" />
         </Style>
 
         <Style Selector="^:right /template/ ContentPresenter#PART_FirstPresenter">
-            <Setter Property="(Grid.Column)" Value="0"/>
+            <Setter Property="(Grid.Column)" Value="0" />
         </Style>
 
         <Style Selector="^:right /template/ ContentPresenter#PART_SecondPresenter">
-            <Setter Property="(Grid.Column)" Value="2"/>
+            <Setter Property="(Grid.Column)" Value="2" />
         </Style>
 
         <Style Selector="^:bottom /template/ ContentPresenter#PART_FirstPresenter">
-            <Setter Property="(Grid.Row)" Value="0"/>
+            <Setter Property="(Grid.Row)" Value="0" />
         </Style>
 
         <Style Selector="^:bottom /template/ ContentPresenter#PART_SecondPresenter">
-            <Setter Property="(Grid.Row)" Value="2"/>
+            <Setter Property="(Grid.Row)" Value="2" />
         </Style>
 
         <Style Selector="^:left /template/ ContentPresenter#PART_FirstPresenter">
-            <Setter Property="(Grid.Column)" Value="2"/>
+            <Setter Property="(Grid.Column)" Value="2" />
         </Style>
 
         <Style Selector="^:left /template/ ContentPresenter#PART_SecondPresenter">
-            <Setter Property="(Grid.Column)" Value="0"/>
+            <Setter Property="(Grid.Column)" Value="0" />
         </Style>
 
         <Style Selector="^:top /template/ ContentPresenter#PART_FirstPresenter">
-            <Setter Property="(Grid.Row)" Value="2"/>
+            <Setter Property="(Grid.Row)" Value="2" />
         </Style>
 
         <Style Selector="^:top /template/ ContentPresenter#PART_SecondPresenter">
-            <Setter Property="(Grid.Row)" Value="0"/>
+            <Setter Property="(Grid.Row)" Value="0" />
+        </Style>
+
+        <Style Selector="^ /template/ Border.dockPreview">
+            <Setter Property="Background" Value="{DynamicResource ThemeDockPreviewBackgroundBrush}" />
+            <Setter Property="Opacity" Value="0.5" />
+            <Setter Property="IsVisible" Value="False" />
+        </Style>
+
+        <Style Selector="^ /template/ Grid#PreviewGrid">
+            <Setter Property="IsVisible" Value="False" />
+        </Style>
+
+        <Style Selector="^:dockableOver /template/ Grid#PreviewGrid">
+            <Setter Property="IsVisible" Value="True" />
+        </Style>
+
+        <Style Selector="^:top /template/ Border#TopPreview">
+            <Setter Property="IsVisible" Value="True" />
+        </Style>
+
+        <Style Selector="^:topPreview /template/ Border#TopPreview">
+            <Setter Property="IsVisible" Value="True" />
+        </Style>
+        <Style Selector="^:bottomPreview /template/ Border#BottomPreview">
+            <Setter Property="IsVisible" Value="True" />
+        </Style>
+        <Style Selector="^:rightPreview /template/ Border#RightPreview">
+            <Setter Property="IsVisible" Value="True" />
+        </Style>
+        <Style Selector="^:leftPreview /template/ Border#LeftPreview">
+            <Setter Property="IsVisible" Value="True" />
+        </Style>
+        <Style Selector="^:centerPreview /template/ Border#CenterPreview">
+            <Setter Property="IsVisible" Value="True" />
         </Style>
 
     </ControlTheme>

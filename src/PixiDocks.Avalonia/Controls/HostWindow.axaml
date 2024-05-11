@@ -11,6 +11,7 @@
         <Setter Property="UseLayoutRounding" Value="True" />
         <Setter Property="SystemDecorations" Value="Full" />
         <Setter Property="ExtendClientAreaToDecorationsHint" Value="True" />
+        <Setter Property="MinWidth" Value="200"/>
         <Setter Property="Title" Value="{Binding Region.ValidDockable, FallbackValue=Window}"/>
         <Setter Property="TextBlock.Foreground" Value="{DynamicResource ThemeDockForegroundBrush}" />
         <Setter Property="ExtendClientAreaChromeHints" Value="PreferSystemChrome" />

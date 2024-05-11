@@ -4,7 +4,7 @@ using PixiDocks.Core.Serialization;
 namespace PixiDocks.Core.Docking;
 
 [JsonConverter(typeof(DockableTreeConverter))]
-public interface IDockableTree : IDockableLayoutElement
+public interface IDockableTree : IDockableLayoutElement, IDockableTarget
 {
     public ITreeElement First { get; set; }
     public double FirstSize { get; set; }

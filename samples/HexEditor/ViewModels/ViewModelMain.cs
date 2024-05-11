@@ -8,6 +8,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using HexEditor.Models;
 using HexEditor.Views;
+using PixiDocks.Avalonia.Controls;
 
 namespace HexEditor.ViewModels;
 
@@ -35,8 +36,8 @@ public partial class ViewModelMain : ObservableObject
     public ViewModelMain(IStorageProvider storageProvider)
     {
         StorageProvider = storageProvider;
-        var inspectorArea = LayoutManager.DockContext.AllHosts.FirstOrDefault(x => x.Id == "InspectorArea");
-        LayoutManager.DockContext.Dock(LayoutManager.DockContext.CreateDockable(_charactersViewModel), inspectorArea);
+        var inspectorArea = LayoutManager.DockContext.AllTargets.FirstOrDefault(x => x.Id == "InspectorArea");
+        inspectorArea.AddDockable(LayoutManager.DockContext.CreateDockable(_charactersViewModel));
     }
 
     [RelayCommand]
@@ -48,7 +49,7 @@ public partial class ViewModelMain : ObservableObject
             return;
         }
 
-        var document = new DocumentViewModel(new Document(file[0].Path.AbsolutePath));
+        var document = new DocumentViewModel(new Document(file[0].Path.LocalPath));
         document.Load();
         document.Selected += () => SelectDocument(document);
         Documents.Add(document);
@@ -60,7 +61,7 @@ public partial class ViewModelMain : ObservableObject
         }
 
         LayoutManager.DockContext.Dock(LayoutManager.DockContext.CreateDockable(document),
-            documentArea.AllHosts.First());
+            documentArea.AllTargets.OfType<DockableArea>().First());
 
         SelectDocument(document);
     }

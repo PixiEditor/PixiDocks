@@ -115,7 +115,7 @@ public class Dockable : ContentControl, IDockable, IDockableSelectionEvents, IDo
                 host = value;
                 if (host != null)
                 {
-                    OnFocusedChanged(host.Context?.FocusedHost == host);
+                    OnFocusedChanged(host.Context?.FocusedTarget == host);
                     host.FocusedChanged += OnFocusedChanged;
                 }
             }

@@ -1,3 +1,4 @@
+using System.Collections;
 using Avalonia;
 using Avalonia.Controls.Primitives;
 using Avalonia.Metadata;
@@ -44,11 +45,9 @@ public class DockableAreaRegion : TemplatedControl, IDockableHostRegion
         set => SetValue(RootProperty, value);
     }
 
-    public IReadOnlyCollection<IDockableHost> AllHosts => _dockableAreaToTree.Keys;
+    public IReadOnlyCollection<IDockableTarget> AllTargets => CollectDockableTargets();
 
-    public IDockable ValidDockable => AllHosts.First().ActiveDockable;
-
-    private Dictionary<DockableArea, DockableTree> _dockableAreaToTree = new();
+    public IDockable? ValidDockable => AllTargets.First(x => x.Dockables.Count > 0).Dockables.First();
 
     static DockableAreaRegion()
     {
@@ -57,7 +56,6 @@ public class DockableAreaRegion : TemplatedControl, IDockableHostRegion
             if (args.NewValue is DockableArea dockableArea)
             {
                 dockableArea.Region = sender;
-                sender._dockableAreaToTree.Add(dockableArea, sender.Root as DockableTree);
                 sender.Root.First = dockableArea;
             }
         });
@@ -67,13 +65,6 @@ public class DockableAreaRegion : TemplatedControl, IDockableHostRegion
             if (args.NewValue is DockableTree tree)
             {
                 tree.SetRegion(sender);
-                tree.Traverse((element, parent) =>
-                {
-                    if (element is DockableArea area)
-                    {
-                        sender._dockableAreaToTree.Add(area, parent as DockableTree);
-                    }
-                });
             }
         });
 
@@ -93,36 +84,101 @@ public class DockableAreaRegion : TemplatedControl, IDockableHostRegion
 
     public DockableAreaRegion()
     {
-        Root = new DockableTree();
+        Root = new DockableTree() { Context = Context, Region = this };
     }
 
     public bool CanDock()
     {
-        return AllHosts.Count == 1 && AllHosts.First().Dockables.Count == 1;
+        return true;
     }
 
-    public DockableArea SplitDockableArea(DockableArea dockableArea, DockingDirection direction)
+    public IDockableTarget SplitDockableArea(IDockableTarget dockableTarget, DockingDirection direction)
     {
         if (direction == DockingDirection.Center)
         {
-            return dockableArea;
+            return dockableTarget;
         }
 
-        var tree = _dockableAreaToTree[dockableArea];
-        var area = tree.Split(direction, _dockableAreaToTree, dockableArea);
+        DockableTree? tree = null;
+        if (dockableTarget is DockableTree dockableTree)
+        {
+            tree = dockableTree;
+        }
+        else
+        {
+            tree = FindTree(dockableTarget);
+        }
+
+        if (tree == null)
+        {
+            throw new InvalidOperationException("Dockable target not found in region");
+        }
+
+        var area = tree.Split(direction, dockableTarget);
         area.Region = this;
-        area.Context = dockableArea.Context;
+        area.Context = dockableTarget.Context;
         return area;
     }
 
     public void RemoveDockableArea(DockableArea dockableArea)
     {
-        var tree = _dockableAreaToTree[dockableArea];
-        if (_dockableAreaToTree.Count == 1)
+        var tree = FindTree(dockableArea);
+        if (AllTargets.Count == 1)
         {
             return;
         }
 
-        tree.RemoveDockableArea(dockableArea, _dockableAreaToTree);
+        tree?.RemoveDockableArea(dockableArea);
+    }
+
+    private DockableTree? FindTree(IDockableTarget dockableTarget, IEnumerable root = null)
+    {
+        if (root == null)
+        {
+            root = AllTargets;
+        }
+
+        foreach (var target in root)
+        {
+            if (target is DockableTree tree)
+            {
+                if (tree.First == dockableTarget || tree.Second == dockableTarget)
+                {
+                    return tree;
+                }
+                else if (tree.First is DockableTree subTree)
+                {
+                    var found = FindTree(dockableTarget, subTree);
+                    if (found != null)
+                    {
+                        return found;
+                    }
+                }
+                else if (tree.Second is DockableTree subTree2)
+                {
+                    var found = FindTree(dockableTarget, subTree2);
+                    if (found != null)
+                    {
+                        return found;
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private IReadOnlyCollection<IDockableTarget> CollectDockableTargets()
+    {
+        var targets = new List<IDockableTarget>();
+        foreach (var element in Root)
+        {
+            if (element is IDockableTarget target)
+            {
+                targets.Add(target);
+            }
+        }
+
+        return targets;
     }
 }

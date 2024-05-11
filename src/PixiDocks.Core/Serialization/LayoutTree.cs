@@ -26,7 +26,7 @@ public struct LayoutTree
         FloatingHeight = null;
     }
 
-    public void ApplyDockables(List<IDockable> dockables)
+    public void ApplyDockables(List<IDockable?> dockables)
     {
         foreach(var element in Root)
         {
@@ -50,9 +50,9 @@ public struct LayoutTree
     {
         foreach(var element in Root)
         {
-            if (element is IDockableHost host)
+            if (element is IDockableTarget target)
             {
-                host.Context = dockContext;
+                target.Context = dockContext;
             }
         };
     }
