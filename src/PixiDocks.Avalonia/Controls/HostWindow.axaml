@@ -1,6 +1,7 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:controls="using:PixiDocks.Avalonia.Controls">
+        xmlns:controls="using:PixiDocks.Avalonia.Controls"
+        xmlns:helpers="clr-namespace:PixiDocks.Avalonia.Helpers">
     <Design.PreviewWith>
         <controls:HostWindow />
     </Design.PreviewWith>
@@ -11,7 +12,7 @@
         <Setter Property="UseLayoutRounding" Value="True" />
         <Setter Property="SystemDecorations" Value="Full" />
         <Setter Property="ExtendClientAreaToDecorationsHint" Value="True" />
-        <Setter Property="MinWidth" Value="200"/>
+        <Setter Property="MinWidth" Value="250"/>
         <Setter Property="Title" Value="{Binding Region.ValidDockable, FallbackValue=Window}"/>
         <Setter Property="TextBlock.Foreground" Value="{DynamicResource ThemeDockForegroundBrush}" />
         <Setter Property="ExtendClientAreaChromeHints" Value="PreferSystemChrome" />

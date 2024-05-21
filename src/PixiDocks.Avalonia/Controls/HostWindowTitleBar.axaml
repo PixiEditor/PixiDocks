@@ -36,14 +36,14 @@ SOFTWARE.-->
     <Setter Property="VerticalAlignment" Value="Top" />
     <Setter Property="HorizontalAlignment" Value="Stretch" />
     <Setter Property="Background" Value="Transparent" />
-
+    
     <Setter Property="Template">
       <ControlTemplate>
         <Panel Background="{TemplateBinding Background}" HorizontalAlignment="{TemplateBinding HorizontalAlignment}" VerticalAlignment="Stretch">
           <Panel x:Name="PART_MouseTracker" Height="1" VerticalAlignment="Top" />
           <Panel x:Name="PART_Container">
             <Border IsHitTestVisible="True" x:Name="PART_Background" Background="{TemplateBinding Background}" />
-            <CaptionButtons x:Name="PART_CaptionButtons" VerticalAlignment="Top" HorizontalAlignment="Right" Foreground="{TemplateBinding Foreground}" />
+            <CaptionButtons MaxHeight="28" x:Name="PART_CaptionButtons" VerticalAlignment="Top" HorizontalAlignment="Right" Foreground="{TemplateBinding Foreground}" />
           </Panel>
         </Panel>
       </ControlTemplate>
