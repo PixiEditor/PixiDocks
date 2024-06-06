@@ -16,14 +16,10 @@
                 <ColumnDefinition Width="{Binding ShowCloseButton,
                 Converter={StaticResource ConditionToSizeConverter}, ConverterParameter=20}"/>
             </Grid.ColumnDefinitions>
-            <!--<Image IsVisible="{Binding !!Icon}" Source="{Binding Icon}"
+            <Image IsVisible="{Binding !!Icon}" Source="{Binding Icon}"
                    VerticalAlignment="Center"
                    RenderOptions.BitmapInterpolationMode="None"
-                   DockPanel.Dock="Left" Width="16" Height="16"/>-->
-            <ContentPresenter Grid.Column="0" IsVisible="{Binding !!Icon}" 
-                              DockPanel.Dock="Left" Width="16" Height="16"
-                              Content="{Binding Icon}" 
-                              VerticalAlignment="Center"/>
+                   DockPanel.Dock="Left" Width="16" Height="16"/>
             <TextBlock Grid.Column="1" Padding="5" DockPanel.Dock="Left" Foreground="{DynamicResource ThemeForegroundBrush}"
                        VerticalAlignment="Center"
                        Text="{Binding $parent[ContentControl].Tag.Title, FallbackValue=TITLE}"/>
