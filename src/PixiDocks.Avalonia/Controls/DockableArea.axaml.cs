@@ -495,6 +495,20 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
     {
         bool isFocused = ReferenceEquals(host, this);
         PseudoClasses.Set(":focused", isFocused);
+        if (isFocused)
+        {
+            if (ActiveDockable is IDockableSelectionEvents selectionEvents)
+            {
+                selectionEvents.OnSelected();
+            }
+        }
+        else
+        {
+            if (ActiveDockable is IDockableSelectionEvents selectionEvents)
+            {
+                selectionEvents.OnDeselected();
+            }
+        }
         FocusedChanged?.Invoke(isFocused);
     }
 
