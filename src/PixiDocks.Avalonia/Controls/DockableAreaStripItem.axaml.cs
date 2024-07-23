@@ -95,7 +95,7 @@ public class DockableAreaStripItem : TemplatedControl
                 var window = Dockable.Host?.Context.Float(Dockable, pt.X, pt.Y);
                 if (window is HostWindow hostWindow)
                 {
-                    hostWindow.MoveDrag(_lastPointerPressedEventArgs, new Point(0, 0));
+                    hostWindow.MoveDrag(_lastPointerPressedEventArgs, diff);
                 }
 
                 e.Pointer.Capture(null);
