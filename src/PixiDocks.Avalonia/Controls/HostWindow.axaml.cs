@@ -86,18 +86,14 @@ public class HostWindow : Window, IHostWindow
 
     public void MoveDrag(PointerPressedEventArgs e, Point pt)
     {
-        _mouseDown = true;
-
-        PseudoClasses.Set(":dragging", true);
-        _draggingWindow = true;
-        _dragStartPoint = e.GetPosition(this) + pt;
-        _state.ProcessDragEvent(this.PointToScreen(_dragStartPoint), EventType.DragStart);
         BeginMoveDrag(e);
 
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-        {
-            EndDrag(e);
-        }
+        _mouseDown = true;
+        PseudoClasses.Set(":dragging", true);
+        _dragStartPoint = e.GetPosition(this) + pt;
+        _state.ProcessDragEvent(this.PointToScreen(_dragStartPoint), EventType.DragStart);
+        e.Pointer.Capture(this);
+        _draggingWindow = true;
     }
 
     private void EndDrag(PointerEventArgs e)
@@ -107,7 +103,7 @@ public class HostWindow : Window, IHostWindow
         _mouseDown = false;
         _draggingWindow = false;
 
-        _state.ProcessDragEvent(this.PointToScreen(e.GetPosition(null)), EventType.DragEnd);
+        _state.ProcessDragEvent(Position, EventType.DragEnd);
     }
 
     /// <inheritdoc/>
@@ -129,7 +125,7 @@ public class HostWindow : Window, IHostWindow
     {
         base.OnPointerReleased(e);
 
-        if (_draggingWindow)
+        if (_draggingWindow && !Equals(e.Pointer.Captured, this))
         {
             EndDrag(e);
         }

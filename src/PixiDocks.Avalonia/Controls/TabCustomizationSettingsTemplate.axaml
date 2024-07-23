@@ -2,12 +2,14 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:controls="clr-namespace:PixiDocks.Avalonia.Controls"
         xmlns:docking="clr-namespace:PixiDocks.Core.Docking;assembly=PixiDocks.Core"
-        xmlns:helpers="clr-namespace:PixiDocks.Avalonia.Helpers">
+        xmlns:helpers="clr-namespace:PixiDocks.Avalonia.Helpers"
+        xmlns:converters="clr-namespace:PixiDocks.Avalonia.Converters">
 
     <DataTemplate DataType="docking:TabCustomizationSettings" x:Key="{x:Type docking:TabCustomizationSettings}">
         <Grid Margin="5, 0">
             <Grid.Resources>
                 <helpers:ConditionToSizeConverter x:Key="ConditionToSizeConverter"/>
+                <converters:SourceToImageConverter x:Key="SourceToImageConverter"/>
             </Grid.Resources>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="{Binding Icon,
@@ -16,7 +18,8 @@
                 <ColumnDefinition Width="{Binding ShowCloseButton,
                 Converter={StaticResource ConditionToSizeConverter}, ConverterParameter=20}"/>
             </Grid.ColumnDefinitions>
-            <Image IsVisible="{Binding !!Icon}" Source="{Binding Icon}"
+            <Image IsVisible="{Binding !!Icon}" 
+                   Source="{Binding Icon, Converter={StaticResource SourceToImageConverter}}"
                    VerticalAlignment="Center"
                    RenderOptions.BitmapInterpolationMode="None"
                    DockPanel.Dock="Left" Width="16" Height="16"/>

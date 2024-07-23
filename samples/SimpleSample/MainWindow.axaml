@@ -5,6 +5,7 @@
         xmlns:controls="clr-namespace:PixiDocks.Avalonia.Controls;assembly=PixiDocks.Avalonia"
         xmlns:avalonia="clr-namespace:PixiDocks.Avalonia;assembly=PixiDocks.Avalonia"
         xmlns:core="clr-namespace:PixiDocks.Core;assembly=PixiDocks.Core"
+        xmlns:docking="clr-namespace:PixiDocks.Core.Docking;assembly=PixiDocks.Core"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="SimpleSample.MainWindow"
         Title="SimpleSample">
@@ -15,7 +16,14 @@
         <controls:DockableAreaRegion Name="RootRegion">
             <controls:DockableArea Context="{StaticResource DockContext}" Background="#252525" CornerRadius="5">
                 <controls:DockableArea.ActiveDockable>
-                    <controls:Dockable Id="SomeDockable" Title="Some Dockable" Icon="/curved-out.png">
+                    <controls:Dockable Id="SomeDockable" Title="Some Dockable">
+                        <controls:Dockable.TabCustomizationSettings>
+                           <docking:TabCustomizationSettings>
+                               <docking:TabCustomizationSettings.Icon>
+                                      <Image Source="/curved-out.png"/>
+                               </docking:TabCustomizationSettings.Icon>
+                           </docking:TabCustomizationSettings>
+                        </controls:Dockable.TabCustomizationSettings>
                         <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
                             <Button Width="60" Height="30" Content="Hello"/>
                         </Grid>

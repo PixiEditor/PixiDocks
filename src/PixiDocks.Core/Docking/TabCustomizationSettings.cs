@@ -23,6 +23,12 @@ public class TabCustomizationSettings : INotifyPropertyChanged
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
+    public TabCustomizationSettings()
+    {
+        Icon = null;
+        ShowCloseButton = false;
+    }
+
     public TabCustomizationSettings(object? icon = null, bool showCloseButton = false)
     {
         Icon = icon;

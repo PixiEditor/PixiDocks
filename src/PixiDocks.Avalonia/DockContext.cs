@@ -151,7 +151,7 @@ public class DockContext : IDockContext
 
         PixelPoint pos = dockable switch
         {
-            Dockable dockableControl => dockableControl.IsAttachedToVisualTree() ? dockableControl.PointToScreen(new Point(0, -30) + new Point(x, y)) : new PixelPoint((int)x, (int)y),
+            Dockable dockableControl => dockableControl.IsAttachedToVisualTree() ? dockableControl.PointToScreen(new Point(-20, -70) + new Point(x, y)) : new PixelPoint((int)x, (int)y),
             _ => new PixelPoint(0, 0)
         };
 

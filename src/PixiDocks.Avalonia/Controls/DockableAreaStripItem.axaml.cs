@@ -4,6 +4,7 @@ using Avalonia.Controls.Metadata;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Media;
+using Avalonia.Threading;
 using Avalonia.VisualTree;
 using PixiDocks.Core;
 using PixiDocks.Core.Docking;
@@ -12,8 +13,9 @@ namespace PixiDocks.Avalonia.Controls;
 
 public class DockableAreaStripItem : TemplatedControl
 {
-    public static readonly StyledProperty<IDockable?> DockableProperty = AvaloniaProperty.Register<DockableAreaStripItem, IDockable>(
-        nameof(Dockable));
+    public static readonly StyledProperty<IDockable?> DockableProperty =
+        AvaloniaProperty.Register<DockableAreaStripItem, IDockable>(
+            nameof(Dockable));
 
     public IDockable? Dockable
     {
@@ -42,6 +44,7 @@ public class DockableAreaStripItem : TemplatedControl
                 oldDockable.Host.Context.FocusedHostChanged -= strip.FocusedHostChanged;
             }
         }
+
         if (e.NewValue is IDockable dockable)
         {
             if (dockable.Host != null)
@@ -92,7 +95,7 @@ public class DockableAreaStripItem : TemplatedControl
                 var window = Dockable.Host?.Context.Float(Dockable, pt.X, pt.Y);
                 if (window is HostWindow hostWindow)
                 {
-                    hostWindow.MoveDrag(_lastPointerPressedEventArgs, diff);
+                    hostWindow.MoveDrag(_lastPointerPressedEventArgs, new Point(0, 0));
                 }
 
                 e.Pointer.Capture(null);
@@ -104,7 +107,8 @@ public class DockableAreaStripItem : TemplatedControl
     private bool IsOutsideStripBar(PointerEventArgs pointerEventArgs)
     {
         var position = pointerEventArgs.GetPosition(_tabItem);
-        return position.X < 0 || position.X > _parent.Bounds.Width || position.Y < 0 || position.Y > _parent.Bounds.Height;
+        return position.X < 0 || position.X > _parent.Bounds.Width || position.Y < 0 ||
+               position.Y > _parent.Bounds.Height;
     }
 
     private void OnBorderOnPointerReleased(object? sender, PointerReleasedEventArgs e)
