@@ -294,8 +294,8 @@ public class DockableTree : TemplatedControl, ITreeElement, IDockableTree
             _grid.ColumnDefinitions.Clear();
             _grid.RowDefinitions.Clear();
 
-            _grid.ColumnDefinitions.Add(new ColumnDefinition(_queuedFirstSize, _queuedFirstType));
-            _grid.RowDefinitions.Add(new RowDefinition(_queuedSecondSize, _queuedSecondType));
+            _grid.ColumnDefinitions.Add(new ColumnDefinition(1, GridUnitType.Star));
+            _grid.RowDefinitions.Add(new RowDefinition(1, GridUnitType.Star));
             SetPseudoClasses();
             return;
         }
