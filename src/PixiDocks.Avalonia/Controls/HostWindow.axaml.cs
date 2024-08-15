@@ -12,6 +12,7 @@ namespace PixiDocks.Avalonia.Controls;
 [PseudoClasses(":dragging")]
 [TemplatePart("PART_TitleBar", typeof(HostWindowTitleBar))]
 [TemplatePart("PART_DockableArea", typeof(DockableArea))]
+[TemplatePart("PART_Grabber", typeof(Control))]
 public class HostWindow : Window, IHostWindow
 {
     public IDockableHostRegion Region => _dockableRegion;
@@ -27,6 +28,13 @@ public class HostWindow : Window, IHostWindow
     private IDockContext _dockContext;
 
     protected override Type StyleKeyOverride => typeof(HostWindow);
+
+    public HostWindow()
+    {
+#if DEBUG
+        this.AttachDevTools();
+#endif
+    }
 
     public void Initialize(IDockable? dockable, IDockContext context, PixelPoint pos)
     {
@@ -65,7 +73,7 @@ public class HostWindow : Window, IHostWindow
 
         _dockableRegion = e.NameScope.Find<DockableAreaRegion>("PART_DockableRegion");
         _dockableRegion.Context = _state.Context;
-       DockableArea = e.NameScope.Find<DockableArea>("PART_DockableArea");
+        DockableArea = e.NameScope.Find<DockableArea>("PART_DockableArea");
         if (DockableArea is not null)
         {
             DockableArea.Context = _state.Context;
@@ -73,18 +81,6 @@ public class HostWindow : Window, IHostWindow
         }
 
         TitleBar = e.NameScope.Find<HostWindowTitleBar>("PART_TitleBar");
-        if (TitleBar is not null)
-        {
-            TitleBar.ApplyTemplate();
-
-            if (TitleBar.BackgroundControl is not null)
-            {
-                TitleBar.BackgroundControl.PointerPressed += (_, args) =>
-                {
-                    MoveDrag(args, new Point(0, 0));
-                };
-            }
-        }
     }
 
     public void MoveDrag(PointerPressedEventArgs e, Point pt)
@@ -114,11 +110,13 @@ public class HostWindow : Window, IHostWindow
     {
         base.OnPointerPressed(e);
 
-        if (TitleBar is not null && TitleBar.IsPointerOver)
+        if (TitleBar is not null && e.GetPosition(TitleBar).Y < TitleBar.Bounds.Height)
         {
+            Point pt = e.GetPosition(TitleBar);
             if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
             {
-                MoveDrag(e, new Point(0, 0));
+                MoveDrag(e, pt);
+                e.Pointer.Capture(null);
             }
         }
     }

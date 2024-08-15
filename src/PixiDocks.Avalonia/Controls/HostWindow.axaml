@@ -1,7 +1,7 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:controls="using:PixiDocks.Avalonia.Controls"
-        xmlns:helpers="clr-namespace:PixiDocks.Avalonia.Helpers">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:controls="using:PixiDocks.Avalonia.Controls"
+                    xmlns:helpers="clr-namespace:PixiDocks.Avalonia.Helpers">
     <Design.PreviewWith>
         <controls:HostWindow />
     </Design.PreviewWith>
@@ -12,8 +12,8 @@
         <Setter Property="UseLayoutRounding" Value="True" />
         <Setter Property="SystemDecorations" Value="Full" />
         <Setter Property="ExtendClientAreaToDecorationsHint" Value="True" />
-        <Setter Property="MinWidth" Value="250"/>
-        <Setter Property="Title" Value="{Binding Region.ValidDockable, FallbackValue=Window}"/>
+        <Setter Property="MinWidth" Value="250" />
+        <Setter Property="Title" Value="{Binding Region.ValidDockable, FallbackValue=Window}" />
         <Setter Property="TextBlock.Foreground" Value="{DynamicResource ThemeDockForegroundBrush}" />
         <Setter Property="ExtendClientAreaChromeHints" Value="PreferSystemChrome" />
 
@@ -24,9 +24,9 @@
                         <VisualLayerManager.ChromeOverlayLayer>
                             <controls:HostWindowTitleBar Name="PART_TitleBar" />
                         </VisualLayerManager.ChromeOverlayLayer>
-                    <controls:DockableAreaRegion Name="PART_DockableRegion">
-                        <controls:DockableArea Name="PART_DockableArea"/>
-                    </controls:DockableAreaRegion>
+                        <controls:DockableAreaRegion Name="PART_DockableRegion">
+                            <controls:DockableArea Name="PART_DockableArea" />
+                        </controls:DockableAreaRegion>
                     </VisualLayerManager>
                 </Panel>
             </ControlTemplate>

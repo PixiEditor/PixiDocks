@@ -7,19 +7,20 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Avalonia" Version="11.1.0" />
-      <PackageReference Include="Avalonia.Svg.Skia" Version="11.1.0" />
-      <PackageReference Include="Avalonia.Xaml.Behaviors" Version="11.1.0" />
+        <PackageReference Include="Avalonia" Version="11.1.0"/>
+        <PackageReference Include="Avalonia.Svg.Skia" Version="11.1.0"/>
+        <PackageReference Include="Avalonia.Xaml.Behaviors" Version="11.1.0"/>
+        <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.1.0"/>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\PixiDocks.Core\PixiDocks.Core.csproj" />
+        <ProjectReference Include="..\PixiDocks.Core\PixiDocks.Core.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-      <AvaloniaResource Include="Images\*" />
-      <None Remove="Assets\x.svg" />
-      <AvaloniaResource Include="Assets\x.svg" />
+        <AvaloniaResource Include="Images\*"/>
+        <None Remove="Assets\x.svg"/>
+        <AvaloniaResource Include="Assets\x.svg"/>
     </ItemGroup>
 
 </Project>
