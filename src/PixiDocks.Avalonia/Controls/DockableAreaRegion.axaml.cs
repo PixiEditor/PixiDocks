@@ -47,7 +47,7 @@ public class DockableAreaRegion : TemplatedControl, IDockableHostRegion
 
     public IReadOnlyCollection<IDockableTarget> AllTargets => CollectDockableTargets();
 
-    public IDockable? ValidDockable => AllTargets.First(x => x.Dockables.Count > 0).Dockables.First();
+    public IDockable? ValidDockable => AllTargets.FirstOrDefault(x => x.Dockables.Count > 0)?.Dockables.FirstOrDefault();
 
     static DockableAreaRegion()
     {

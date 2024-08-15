@@ -14,7 +14,7 @@ public class HostWindowTitleBar : TitleBar
 
     /// <inheritdoc/>
     protected override Type StyleKeyOverride => typeof(HostWindowTitleBar);
-
+    
     /// <inheritdoc/>
     protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
     {

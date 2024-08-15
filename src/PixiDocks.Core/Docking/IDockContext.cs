@@ -10,7 +10,7 @@ public interface IDockContext
     public IHostWindow Float(IDockable? dockable, double x, double y);
     public void Dock(IDockable? dockable, IDockableTarget toHost);
     public IDockable? CreateDockable(IDockableContent content);
-    public void Close(IDockable? dockable);
+    public Task<bool> Close(IDockable? dockable);
     public void RemoveRegion(IDockableHostRegion sender);
     public void AddRegion(IDockableHostRegion sender);
     public string Serialize();

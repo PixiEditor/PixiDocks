@@ -38,6 +38,8 @@ public class DockContext : IDockContext
     }
 
     public Func<HostWindow> HostWindowFactory { get; set; } = () => new HostWindow();
+    public event Action<HostWindow>? WindowFloated;
+    public event Action<IDockable>? DockableClosed;
 
     public event Action<IDockableTarget?>? FocusedHostChanged;
 
@@ -174,6 +176,7 @@ public class DockContext : IDockContext
             hostWindow.Show();
         }
 
+        WindowFloated?.Invoke(hostWindow);
         return hostWindow;
     }
 
@@ -195,25 +198,31 @@ public class DockContext : IDockContext
         }
     }
 
-    public void Close(IDockable? dockable)
+    public async Task<bool> Close(IDockable? dockable)
     {
-        if(!dockable.CanClose) return;
+        if (!dockable.CanClose) return false;
 
         if (dockable is IDockableCloseEvents closeEvents)
         {
-            if (!closeEvents.OnClose())
+            if (!await closeEvents.OnClose())
             {
-                return;
+                return false;
             }
         }
 
         if (floatingWindows.TryGetValue(dockable.Id, out HostWindow? value))
         {
-            value.Close();
-            floatingWindows.Remove(dockable.Id);
+            if (value.Region.ValidDockable == null)
+            {
+                value.Close();
+                floatingWindows.Remove(dockable.Id);
+            }
         }
 
         dockable.Host?.RemoveDockable(dockable);
+        DockableClosed?.Invoke(dockable);
+        
+        return true;
     }
 
     private void OnWindowActivated(object sender, EventArgs e)

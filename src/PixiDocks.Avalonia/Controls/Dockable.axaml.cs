@@ -152,12 +152,12 @@ public class Dockable : ContentControl, IDockable, IDockableSelectionEvents, IDo
         RaiseEvent(new RoutedEventArgs(DeselectedEvent));
     }
 
-    bool IDockableCloseEvents.OnClose()
+     async Task<bool> IDockableCloseEvents.OnClose()
     {
         bool close = true;
         if(Content is IDockableCloseEvents closeEvents)
         {
-            close = closeEvents.OnClose();
+            close = await closeEvents.OnClose();
         }
 
         RaiseEvent(new RoutedEventArgs(CloseEvent));

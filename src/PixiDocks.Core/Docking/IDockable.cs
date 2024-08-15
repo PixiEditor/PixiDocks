@@ -14,7 +14,7 @@ public interface IDockable : IDockableLayoutElement
     public IDockableHost? Host { get; set; }
     public bool CanSplit => Host?.Dockables.Count > 1;
     public TabCustomizationSettings TabCustomizationSettings { get; }
-
+    
     IEnumerator IEnumerable.GetEnumerator()
     {
         return GetEnumerator();

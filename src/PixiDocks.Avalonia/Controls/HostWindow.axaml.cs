@@ -24,6 +24,7 @@ public class HostWindow : Window, IHostWindow
     private HostWindowState _state;
     private Point _dragStartPoint;
     private DockableAreaRegion _dockableRegion;
+    private IDockContext _dockContext;
 
     protected override Type StyleKeyOverride => typeof(HostWindow);
 
@@ -40,6 +41,7 @@ public class HostWindow : Window, IHostWindow
         Position = pos;
 
         _state = new HostWindowState(context, this);
+        _dockContext = context;
         PositionChanged += OnPositionChanged;
     }
 
@@ -62,6 +64,7 @@ public class HostWindow : Window, IHostWindow
         base.OnApplyTemplate(e);
 
         _dockableRegion = e.NameScope.Find<DockableAreaRegion>("PART_DockableRegion");
+        _dockableRegion.Context = _state.Context;
        DockableArea = e.NameScope.Find<DockableArea>("PART_DockableArea");
         if (DockableArea is not null)
         {

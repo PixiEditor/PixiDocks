@@ -43,7 +43,7 @@ SOFTWARE.-->
           <Panel x:Name="PART_MouseTracker" Height="1" VerticalAlignment="Top" />
           <Panel x:Name="PART_Container">
             <Border IsHitTestVisible="True" x:Name="PART_Background" Background="{TemplateBinding Background}" />
-            <CaptionButtons MaxHeight="28" x:Name="PART_CaptionButtons" VerticalAlignment="Top" HorizontalAlignment="Right" Foreground="{TemplateBinding Foreground}" />
+            <controls:HostWindowCaptionButtons MaxHeight="28" x:Name="PART_CaptionButtons" VerticalAlignment="Top" HorizontalAlignment="Right" Foreground="{TemplateBinding Foreground}" />
           </Panel>
         </Panel>
       </ControlTemplate>

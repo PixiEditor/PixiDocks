@@ -2,5 +2,5 @@ namespace PixiDocks.Core.Docking.Events;
 
 public interface IDockableCloseEvents
 {
-    public bool OnClose();
+    public Task<bool> OnClose();
 }
