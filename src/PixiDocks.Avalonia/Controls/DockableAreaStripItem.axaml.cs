@@ -75,12 +75,17 @@ public class DockableAreaStripItem : TemplatedControl
 
     private void OnBorderOnPointerPressed(object? sender, PointerPressedEventArgs args)
     {
-        if (args.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
+        var properties = args.GetCurrentPoint(this).Properties;
+        if (properties.IsLeftButtonPressed)
         {
             _isDragging = true;
             args.Pointer.Capture(_tabItem);
             _lastPointerPressedEventArgs = args;
             _clickPoint = args.GetPosition(_parent);
+        }
+        else if (properties.IsMiddleButtonPressed)
+        {
+            Dockable?.Host?.Context.Close(Dockable);
         }
     }
 
