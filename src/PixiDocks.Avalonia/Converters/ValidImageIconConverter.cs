@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using Avalonia.Controls;
 using Avalonia.Data.Converters;
+using Avalonia.Media;
 
 namespace PixiDocks.Avalonia.Converters;
 
@@ -13,7 +14,7 @@ public class ValidImageIconConverter : IValueConverter
             return true;
         }
 
-        if (value is Image img)
+        if (value is Image img || value is IImage)
         {
             return true;
         }
