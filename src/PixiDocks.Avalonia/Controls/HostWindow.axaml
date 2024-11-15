@@ -7,7 +7,7 @@
     </Design.PreviewWith>
 
     <ControlTheme TargetType="controls:HostWindow" x:Key="{x:Type controls:HostWindow}">
-        <Setter Property="FontFamily" Value="{TemplateBinding FontFamily}" />
+        <Setter Property="FontFamily" Value="{Binding FontFamily, RelativeSource={RelativeSource TemplatedParent}}" />
         <Setter Property="WindowState" Value="Normal" />
         <Setter Property="UseLayoutRounding" Value="True" />
         <Setter Property="SystemDecorations" Value="Full" />
