@@ -1,5 +1,18 @@
 <Project>
-    <PropertyGroup>
-		    <AvaloniaVersion>11.2.2</AvaloniaVersion>
-    </PropertyGroup>
+  <PropertyGroup>
+    <AvaloniaVersion>11.2.2</AvaloniaVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='Release'">
+    <DebugSymbols>False</DebugSymbols>
+    <DebugType>None</DebugType>
+    <Optimize>true</Optimize>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='Debug'">
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <WarningLevel>0</WarningLevel>
+  </PropertyGroup>
+  
 </Project>
