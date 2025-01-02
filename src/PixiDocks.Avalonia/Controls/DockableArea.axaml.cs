@@ -8,6 +8,7 @@ using Avalonia.Controls.Metadata;
 using Avalonia.Controls.Presenters;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
+using Avalonia.VisualTree;
 using PixiDocks.Avalonia.Helpers;
 using PixiDocks.Avalonia.Utils;
 using PixiDocks.Core.Docking;
@@ -415,7 +416,7 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
 
     public bool IsPointerOverTab(PixelPoint position)
     {
-        if(tabControl is null)
+        if(tabControl is null || !this.IsAttachedToVisualTree())
         {
             return false;
         }
