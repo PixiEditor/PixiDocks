@@ -65,6 +65,15 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
     public static readonly StyledProperty<object?> FallbackContentProperty = AvaloniaProperty.Register<DockableArea, object?>(
         nameof(FallbackContent));
 
+    public static readonly StyledProperty<bool> CloseRegionOnEmptyProperty = AvaloniaProperty.Register<DockableArea, bool>(
+        nameof(CloseRegionOnEmpty), true);
+
+    public bool CloseRegionOnEmpty
+    {
+        get => GetValue(CloseRegionOnEmptyProperty);
+        set => SetValue(CloseRegionOnEmptyProperty, value);
+    }
+
     public object? FallbackContent
     {
         get => GetValue(FallbackContentProperty);
@@ -188,7 +197,7 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
 
         if (Dockables.Count == 0)
         {
-            if (FallbackContent == null)
+            if (FallbackContent == null && CloseRegionOnEmpty)
             {
                 Region.RemoveDockableArea(this);
             }
