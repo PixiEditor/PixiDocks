@@ -24,9 +24,9 @@
                                 Grid.ColumnSpan="3" Name="CenterPreview" />
                     </Grid>
                     <Grid Name="PART_Grid">
-                        <ContentPresenter Name="PART_FirstPresenter" Content="{TemplateBinding First}" />
+                        <ContentPresenter Name="PART_FirstPresenter" Content="{Binding First, RelativeSource={RelativeSource TemplatedParent}}" />
                         <GridSplitter Name="PART_Splitter" IsVisible="False" Background="Transparent" />
-                        <ContentPresenter Name="PART_SecondPresenter" Content="{TemplateBinding Second}" />
+                        <ContentPresenter Name="PART_SecondPresenter" Content="{Binding Second, RelativeSource={RelativeSource TemplatedParent}}" />
                     </Grid>
                 </Grid>
 
