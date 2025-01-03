@@ -1,9 +1,11 @@
 using System.Collections;
+using System.Collections.Specialized;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Metadata;
 using Avalonia.Controls.Presenters;
 using Avalonia.Controls.Primitives;
+using Avalonia.VisualTree;
 using PixiDocks.Avalonia.Utils;
 using PixiDocks.Core.Docking;
 using PixiDocks.Core.Serialization;
@@ -28,6 +30,15 @@ public class DockableTree : TemplatedControl, ITreeElement, IDockableTree
     public static readonly StyledProperty<DockingDirection?> SplitDirectionProperty =
         AvaloniaProperty.Register<DockableTree, DockingDirection?>(
             nameof(SplitDirection));
+
+    public static readonly StyledProperty<bool> AutoExpandProperty = AvaloniaProperty.Register<DockableTree, bool>(
+        nameof(AutoExpand));
+
+    public bool AutoExpand
+    {
+        get => GetValue(AutoExpandProperty);
+        set => SetValue(AutoExpandProperty, value);
+    }
 
     public DockingDirection? SplitDirection
     {
@@ -73,10 +84,43 @@ public class DockableTree : TemplatedControl, ITreeElement, IDockableTree
     public DockableAreaRegion Region { get; set; }
     public DockableTree? DockableParent { get; set; }
 
+    private double TargetFirstSize
+    {
+        get
+        {
+            if(IsFirstExpanded) return 1;
+            if(IsSecondExpanded) return 0;
+
+            return _queuedFirstSize;
+        }
+    }
+
+    private double TargetSecondSize
+    {
+        get
+        {
+            if(IsSecondExpanded) return 1;
+            if(IsFirstExpanded) return 0;
+
+            return _queuedSecondSize;
+        }
+    }
+    
+    private GridUnitType TargetFirstType => IsFirstExpanded ? GridUnitType.Star : _queuedFirstType;
+    private GridUnitType TargetSecondType => IsSecondExpanded ? GridUnitType.Star : _queuedSecondType;
+    
+    private bool IsFirstExpanded => Second is null or IDockableHost { Dockables.Count: 0, FallbackContent: null } && AutoExpand;
+    private bool IsSecondExpanded => First is null or IDockableHost { Dockables.Count: 0, FallbackContent: null } && AutoExpand;
+
     public double FirstSize
     {
         get
         {
+            if (IsFirstExpanded)
+            {
+                return 1;
+            }
+
             if (SplitDirection.HasValue)
             {
                 return SplitDirection is DockingDirection.Left or DockingDirection.Right
@@ -106,6 +150,11 @@ public class DockableTree : TemplatedControl, ITreeElement, IDockableTree
     {
         get
         {
+            if (IsSecondExpanded)
+            {
+                return 1;
+            }
+
             if (SplitDirection.HasValue)
             {
                 return SplitDirection is DockingDirection.Left or DockingDirection.Right
@@ -154,7 +203,7 @@ public class DockableTree : TemplatedControl, ITreeElement, IDockableTree
     {
         base.OnApplyTemplate(e);
         _grid = e.NameScope.Find<Grid>("PART_Grid");
-        if (_queuedFirstSize == 1 && _queuedSecondSize == 1)
+        if (TargetFirstSize == 1 && TargetSecondSize == 1)
         {
             if (SplitDirection is DockingDirection.Right or DockingDirection.Bottom)
             {
@@ -165,8 +214,22 @@ public class DockableTree : TemplatedControl, ITreeElement, IDockableTree
                 SecondSize = 0.66;
             }
         }
-
+        
         UpdateGrid();
+    }
+
+    protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
+    {
+        base.OnDetachedFromVisualTree(e);
+        if (First is DockableArea area)
+        {
+            area.Dockables.CollectionChanged -= DockablesOnCollectionChanged;
+        }
+
+        if (Second is DockableArea area2)
+        {
+            area2.Dockables.CollectionChanged -= DockablesOnCollectionChanged;
+        }
     }
 
     public DockableArea Split(DockingDirection direction,
@@ -180,26 +243,14 @@ public class DockableTree : TemplatedControl, ITreeElement, IDockableTree
         {
             area = Second as DockableArea;
             DetachOldParents(area);
-            Second = new DockableTree()
-            {
-                First = area,
-                DockableParent = this,
-                Context = Context,
-                Region = Region
-            };
+            Second = new DockableTree() { First = area, DockableParent = this, Context = Context, Region = Region };
             resultTree = Second as DockableTree;
         }
         else if (areaToSplit == First)
         {
             area = First as DockableArea;
             DetachOldParents(area);
-            First = new DockableTree()
-            {
-                First = area,
-                DockableParent = this,
-                Context = Context,
-                Region = Region
-            };
+            First = new DockableTree() { First = area, DockableParent = this, Context = Context, Region = Region };
             resultTree = First as DockableTree;
         }
         else if (Equals(areaToSplit, this))
@@ -212,7 +263,9 @@ public class DockableTree : TemplatedControl, ITreeElement, IDockableTree
         }
 
         resultTree.Second = new DockableTree()
-            { First = second, DockableParent = resultTree, Context = Context, Region = Region };
+        {
+            First = second, DockableParent = resultTree, Context = Context, Region = Region
+        };
 
         resultTree.SplitDirection = direction;
 
@@ -230,7 +283,9 @@ public class DockableTree : TemplatedControl, ITreeElement, IDockableTree
 
         DockableTree newTree = new DockableTree
         {
-            Context = Context, Region = Region, DockableParent = this,
+            Context = Context,
+            Region = Region,
+            DockableParent = this,
             First = firstElement,
             Second = secondElement,
             SplitDirection = SplitDirection
@@ -289,6 +344,7 @@ public class DockableTree : TemplatedControl, ITreeElement, IDockableTree
 
     private void UpdateGrid()
     {
+        if(_grid is null) return;
         if (First == null || Second == null)
         {
             _grid.ColumnDefinitions.Clear();
@@ -303,17 +359,18 @@ public class DockableTree : TemplatedControl, ITreeElement, IDockableTree
         _grid.ColumnDefinitions.Clear();
         _grid.RowDefinitions.Clear();
 
+        double splitterSize = IsFirstExpanded || IsSecondExpanded ? 0 : 5;
         if (SplitDirection is DockingDirection.Right or DockingDirection.Left)
         {
-            _grid.ColumnDefinitions.Add(new ColumnDefinition(_queuedFirstSize, _queuedFirstType));
-            _grid.ColumnDefinitions.Add(new ColumnDefinition(5, GridUnitType.Pixel));
-            _grid.ColumnDefinitions.Add(new ColumnDefinition(_queuedSecondSize, _queuedSecondType));
+            _grid.ColumnDefinitions.Add(new ColumnDefinition(TargetFirstSize, TargetFirstType));
+            _grid.ColumnDefinitions.Add(new ColumnDefinition(splitterSize, GridUnitType.Pixel));
+            _grid.ColumnDefinitions.Add(new ColumnDefinition(TargetSecondSize, TargetSecondType));
         }
         else if (SplitDirection is DockingDirection.Top or DockingDirection.Bottom)
         {
-            _grid.RowDefinitions.Add(new RowDefinition(_queuedFirstSize, _queuedFirstType));
-            _grid.RowDefinitions.Add(new RowDefinition(5, GridUnitType.Pixel));
-            _grid.RowDefinitions.Add(new RowDefinition(_queuedSecondSize, _queuedSecondType));
+            _grid.RowDefinitions.Add(new RowDefinition(TargetFirstSize, TargetFirstType));
+            _grid.RowDefinitions.Add(new RowDefinition(splitterSize, GridUnitType.Pixel));
+            _grid.RowDefinitions.Add(new RowDefinition(TargetSecondSize, TargetSecondType));
         }
 
         SetPseudoClasses();
@@ -353,7 +410,6 @@ public class DockableTree : TemplatedControl, ITreeElement, IDockableTree
 
     void IDockableTarget.AddDockable(IDockable? dockable)
     {
-
     }
 
     void IDockableTarget.RemoveDockable(IDockable? dockable)
@@ -365,11 +421,12 @@ public class DockableTree : TemplatedControl, ITreeElement, IDockableTree
         Point point = CoordinatesUtil.ToRelativePoint(this, x, y);
         if (First is IDockableTarget target)
         {
-            if(target.IsPointWithin(x, y)) return false;
+            if (target.IsPointWithin(x, y)) return false;
         }
+
         if (Second is IDockableTarget target2)
         {
-            if(target2.IsPointWithin(x, y)) return false;
+            if (target2.IsPointWithin(x, y)) return false;
         }
 
         return Bounds.Contains(point) && !Bounds.Deflate(DockBorderThickness).Contains(point);
@@ -526,6 +583,20 @@ public class DockableTree : TemplatedControl, ITreeElement, IDockableTree
         {
             tree.DockableParent = sender;
         }
+        else if (e.NewValue is DockableArea area)
+        {
+            area.Dockables.CollectionChanged += sender.DockablesOnCollectionChanged;
+        }
+
+        if (e.OldValue is DockableArea oldArea)
+        {
+            oldArea.Dockables.CollectionChanged -= sender.DockablesOnCollectionChanged;
+        }
+    }
+
+    private void DockablesOnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    {
+        UpdateGrid();
     }
 
     private static void ContextChanged(DockableTree sender, AvaloniaPropertyChangedEventArgs e)
