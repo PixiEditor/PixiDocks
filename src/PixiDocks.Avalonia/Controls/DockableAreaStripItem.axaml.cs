@@ -56,7 +56,7 @@ public class DockableAreaStripItem : TemplatedControl
         strip.UpdateStripPseudoClasses();
     }
 
-    private void FocusedHostChanged(IDockableTarget? obj)
+    private void FocusedHostChanged(IDockableTarget? obj, bool selecting)
     {
         UpdateStripPseudoClasses();
     }

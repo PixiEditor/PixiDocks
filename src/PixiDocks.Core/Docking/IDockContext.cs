@@ -14,5 +14,5 @@ public interface IDockContext
     public void RemoveRegion(IDockableHostRegion sender);
     public void AddRegion(IDockableHostRegion sender);
     public string Serialize();
-    public event Action<IDockableTarget?> FocusedHostChanged;
+    public event Action<IDockableTarget?, bool> FocusedHostChanged;
 }

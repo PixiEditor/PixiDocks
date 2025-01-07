@@ -32,8 +32,9 @@ public class DockContext : IDockContext
                 return;
             }
 
+            FocusedHostChanged?.Invoke(_focusedHost, false);
             _focusedHost = value;
-            FocusedHostChanged?.Invoke(_focusedHost);
+            FocusedHostChanged?.Invoke(_focusedHost, true);
         }
     }
 
@@ -41,7 +42,7 @@ public class DockContext : IDockContext
     public event Action<HostWindow>? WindowFloated;
     public event Action<IDockable>? DockableClosed;
 
-    public event Action<IDockableTarget?>? FocusedHostChanged;
+    public event Action<IDockableTarget?, bool>? FocusedHostChanged;
 
     public void AddDockableTarget(IDockableTarget target)
     {

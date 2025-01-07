@@ -176,7 +176,6 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
     public DockableArea()
     {
         Dockables = new ObservableCollection<IDockable?>();
-        ContextProperty.Changed.AddClassHandler<DockableArea>(ContextChanged);
     }
 
     public void AddDockable(IDockable? dockable)
@@ -496,24 +495,28 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
 
             if(context.FocusedTarget == area)
             {
-                area.OnFocusedHostChanged(area);
+                area.OnFocusedHostChanged(area, true);
             }
         }
     }
 
-    private void OnFocusedHostChanged(IDockableTarget? host)
+    private void OnFocusedHostChanged(IDockableTarget? host, bool selecting)
     {
         bool isFocused = ReferenceEquals(host, this);
         PseudoClasses.Set(":focused", isFocused);
         if (isFocused)
         {
+            if(!selecting) return;
+            
             if (ActiveDockable is IDockableSelectionEvents selectionEvents)
             {
                 selectionEvents.OnSelected();
             }
         }
-        else
+        else 
         {
+            if(selecting) return;
+            
             if (ActiveDockable is IDockableSelectionEvents selectionEvents)
             {
                 selectionEvents.OnDeselected();
