@@ -8,6 +8,7 @@ using Avalonia.Controls.Metadata;
 using Avalonia.Controls.Presenters;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.VisualTree;
 using PixiDocks.Avalonia.Helpers;
 using PixiDocks.Avalonia.Utils;
@@ -149,9 +150,15 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
         tabControl.ApplyTemplate();
         _strip = tabControl.Presenter;
         tabControl.PointerPressed += OnTabControlPointerPressed;
+        AddHandler(PointerPressedEvent, PressedHandler, RoutingStrategies.Tunnel);
     }
 
     private void OnTabControlPointerPressed(object? sender, PointerPressedEventArgs e)
+    {
+        FocusHost();
+    }
+    
+    private void PressedHandler(object? sender, PointerPressedEventArgs e)
     {
         FocusHost();
     }
