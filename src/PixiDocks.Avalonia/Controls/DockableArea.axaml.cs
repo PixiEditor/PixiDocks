@@ -9,6 +9,8 @@ using Avalonia.Controls.Presenters;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.Layout;
+using Avalonia.Threading;
 using Avalonia.VisualTree;
 using PixiDocks.Avalonia.Helpers;
 using PixiDocks.Avalonia.Utils;
@@ -45,17 +47,21 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
         AvaloniaProperty.Register<DockableArea, ObservableCollection<IDockable>>(
             nameof(Dockables));
 
-    public static readonly StyledProperty<ICommand> FloatCommandProperty = AvaloniaProperty.Register<DockableArea, ICommand>(
-        nameof(FloatCommand));
+    public static readonly StyledProperty<ICommand> FloatCommandProperty =
+        AvaloniaProperty.Register<DockableArea, ICommand>(
+            nameof(FloatCommand));
 
-    public static readonly StyledProperty<IDockContext> ContextProperty = AvaloniaProperty.Register<DockableArea, IDockContext>(
-        nameof(Context));
+    public static readonly StyledProperty<IDockContext> ContextProperty =
+        AvaloniaProperty.Register<DockableArea, IDockContext>(
+            nameof(Context));
 
-    public static readonly StyledProperty<IDockable?> ActiveDockableProperty = AvaloniaProperty.Register<DockableArea, IDockable?>(
-        nameof(ActiveDockable));
+    public static readonly StyledProperty<IDockable?> ActiveDockableProperty =
+        AvaloniaProperty.Register<DockableArea, IDockable?>(
+            nameof(ActiveDockable));
 
-    public static readonly StyledProperty<DockableAreaRegion> RegionProperty = AvaloniaProperty.Register<DockableArea, DockableAreaRegion>(
-        nameof(Region));
+    public static readonly StyledProperty<DockableAreaRegion> RegionProperty =
+        AvaloniaProperty.Register<DockableArea, DockableAreaRegion>(
+            nameof(Region));
 
     public static readonly StyledProperty<Dock> TabPlacementProperty = AvaloniaProperty.Register<DockableArea, Dock>(
         nameof(TabPlacement), global::Avalonia.Controls.Dock.Top);
@@ -63,11 +69,13 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
     public static readonly StyledProperty<string> IdProperty = AvaloniaProperty.Register<DockableArea, string>(
         nameof(Id));
 
-    public static readonly StyledProperty<object?> FallbackContentProperty = AvaloniaProperty.Register<DockableArea, object?>(
-        nameof(FallbackContent));
+    public static readonly StyledProperty<object?> FallbackContentProperty =
+        AvaloniaProperty.Register<DockableArea, object?>(
+            nameof(FallbackContent));
 
-    public static readonly StyledProperty<bool> CloseRegionOnEmptyProperty = AvaloniaProperty.Register<DockableArea, bool>(
-        nameof(CloseRegionOnEmpty), true);
+    public static readonly StyledProperty<bool> CloseRegionOnEmptyProperty =
+        AvaloniaProperty.Register<DockableArea, bool>(
+            nameof(CloseRegionOnEmpty), true);
 
     public bool CloseRegionOnEmpty
     {
@@ -137,7 +145,7 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
 
     protected override void OnGotFocus(GotFocusEventArgs e)
     {
-        if(Context != null)
+        if (Context != null)
         {
             Context.FocusedTarget = this;
         }
@@ -157,7 +165,7 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
     {
         FocusHost();
     }
-    
+
     private void PressedHandler(object? sender, PointerPressedEventArgs e)
     {
         FocusHost();
@@ -166,7 +174,7 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
     protected override void OnTemplateChanged(AvaloniaPropertyChangedEventArgs e)
     {
         base.OnTemplateChanged(e);
-        if(tabControl != null)
+        if (tabControl != null)
         {
             tabControl.PointerPressed += OnTabControlPointerPressed;
         }
@@ -174,7 +182,7 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
 
     private void FocusHost()
     {
-        if(Context != null)
+        if (Context != null)
         {
             Context.FocusedTarget = this;
         }
@@ -183,6 +191,32 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
     public DockableArea()
     {
         Dockables = new ObservableCollection<IDockable?>();
+        EffectiveViewportChanged += OnEffectiveViewportChanged;
+        TemplateApplied += OnTemplateApplied;
+    }
+
+    private void OnEffectiveViewportChanged(object? sender, EffectiveViewportChangedEventArgs e)
+    {
+       UpdateTabControl(); 
+    }
+
+    private void OnTemplateApplied(object? sender, TemplateAppliedEventArgs e)
+    {
+        UpdateTabControl();
+    }
+
+    private void UpdateTabControl()
+    {
+        bool isOverTab = false;
+
+        if (VisualRoot is HostWindow hostWindow)
+        {
+            var relative = FindRelativePos(tabControl, hostWindow);
+
+            isOverTab = relative is { X: <= 65, Y: <= 25 };
+        }
+
+        tabControl.Classes.Set("overTab", isOverTab);
     }
 
     public void AddDockable(IDockable? dockable)
@@ -218,7 +252,7 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
 
     public void OnDockableEntered(IDockableHostRegion region, int x, int y)
     {
-        if(!CanDock()) return;
+        if (!CanDock()) return;
         PseudoClasses.Set(":dockableOver", true);
     }
 
@@ -300,12 +334,12 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
 
     private bool IsOverStrip(Point? pos)
     {
-        if(_strip is null)
+        if (_strip is null)
         {
             return false;
         }
 
-        if(pos is null)
+        if (pos is null)
         {
             return false;
         }
@@ -320,7 +354,7 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
         Rect left = new Rect(0, 0, Bounds.Width / 4, Bounds.Height);
         Rect right = new Rect(Bounds.Width - Bounds.Width / 4, 0, Bounds.Width / 4, Bounds.Height);
 
-        if(_strip != null && _strip.Bounds.Contains(pos))
+        if (_strip != null && _strip.Bounds.Contains(pos))
         {
             return null;
         }
@@ -431,7 +465,7 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
 
     public bool IsPointerOverTab(PixelPoint position)
     {
-        if(tabControl is null || !this.IsAttachedToVisualTree())
+        if (tabControl is null || !this.IsAttachedToVisualTree())
         {
             return false;
         }
@@ -442,9 +476,29 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
 
     public event Action<bool>? FocusedChanged;
 
+    private static Point? FindRelativePos(Control control, Visual relativeTo)
+    {
+        if (control is null)
+        {
+            return null;
+        }
+
+        Point position = control.Bounds.Position;
+
+        var parent = control.GetVisualParent();
+
+        while (parent != null && parent != relativeTo)
+        {
+            position += parent.Bounds.Position;
+            parent = parent.GetVisualParent();
+        }
+
+        return position;
+    }
+
     private static void ActiveDockableChanged(DockableArea sender, AvaloniaPropertyChangedEventArgs args)
     {
-        if(args.OldValue is IDockable oldDockable)
+        if (args.OldValue is IDockable oldDockable)
         {
             if (oldDockable is IDockableSelectionEvents selectionEvents)
             {
@@ -495,12 +549,13 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
         {
             oldContext.FocusedHostChanged -= area.OnFocusedHostChanged;
         }
+
         if (args.NewValue is IDockContext context)
         {
             context.AddDockableTarget(area);
             context.FocusedHostChanged += area.OnFocusedHostChanged;
 
-            if(context.FocusedTarget == area)
+            if (context.FocusedTarget == area)
             {
                 area.OnFocusedHostChanged(area, true);
             }
@@ -513,22 +568,23 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
         PseudoClasses.Set(":focused", isFocused);
         if (isFocused)
         {
-            if(!selecting) return;
-            
+            if (!selecting) return;
+
             if (ActiveDockable is IDockableSelectionEvents selectionEvents)
             {
                 selectionEvents.OnSelected();
             }
         }
-        else 
+        else
         {
-            if(selecting) return;
-            
+            if (selecting) return;
+
             if (ActiveDockable is IDockableSelectionEvents selectionEvents)
             {
                 selectionEvents.OnDeselected();
             }
         }
+
         FocusedChanged?.Invoke(isFocused);
     }
 

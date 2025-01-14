@@ -24,7 +24,8 @@
                         <VisualLayerManager.ChromeOverlayLayer>
                             <controls:HostWindowTitleBar Name="PART_TitleBar" />
                         </VisualLayerManager.ChromeOverlayLayer>
-                        <controls:DockableAreaRegion Name="PART_DockableRegion">
+                        <controls:DockableAreaRegion 
+                            Name="PART_DockableRegion">
                             <controls:DockableArea Name="PART_DockableArea" />
                         </controls:DockableAreaRegion>
                     </VisualLayerManager>

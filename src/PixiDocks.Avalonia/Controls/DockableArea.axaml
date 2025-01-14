@@ -1,10 +1,10 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:controls="using:PixiDocks.Avalonia.Controls"
-        xmlns:core="clr-namespace:PixiDocks.Core;assembly=PixiDocks.Core"
-        xmlns:behaviors="clr-namespace:PixiDocks.Avalonia.Behaviors"
-        xmlns:avalonia="clr-namespace:PixiDocks.Avalonia"
-        xmlns:panels="clr-namespace:PixiDocks.Avalonia.Panels">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:controls="using:PixiDocks.Avalonia.Controls"
+                    xmlns:core="clr-namespace:PixiDocks.Core;assembly=PixiDocks.Core"
+                    xmlns:behaviors="clr-namespace:PixiDocks.Avalonia.Behaviors"
+                    xmlns:avalonia="clr-namespace:PixiDocks.Avalonia"
+                    xmlns:panels="clr-namespace:PixiDocks.Avalonia.Panels">
     <Design.PreviewWith>
         <controls:DockableArea />
     </Design.PreviewWith>
@@ -24,7 +24,8 @@
                             <Setter Property="(Interaction.Behaviors)">
                                 <BehaviorCollectionTemplate>
                                     <BehaviorCollection>
-                                        <behaviors:DockableTabDragBehavior HorizontalDragThreshold="3" VerticalDragThreshold="3" />
+                                        <behaviors:DockableTabDragBehavior HorizontalDragThreshold="3"
+                                                                           VerticalDragThreshold="3" />
                                     </BehaviorCollection>
                                 </BehaviorCollectionTemplate>
                             </Setter>
@@ -37,18 +38,29 @@
                         <Style Selector=":is(TabControl).draggable">
                             <Setter Property="ItemsPanel">
                                 <ItemsPanelTemplate>
-                                    <panels:TabGrid HorizontalAlignment="Left" />
+                                    <panels:TabGrid HorizontalAlignment="Left"
+                                                    Classes.offsetLeft="{OnPlatform Default=false, macOS=true}" />
                                 </ItemsPanelTemplate>
                             </Setter>
                         </Style>
+
+                        <Style Selector=":is(TabControl).overTab :is(panels|TabGrid).offsetLeft">
+                            <Setter Property="Margin" Value="75,0,0,0" />
+                        </Style>
+
                     </Border.Styles>
                     <Grid>
                         <Grid ColumnDefinitions="*, *, *" RowDefinitions="*, *, *" ZIndex="9999">
-                            <Border Classes="dockPreview" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Name="TopPreview"/>
-                            <Border Classes="dockPreview" Grid.Row="0" Grid.Column="0" Grid.RowSpan="3" Name="LeftPreview" />
-                            <Border Classes="dockPreview" Grid.Row="0" Grid.Column="2" Grid.RowSpan="3" Name="RightPreview"/>
-                            <Border Classes="dockPreview" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" Name="BottomPreview"/>
-                            <Border Classes="dockPreview" Grid.Row="0" Grid.Column="0" Grid.RowSpan="3" Grid.ColumnSpan="3" Name="CenterPreview"/>
+                            <Border Classes="dockPreview" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3"
+                                    Name="TopPreview" />
+                            <Border Classes="dockPreview" Grid.Row="0" Grid.Column="0" Grid.RowSpan="3"
+                                    Name="LeftPreview" />
+                            <Border Classes="dockPreview" Grid.Row="0" Grid.Column="2" Grid.RowSpan="3"
+                                    Name="RightPreview" />
+                            <Border Classes="dockPreview" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3"
+                                    Name="BottomPreview" />
+                            <Border Classes="dockPreview" Grid.Row="0" Grid.Column="0" Grid.RowSpan="3"
+                                    Grid.ColumnSpan="3" Name="CenterPreview" />
                         </Grid>
                         <Grid>
                             <TabControl Name="PART_TabControl" Theme="{DynamicResource PixiDockTabControlTheme}"
@@ -58,30 +70,34 @@
                                         TabStripPlacement="{TemplateBinding TabPlacement}">
                                 <TabControl.ItemsPanel>
                                     <ItemsPanelTemplate>
-                                        <panels:TabGrid HorizontalAlignment="Left" />
+                                        <panels:TabGrid HorizontalAlignment="Left"
+                                                        Classes.offsetLeft="{OnPlatform Default=false, macOS=true}" />
                                     </ItemsPanelTemplate>
                                 </TabControl.ItemsPanel>
                                 <TabControl.ItemTemplate>
                                     <DataTemplate>
-                                        <controls:DockableAreaStripItem DockPanel.Dock="Top"
-                                                                        Dockable="{Binding $parent[TabItem].Content}"/>
+                                        <controls:DockableAreaStripItem
+                                            DockPanel.Dock="Top"
+                                            Dockable="{Binding $parent[TabItem].Content}" />
                                     </DataTemplate>
                                 </TabControl.ItemTemplate>
                                 <TabControl.Resources>
                                     <ResourceDictionary>
                                         <ResourceDictionary.MergedDictionaries>
-                                            <MergeResourceInclude Source="/Themes/PixiDockTabItem.axaml"/>
+                                            <MergeResourceInclude Source="/Themes/PixiDockTabItem.axaml" />
                                         </ResourceDictionary.MergedDictionaries>
                                     </ResourceDictionary>
                                 </TabControl.Resources>
                             </TabControl>
-                            <Grid IsVisible="{Binding !Dockables.Count, RelativeSource={RelativeSource TemplatedParent}}">
+                            <Grid
+                                IsVisible="{Binding !Dockables.Count, RelativeSource={RelativeSource TemplatedParent}}">
                                 <Button HorizontalAlignment="Right" VerticalAlignment="Top" Margin="5"
                                         IsVisible="{Binding !!FallbackContent, RelativeSource={RelativeSource TemplatedParent}}"
                                         Classes="CloseDockableAreaButton"
                                         Command="{Binding CloseHost, RelativeSource={RelativeSource TemplatedParent}}">
                                 </Button>
-                                <ContentPresenter Content="{Binding FallbackContent, RelativeSource={RelativeSource TemplatedParent}}"/>
+                                <ContentPresenter
+                                    Content="{Binding FallbackContent, RelativeSource={RelativeSource TemplatedParent}}" />
                             </Grid>
                         </Grid>
                     </Grid>
@@ -90,29 +106,29 @@
         </Setter>
 
         <Style Selector="^ /template/ Border.dockPreview">
-            <Setter Property="Background" Value="{DynamicResource ThemeDockPreviewBackgroundBrush}"/>
-            <Setter Property="Opacity" Value="0.5"/>
-            <Setter Property="IsVisible" Value="False"/>
+            <Setter Property="Background" Value="{DynamicResource ThemeDockPreviewBackgroundBrush}" />
+            <Setter Property="Opacity" Value="0.5" />
+            <Setter Property="IsVisible" Value="False" />
         </Style>
 
         <Style Selector="^:dockableOver /template/ Border#Preview">
-            <Setter Property="IsVisible" Value="True"/>
+            <Setter Property="IsVisible" Value="True" />
         </Style>
 
         <Style Selector="^:top /template/ Border#TopPreview">
-            <Setter Property="IsVisible" Value="True"/>
+            <Setter Property="IsVisible" Value="True" />
         </Style>
         <Style Selector="^:bottom /template/ Border#BottomPreview">
-            <Setter Property="IsVisible" Value="True"/>
+            <Setter Property="IsVisible" Value="True" />
         </Style>
         <Style Selector="^:right /template/ Border#RightPreview">
-            <Setter Property="IsVisible" Value="True"/>
+            <Setter Property="IsVisible" Value="True" />
         </Style>
         <Style Selector="^:left /template/ Border#LeftPreview">
-            <Setter Property="IsVisible" Value="True"/>
+            <Setter Property="IsVisible" Value="True" />
         </Style>
         <Style Selector="^:center /template/ Border#CenterPreview">
-            <Setter Property="IsVisible" Value="True"/>
+            <Setter Property="IsVisible" Value="True" />
         </Style>
     </ControlTheme>
 </ResourceDictionary>
