@@ -52,7 +52,7 @@ public class HostWindow : Window, IHostWindow
         _dockContext = context;
         PositionChanged += OnPositionChanged;
     }
-
+    
     private void OnPositionChanged(object? sender, PixelPointEventArgs e)
     {
         if (_draggingWindow)
@@ -113,6 +113,15 @@ public class HostWindow : Window, IHostWindow
         if (TitleBar is not null && e.GetPosition(TitleBar).Y < TitleBar.Bounds.Height)
         {
             Point pt = e.GetPosition(TitleBar);
+            if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
+            {
+                MoveDrag(e, pt);
+                e.Pointer.Capture(null);
+            }
+        }
+        else if (TitleBar?.Bounds.Height == 0 && e.GetPosition(this).Y < 30)
+        {
+            Point pt = e.GetPosition(this);
             if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
             {
                 MoveDrag(e, pt);

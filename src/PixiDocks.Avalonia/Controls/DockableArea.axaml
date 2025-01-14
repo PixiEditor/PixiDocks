@@ -4,7 +4,8 @@
                     xmlns:core="clr-namespace:PixiDocks.Core;assembly=PixiDocks.Core"
                     xmlns:behaviors="clr-namespace:PixiDocks.Avalonia.Behaviors"
                     xmlns:avalonia="clr-namespace:PixiDocks.Avalonia"
-                    xmlns:panels="clr-namespace:PixiDocks.Avalonia.Panels">
+                    xmlns:panels="clr-namespace:PixiDocks.Avalonia.Panels"
+                    xmlns:converters="clr-namespace:PixiDocks.Avalonia.Converters">
     <Design.PreviewWith>
         <controls:DockableArea />
     </Design.PreviewWith>
@@ -63,8 +64,11 @@
                                     Grid.ColumnSpan="3" Name="CenterPreview" />
                         </Grid>
                         <Grid>
+                            <Grid.Resources>
+                                <converters:GreaterThanOneConverter x:Key="Converter" />
+                            </Grid.Resources>
                             <TabControl Name="PART_TabControl" Theme="{DynamicResource PixiDockTabControlTheme}"
-                                        Classes="draggable"
+                                        Classes.draggable="{Binding Dockables.Count, Converter={StaticResource Converter}, RelativeSource={RelativeSource TemplatedParent}}"
                                         SelectedItem="{Binding Path=ActiveDockable, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
                                         ItemsSource="{TemplateBinding Dockables}"
                                         TabStripPlacement="{TemplateBinding TabPlacement}">

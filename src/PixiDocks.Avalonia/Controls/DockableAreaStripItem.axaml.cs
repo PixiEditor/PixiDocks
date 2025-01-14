@@ -105,6 +105,7 @@ public class DockableAreaStripItem : TemplatedControl
 
                 e.Pointer.Capture(null);
                 _isDragging = false;
+                e.Handled = true;
             }
         }
     }

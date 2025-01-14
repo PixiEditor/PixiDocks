@@ -22,7 +22,7 @@
                 <Panel Background="{DynamicResource ThemeBackgroundBrush}">
                     <VisualLayerManager>
                         <VisualLayerManager.ChromeOverlayLayer>
-                            <controls:HostWindowTitleBar Name="PART_TitleBar" />
+                            <controls:HostWindowTitleBar Name="PART_TitleBar"/>
                         </VisualLayerManager.ChromeOverlayLayer>
                         <controls:DockableAreaRegion 
                             Name="PART_DockableRegion">
