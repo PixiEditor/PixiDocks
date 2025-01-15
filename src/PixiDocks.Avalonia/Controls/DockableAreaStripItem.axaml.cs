@@ -129,7 +129,11 @@ public class DockableAreaStripItem : TemplatedControl
                     hostWindow.MoveUntilReleased(startPos);
                 }
 
-                e.Pointer.Capture(null);
+                if (OperatingSystem.IsWindows())
+                {
+                    e.Pointer.Capture(null);
+                }
+
                 _isDragging = false;
                 e.Handled = true;
             }
