@@ -105,6 +105,7 @@ public class HostWindow : Window, IHostWindow
         _state.ProcessDragEvent(this.PointToScreen(_dragStartPoint), EventType.DragStart);
         e.Pointer.Capture(this);
         _draggingWindow = true;
+        Position = this.PointToScreen(pt);
     }
 
     private void EndDrag(PointerEventArgs e)
