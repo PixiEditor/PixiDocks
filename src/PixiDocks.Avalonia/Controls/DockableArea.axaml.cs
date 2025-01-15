@@ -471,7 +471,7 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
         }
 
         Point pos = this.PointToClient(position);
-        return tabControl.GetRealizedContainers().Any(x => x.Bounds.Contains(pos));
+        return tabControl.GetRealizedContainers().Any(x => x.Bounds.Contains(pos - tabControl.ItemsPanelRoot.Bounds.Position));
     }
 
     public event Action<bool>? FocusedChanged;

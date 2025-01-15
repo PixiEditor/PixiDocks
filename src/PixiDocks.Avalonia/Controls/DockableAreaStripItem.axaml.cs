@@ -93,19 +93,38 @@ public class DockableAreaStripItem : TemplatedControl
     {
         if (_isDragging)
         {
-            if (IsOutsideStripBar(e) || Dockable.Host?.Dockables.Count == 1)
+            if (IsOutsideStripBar(e) || Dockable?.Host?.Dockables.Count == 1)
             {
                 Point pt = e.GetPosition(_parent);
                 Point diff = pt - _clickPoint!.Value;
-                var window = Dockable.Host?.Context.Float(Dockable, pt.X, pt.Y);
-                if (window is HostWindow hostWindow)
+                bool wasFloating = Dockable.Host.Context.IsFloating(Dockable.Host);
+                if (!wasFloating)
                 {
-                    hostWindow.MoveDrag(_lastPointerPressedEventArgs, diff);
+                    Point leftMargin = OperatingSystem.IsMacOS() ? new Point(75, 0) : new Point(0, 0);
+                    pt += leftMargin;
                 }
 
-                e.Pointer.Capture(null);
+                var window = Dockable.Host?.Context.Float(Dockable, _clickPoint.Value.X, -pt.Y - diff.Y);
+                if (window is HostWindow hostWindow)
+                {
+                    e.Pointer.Capture(hostWindow);
+
+                    Point startPos = new Point(_tabItem.Bounds.Width / 2, _tabItem.Bounds.Height / 2);
+                    if (this.IsAttachedToVisualTree())
+                    {
+                        pt += new Point(_parent.Margin.Left, 0);
+                        startPos = pt;
+                    }
+                    else
+                    {
+                        Point toAdd = new Point(hostWindow.FindDescendantOfType<TabControl>().ItemsPanelRoot.Margin.Left, 0);
+                        startPos += toAdd;
+                    }
+
+                    hostWindow.MoveUntilReleased(startPos);
+                }
+
                 _isDragging = false;
-                e.Handled = true;
             }
         }
     }

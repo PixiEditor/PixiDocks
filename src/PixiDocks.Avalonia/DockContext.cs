@@ -3,6 +3,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data;
+using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.VisualTree;
 using PixiDocks.Avalonia.Controls;
@@ -43,6 +44,10 @@ public class DockContext : IDockContext
     public event Action<IDockable>? DockableClosed;
 
     public event Action<IDockableTarget?, bool>? FocusedHostChanged;
+    public bool IsFloating(IDockableHost dockableHost)
+    {
+        return floatingWindows.Values.Any(window => window.Region.AllTargets.Contains(dockableHost));
+    }
 
     public void AddDockableTarget(IDockableTarget target)
     {
@@ -154,7 +159,7 @@ public class DockContext : IDockContext
 
         PixelPoint pos = dockable switch
         {
-            Dockable dockableControl => dockableControl.IsAttachedToVisualTree() ? dockableControl.PointToScreen(new Point(-20, -40) + new Point(x, y)) : new PixelPoint((int)x, (int)y),
+             Dockable dockableControl => dockableControl.IsAttachedToVisualTree() ? dockableControl.PointToScreen(new Point(x, y)) : new PixelPoint((int)x, (int)y),
             _ => new PixelPoint(0, 0)
         };
 

@@ -15,4 +15,5 @@ public interface IDockContext
     public void AddRegion(IDockableHostRegion sender);
     public string Serialize();
     public event Action<IDockableTarget?, bool> FocusedHostChanged;
+    public bool IsFloating(IDockableHost dockableHost);
 }

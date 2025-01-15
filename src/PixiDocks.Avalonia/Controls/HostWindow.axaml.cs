@@ -22,6 +22,7 @@ public class HostWindow : Window, IHostWindow
 
     private bool _mouseDown, _draggingWindow;
 
+    private bool isProgrammaticallyDragging;
     private HostWindowState _state;
     private Point _dragStartPoint;
     private DockableAreaRegion _dockableRegion;
@@ -83,6 +84,17 @@ public class HostWindow : Window, IHostWindow
         TitleBar = e.NameScope.Find<HostWindowTitleBar>("PART_TitleBar");
     }
 
+    protected override void OnPointerMoved(PointerEventArgs e)
+    {
+        base.OnPointerMoved(e);
+        if (isProgrammaticallyDragging)
+        {
+            Point point = e.GetPosition(this);
+            Point delta = point - _dragStartPoint;
+            Position = new PixelPoint(Position.X + (int)delta.X, Position.Y + (int)delta.Y);
+        }
+    }
+
     public void MoveDrag(PointerPressedEventArgs e, Point pt)
     {
         BeginMoveDrag(e);
@@ -135,9 +147,19 @@ public class HostWindow : Window, IHostWindow
     {
         base.OnPointerReleased(e);
 
-        if (_draggingWindow && !Equals(e.Pointer.Captured, this))
+        if ((_draggingWindow && !Equals(e.Pointer.Captured, this)) || isProgrammaticallyDragging)
         {
             EndDrag(e);
         }
+        
+        isProgrammaticallyDragging = false;
+    }
+
+    public void MoveUntilReleased(Point startPoint)
+    {
+        isProgrammaticallyDragging = true;
+        _dragStartPoint = startPoint; 
+        _state.ProcessDragEvent(this.PointToScreen(startPoint), EventType.DragStart);
+        _draggingWindow = true;
     }
 }
