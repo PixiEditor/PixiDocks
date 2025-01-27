@@ -242,14 +242,12 @@ public class DockableTree : TemplatedControl, ITreeElement, IDockableTree
         if (areaToSplit == Second)
         {
             area = Second as DockableArea;
-            DetachOldParents(area);
             Second = new DockableTree() { First = area, DockableParent = this, Context = Context, Region = Region };
             resultTree = Second as DockableTree;
         }
         else if (areaToSplit == First)
         {
             area = First as DockableArea;
-            DetachOldParents(area);
             First = new DockableTree() { First = area, DockableParent = this, Context = Context, Region = Region };
             resultTree = First as DockableTree;
         }
@@ -277,9 +275,7 @@ public class DockableTree : TemplatedControl, ITreeElement, IDockableTree
     {
         DockableTree resultTree;
         var firstElement = First;
-        DetachOldParents(firstElement);
         var secondElement = Second;
-        DetachOldParents(secondElement);
 
         DockableTree newTree = new DockableTree
         {
@@ -294,32 +290,6 @@ public class DockableTree : TemplatedControl, ITreeElement, IDockableTree
         First = newTree;
         resultTree = this;
         return resultTree;
-    }
-
-    private void DetachOldParents(ITreeElement? element)
-    {
-        if (element is null)
-        {
-            return;
-        }
-
-        if (element is DockableTree tree)
-        {
-            tree.DetachOldParents(tree.First);
-            tree.DetachOldParents(tree.Second);
-        }
-
-        if (element is IDockableTarget target)
-        {
-            foreach (var dockable in target.Dockables)
-            {
-                if (dockable is Dockable { Parent: TabItem tabItem })
-                {
-                    tabItem.Content =
-                        null; // This removes Dockable as a content from old tabitem which doesn't have any parent
-                }
-            }
-        }
     }
 
     public void RemoveDockableArea(ITreeElement element)

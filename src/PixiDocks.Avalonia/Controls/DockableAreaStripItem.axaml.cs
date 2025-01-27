@@ -93,7 +93,7 @@ public class DockableAreaStripItem : TemplatedControl
     {
         if (_isDragging)
         {
-            if (IsOutsideStripBar(e) || Dockable?.Host?.Dockables.Count == 1)
+            if (Dockable != null && (IsOutsideStripBar(e) || Dockable.Host?.Dockables.Count == 1))
             {
                 Point pt = e.GetPosition(_parent);
                 Point diff = pt - _clickPoint!.Value;
