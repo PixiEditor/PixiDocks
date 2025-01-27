@@ -97,47 +97,63 @@ public class DockableAreaStripItem : TemplatedControl
             {
                 Point pt = e.GetPosition(_parent);
                 Point diff = pt - _clickPoint!.Value;
-                bool wasFloating = Dockable.Host.Context.IsFloating(Dockable.Host);
-                if (!wasFloating)
+
+                if (OperatingSystem.IsMacOS())
                 {
-                    Point leftMargin = OperatingSystem.IsMacOS() ? new Point(75, 0) : new Point(0, 0);
-                    pt += leftMargin;
+                    FloatMacOs(e, pt, diff);
                 }
-
-                var window = Dockable.Host?.Context.Float(Dockable, _clickPoint.Value.X, -pt.Y - diff.Y);
-                if (window is HostWindow hostWindow)
+                else
                 {
-                    e.Pointer.Capture(hostWindow);
-
-                    Point startPos = new Point(_tabItem.Bounds.Width / 2, _tabItem.Bounds.Height / 2);
-                    if (this.IsAttachedToVisualTree())
-                    {
-                        pt += new Point(_parent.Margin.Left, 0);
-                        startPos = pt;
-                    }
-                    else
-                    {
-                        Point toAdd = new Point(hostWindow.FindDescendantOfType<TabControl>().ItemsPanelRoot.Margin.Left, 0);
-                        startPos += toAdd;
-                    }
-
-                    if (OperatingSystem.IsWindows())
-                    {
-                        hostWindow.MoveDrag(_lastPointerPressedEventArgs, diff + new Point(-startPos.X, startPos.Y));
-                    }
-
-                    hostWindow.MoveUntilReleased(startPos);
-                }
-
-                if (OperatingSystem.IsWindows())
-                {
-                    e.Pointer.Capture(null);
+                    FloatWindows(pt, diff, e.Pointer);
                 }
 
                 _isDragging = false;
                 e.Handled = true;
             }
         }
+    }
+
+    private void FloatMacOs(PointerEventArgs e, Point pt, Point diff)
+    {
+        bool wasFloating = Dockable.Host.Context.IsFloating(Dockable.Host);
+        if (!wasFloating)
+        {
+            Point leftMargin = new Point(75, 0);
+            pt += leftMargin;
+        }
+
+        var window = Dockable.Host?.Context.Float(Dockable, _clickPoint.Value.X, -pt.Y - diff.Y);
+        if (window is HostWindow hostWindow)
+        {
+            e.Pointer.Capture(hostWindow);
+
+            Point startPos = new Point(_tabItem.Bounds.Width / 2, _tabItem.Bounds.Height / 2);
+            if (this.IsAttachedToVisualTree())
+            {
+                pt += new Point(_parent.Margin.Left, 0);
+                startPos = pt;
+            }
+            else
+            {
+                Point toAdd =
+                    new Point(hostWindow.FindDescendantOfType<TabControl>().ItemsPanelRoot.Margin.Left, 0);
+                startPos += toAdd;
+            }
+
+            hostWindow.MoveUntilReleased(startPos);
+        }
+    }
+
+    private void FloatWindows(Point pt, Point diff, IPointer pointer)
+    {
+        var window = Dockable.Host?.Context.Float(Dockable, pt.X - 50, pt.Y - 40);
+        if (window is HostWindow hostWindow)
+        {
+            hostWindow.MoveDrag(_lastPointerPressedEventArgs, diff);
+        }
+
+        pointer.Capture(null);
+        _isDragging = false;
     }
 
     private bool IsOutsideStripBar(PointerEventArgs pointerEventArgs)

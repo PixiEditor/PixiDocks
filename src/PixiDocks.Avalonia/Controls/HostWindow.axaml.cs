@@ -53,7 +53,7 @@ public class HostWindow : Window, IHostWindow
         _dockContext = context;
         PositionChanged += OnPositionChanged;
     }
-    
+
     private void OnPositionChanged(object? sender, PixelPointEventArgs e)
     {
         if (_draggingWindow)
@@ -105,7 +105,6 @@ public class HostWindow : Window, IHostWindow
         _state.ProcessDragEvent(this.PointToScreen(_dragStartPoint), EventType.DragStart);
         e.Pointer.Capture(this);
         _draggingWindow = true;
-        Position = this.PointToScreen(pt);
     }
 
     private void EndDrag(PointerEventArgs e)
@@ -152,15 +151,16 @@ public class HostWindow : Window, IHostWindow
         {
             EndDrag(e);
         }
-        
+
         isProgrammaticallyDragging = false;
     }
 
     public void MoveUntilReleased(Point startPoint)
     {
         isProgrammaticallyDragging = true;
-        _dragStartPoint = startPoint; 
+        _dragStartPoint = startPoint;
         _state.ProcessDragEvent(this.PointToScreen(startPoint), EventType.DragStart);
+        PseudoClasses.Set(":dragging", true);
         _draggingWindow = true;
     }
 }
