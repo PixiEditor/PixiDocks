@@ -215,6 +215,8 @@ public class DockContext : IDockContext
                 return false;
             }
         }
+        
+        dockable.Host?.RemoveDockable(dockable);
 
         if (floatingWindows.TryGetValue(dockable.Id, out HostWindow? value))
         {
@@ -225,7 +227,6 @@ public class DockContext : IDockContext
             }
         }
 
-        dockable.Host?.RemoveDockable(dockable);
         DockableClosed?.Invoke(dockable);
         
         return true;
