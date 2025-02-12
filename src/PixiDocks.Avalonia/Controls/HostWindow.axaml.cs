@@ -4,6 +4,8 @@ using Avalonia.Controls;
 using Avalonia.Controls.Metadata;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
+using Avalonia.Interactivity;
+using PixiDocks.Avalonia.Helpers;
 using PixiDocks.Core;
 using PixiDocks.Core.Docking;
 
@@ -30,7 +32,6 @@ public class HostWindow : Window, IHostWindow
     private IDockContext _dockContext;
     private Control _resizeBorder;
     private WindowEdge? _resizeDirection;
-    private PixelPoint beginResizePos;
     private int widthOnResizeStart;
     private int heightOnResizeStart;
 
@@ -81,8 +82,11 @@ public class HostWindow : Window, IHostWindow
         if (OperatingSystem.IsLinux())
         {
             _resizeBorder = e.NameScope.Find<Control>("PART_ResizeBorder");
-            _resizeBorder.PointerPressed += BeginResizing;
-            _resizeBorder.PointerMoved += SetResizeCursor;
+            _resizeBorder.AddHandler(PointerPressedEvent, BeginResizing, RoutingStrategies.Tunnel | RoutingStrategies.Bubble);
+            _resizeBorder.PointerMoved += (_, e) =>
+            {
+                Cursor = new Cursor(WindowUtility.SetResizeCursor(e, _resizeBorder, new Thickness(8)));
+            };
             _resizeBorder.PointerExited += SetDefaultCursor;
         }
 
@@ -184,8 +188,7 @@ public class HostWindow : Window, IHostWindow
         {
             if (sender is Control border)
             {
-                beginResizePos = this.PointToScreen(e.GetPosition(null));
-                _resizeDirection = GetResizeDirection(e.GetPosition(border));
+                _resizeDirection = WindowUtility.GetResizeDirection(e.GetPosition(border), border, new Thickness(8));
                 if(_resizeDirection is null) return;
                 
                 BeginResizeDrag(_resizeDirection.Value, e);
@@ -195,97 +198,8 @@ public class HostWindow : Window, IHostWindow
         }
     }
     
-    private void SetResizeCursor(object? sender, PointerEventArgs e)
-    {
-        var direction = GetResizeDirection(e.GetPosition(_resizeBorder));
-        if (direction is WindowEdge.West)
-        {
-            Cursor = new Cursor(StandardCursorType.LeftSide);
-        }
-        else if (direction is WindowEdge.East)
-        {
-            Cursor = new Cursor(StandardCursorType.RightSide);
-        }
-        else if (direction is WindowEdge.South)
-        {
-            Cursor = new Cursor(StandardCursorType.BottomSide);
-        }
-        else if (direction is WindowEdge.North)
-        {
-            Cursor = new Cursor(StandardCursorType.TopSide);
-        }
-        else if (direction is WindowEdge.NorthWest)
-        {
-            Cursor = new Cursor(StandardCursorType.TopLeftCorner);
-        }
-        else if (direction is WindowEdge.NorthEast)
-        {
-            Cursor = new Cursor(StandardCursorType.TopRightCorner);
-        }
-        else if (direction is WindowEdge.SouthWest)
-        {
-            Cursor = new Cursor(StandardCursorType.BottomLeftCorner);
-        }
-        else if (direction is WindowEdge.SouthEast)
-        {
-            Cursor = new Cursor(StandardCursorType.BottomRightCorner);
-        }
-        else
-        {
-            Cursor = new Cursor(StandardCursorType.Arrow);
-        }
-    }
-    
-    
     private void SetDefaultCursor(object? sender, PointerEventArgs e)
     {
         Cursor = new Cursor(StandardCursorType.Arrow);
-    }
-    
-    private WindowEdge? GetResizeDirection(Point pt)
-    {
-        Thickness thickness = new Thickness(8);
-        
-        if (pt.X < thickness.Left)
-        {
-            if (pt.Y < thickness.Top)
-            {
-                return WindowEdge.NorthWest;
-            }
-
-            if (pt.Y > _resizeBorder.Bounds.Height - thickness.Bottom)
-            {
-                return WindowEdge.SouthWest;
-            }
-            
-            return WindowEdge.West;
-        }
-        
-        if (pt.X > _resizeBorder.Bounds.Width - thickness.Right)
-        {
-            if (pt.Y < thickness.Top)
-            {
-                return WindowEdge.NorthEast;
-            }
-
-            if (pt.Y > _resizeBorder.Bounds.Height - thickness.Bottom)
-            {
-                return WindowEdge.SouthEast;
-            }
-            
-            return WindowEdge.East;
-        }
-        
-        if (pt.Y < thickness.Top)
-        {
-            return WindowEdge.North;
-        }
-        
-        if (pt.Y > _resizeBorder.Bounds.Height - thickness.Bottom)
-        {
-            return WindowEdge.South;
-        }
-
-        return null;
     }
 }
