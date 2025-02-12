@@ -82,9 +82,15 @@ public class HostWindow : Window, IHostWindow
         if (OperatingSystem.IsLinux())
         {
             _resizeBorder = e.NameScope.Find<Control>("PART_ResizeBorder");
-            _resizeBorder.AddHandler(PointerPressedEvent, BeginResizing, RoutingStrategies.Tunnel | RoutingStrategies.Bubble);
+            _resizeBorder.AddHandler(PointerPressedEvent, BeginResizing,
+                RoutingStrategies.Tunnel | RoutingStrategies.Bubble);
             _resizeBorder.PointerMoved += (_, e) =>
             {
+                if(WindowState != WindowState.Normal)
+                {
+                    return;
+                }
+                
                 Cursor = new Cursor(WindowUtility.SetResizeCursor(e, _resizeBorder, new Thickness(8)));
             };
             _resizeBorder.PointerExited += SetDefaultCursor;
@@ -145,8 +151,15 @@ public class HostWindow : Window, IHostWindow
             Point pt = e.GetPosition(TitleBar);
             if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
             {
-                MoveDrag(e, pt);
-                e.Pointer.Capture(null);
+                if (e.ClickCount == 2)
+                {
+                    WindowState = WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
+                }
+                else
+                {
+                    MoveDrag(e, pt);
+                    e.Pointer.Capture(null);
+                }
             }
         }
         else if (TitleBar?.Bounds.Height == 0 && e.GetPosition(this).Y < 30)
@@ -154,8 +167,15 @@ public class HostWindow : Window, IHostWindow
             Point pt = e.GetPosition(this);
             if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
             {
-                MoveDrag(e, pt);
-                e.Pointer.Capture(null);
+                if (e.ClickCount == 2)
+                {
+                    WindowState = WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
+                }
+                else
+                {
+                    MoveDrag(e, pt);
+                    e.Pointer.Capture(null);
+                }
             }
         }
     }
@@ -181,23 +201,23 @@ public class HostWindow : Window, IHostWindow
         PseudoClasses.Set(":dragging", true);
         _draggingWindow = true;
     }
-    
+
     private void BeginResizing(object? sender, PointerPressedEventArgs e)
     {
-        if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
+        if (WindowState == WindowState.Normal && e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
         {
             if (sender is Control border)
             {
                 _resizeDirection = WindowUtility.GetResizeDirection(e.GetPosition(border), border, new Thickness(8));
-                if(_resizeDirection is null) return;
-                
+                if (_resizeDirection is null) return;
+
                 BeginResizeDrag(_resizeDirection.Value, e);
                 e.Pointer.Capture(border);
                 e.Handled = true;
             }
         }
     }
-    
+
     private void SetDefaultCursor(object? sender, PointerEventArgs e)
     {
         Cursor = new Cursor(StandardCursorType.Arrow);
