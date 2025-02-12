@@ -10,7 +10,16 @@
         <Setter Property="FontFamily" Value="{Binding FontFamily, RelativeSource={RelativeSource TemplatedParent}}" />
         <Setter Property="WindowState" Value="Normal" />
         <Setter Property="UseLayoutRounding" Value="True" />
-        <Setter Property="SystemDecorations" Value="Full" />
+        <Setter Property="SystemDecorations">
+            <OnPlatform>
+                <OnPlatform.Default>
+                    <SystemDecorations>Full</SystemDecorations>
+                </OnPlatform.Default>
+                <OnPlatform.Linux>
+                    <SystemDecorations>None</SystemDecorations>
+                </OnPlatform.Linux>
+            </OnPlatform>
+        </Setter>
         <Setter Property="ExtendClientAreaToDecorationsHint" Value="True" />
         <Setter Property="MinWidth" Value="250" />
         <Setter Property="Title" Value="{Binding Region.ValidDockable, FallbackValue=Window}" />
@@ -19,12 +28,12 @@
 
         <Setter Property="Template">
             <ControlTemplate>
-                <Panel Background="{DynamicResource ThemeBackgroundBrush}">
+                <Panel Name="PART_ResizeBorder" Background="{DynamicResource ThemeBackgroundBrush}">
                     <VisualLayerManager>
                         <VisualLayerManager.ChromeOverlayLayer>
-                            <controls:HostWindowTitleBar Name="PART_TitleBar"/>
+                            <controls:HostWindowTitleBar Name="PART_TitleBar" />
                         </VisualLayerManager.ChromeOverlayLayer>
-                        <controls:DockableAreaRegion 
+                        <controls:DockableAreaRegion
                             Name="PART_DockableRegion">
                             <controls:DockableArea Name="PART_DockableArea" />
                         </controls:DockableAreaRegion>

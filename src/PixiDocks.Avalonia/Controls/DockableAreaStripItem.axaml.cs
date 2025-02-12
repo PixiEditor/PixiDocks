@@ -98,13 +98,13 @@ public class DockableAreaStripItem : TemplatedControl
                 Point pt = e.GetPosition(_parent);
                 Point diff = pt - _clickPoint!.Value;
 
-                if (OperatingSystem.IsMacOS())
+                if (OperatingSystem.IsMacOS() || OperatingSystem.IsLinux())
                 {
-                    FloatMacOs(e, pt, diff);
+                    FloatUnix(e, pt, diff);
                 }
                 else
                 {
-                    FloatWindows(pt, diff, e.Pointer);
+                    FloatWindowsOs(pt, diff, e.Pointer);
                 }
 
                 _isDragging = false;
@@ -113,7 +113,7 @@ public class DockableAreaStripItem : TemplatedControl
         }
     }
 
-    private void FloatMacOs(PointerEventArgs e, Point pt, Point diff)
+    private void FloatUnix(PointerEventArgs e, Point pt, Point diff)
     {
         bool wasFloating = Dockable.Host.Context.IsFloating(Dockable.Host);
         if (!wasFloating)
@@ -144,7 +144,7 @@ public class DockableAreaStripItem : TemplatedControl
         }
     }
 
-    private void FloatWindows(Point pt, Point diff, IPointer pointer)
+    private void FloatWindowsOs(Point pt, Point diff, IPointer pointer)
     {
         var window = Dockable.Host?.Context.Float(Dockable, pt.X - 50, pt.Y - 40);
         if (window is HostWindow hostWindow)
@@ -153,6 +153,7 @@ public class DockableAreaStripItem : TemplatedControl
         }
 
         pointer.Capture(null);
+
         _isDragging = false;
     }
 
