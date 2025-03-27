@@ -415,29 +415,29 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
         Region.RemoveDockableArea(this);
     }
 
-    public void Close(IDockable? dockable)
+    public async void Close(IDockable? dockable)
     {
-        Context.Close(dockable);
+        await Context.Close(dockable);
     }
 
-    public void CloseAll()
+    public async void CloseAll()
     {
         for (var i = 0; i < Dockables.Count; i++)
         {
             var dockable = Dockables[i];
-            Context.Close(dockable);
+            await Context.Close(dockable);
             i--;
         }
     }
 
-    public void CloseAllExcept(IDockable dockable)
+    public async void CloseAllExcept(IDockable dockable)
     {
         for (var i = 0; i < Dockables.Count; i++)
         {
             var d = Dockables[i];
             if (d != dockable)
             {
-                Context.Close(d);
+                await Context.Close(d);
                 i--;
             }
         }
