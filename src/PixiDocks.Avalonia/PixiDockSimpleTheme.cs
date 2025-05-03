@@ -13,6 +13,8 @@ public class PixiDockSimpleTheme : Styles
     {
         AvaloniaXamlLoader.Load(sp, this);
 
+        if (LayoutTree.TypeMap.ContainsKey(typeof(IDockable))) return; // Avoids re-adding the same types
+
         LayoutTree.TypeMap.Add(typeof(IDockable), typeof(Dockable));
         LayoutTree.TypeMap.Add(typeof(IDockableHost), typeof(DockableArea));
         LayoutTree.TypeMap.Add(typeof(IDockableTree), typeof(DockableTree));
