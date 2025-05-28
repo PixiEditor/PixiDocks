@@ -28,7 +28,7 @@ public class HostWindowState
 
     public void ProcessDragEvent(PixelPoint position, EventType type)
     {
-        if (type == EventType.DragStart && Window.DockableArea.IsPointerOverTab(position))
+        if ((type == EventType.DragStart || (type == EventType.DragMove && !isDraggingTab)) && Window.DockableArea.IsPointerOverTab(position))
         {
             isDraggingTab = true;
         }

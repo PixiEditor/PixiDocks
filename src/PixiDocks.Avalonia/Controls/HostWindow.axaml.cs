@@ -5,6 +5,7 @@ using Avalonia.Controls.Metadata;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.Threading;
 using PixiDocks.Avalonia.Helpers;
 using PixiDocks.Core;
 using PixiDocks.Core.Docking;
@@ -97,15 +98,19 @@ public class HostWindow : Window, IHostWindow
         }
 
         _dockableRegion = e.NameScope.Find<DockableAreaRegion>("PART_DockableRegion");
-        _dockableRegion.Context = _state.Context;
         DockableArea = e.NameScope.Find<DockableArea>("PART_DockableArea");
+        TitleBar = e.NameScope.Find<HostWindowTitleBar>("PART_TitleBar");
+    }
+
+    protected override void OnLoaded(RoutedEventArgs e)
+    {
+        base.OnLoaded(e);
+        _dockableRegion.Context = _state.Context;
         if (DockableArea is not null)
         {
             DockableArea.Context = _state.Context;
             DockableArea.ActiveDockable = Content as IDockable;
         }
-
-        TitleBar = e.NameScope.Find<HostWindowTitleBar>("PART_TitleBar");
     }
 
     protected override void OnPointerMoved(PointerEventArgs e)
