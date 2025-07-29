@@ -427,6 +427,8 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
             var dockable = Dockables[i];
             await Context.Close(dockable);
             i--;
+
+            Dockables.Remove(dockable);
         }
     }
 
@@ -439,6 +441,8 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
             {
                 await Context.Close(d);
                 i--;
+
+                Dockables.Remove(d);
             }
         }
     }
