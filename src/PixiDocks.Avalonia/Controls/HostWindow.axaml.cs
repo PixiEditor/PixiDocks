@@ -5,6 +5,7 @@ using Avalonia.Controls.Metadata;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.Platform;
 using Avalonia.Threading;
 using PixiDocks.Avalonia.Helpers;
 using PixiDocks.Core;
@@ -38,11 +39,62 @@ public class HostWindow : Window, IHostWindow
 
     protected override Type StyleKeyOverride => typeof(HostWindow);
 
+    private static bool forceUseSystemDecorations;
+
+    public static bool ForceUseSystemDecorations
+    {
+        get => forceUseSystemDecorations;
+        set
+        {
+            forceUseSystemDecorations = value;
+            UpdateTitleBar?.Invoke();
+        }
+    }
+
+    private static event Action UpdateTitleBar;
+
     public HostWindow()
     {
 #if DEBUG
         this.AttachDevTools();
 #endif
+
+        UpdateTitleBar += UpdateDecorations;
+
+        UpdateDecorations();
+    }
+
+    private void UpdateDecorations()
+    {
+        var cliArgs = Environment.GetCommandLineArgs();
+        bool isWindows10 = System.OperatingSystem.IsWindowsVersionAtLeast(10)
+                           && !System.OperatingSystem.IsWindowsVersionAtLeast(10, 0, 22000);
+
+        bool systemDecorations = false;
+        if (cliArgs != null || isWindows10 || ForceUseSystemDecorations)
+        {
+            if (isWindows10 || ForceUseSystemDecorations || cliArgs.Contains("--system-decorations"))
+            {
+                this.ExtendClientAreaChromeHints = ExtendClientAreaChromeHints.Default;
+                this.ExtendClientAreaToDecorationsHint = false;
+                this.SystemDecorations = SystemDecorations.Full;
+                systemDecorations = true;
+            }
+        }
+
+        if (!systemDecorations)
+        {
+            this.ExtendClientAreaChromeHints = ExtendClientAreaChromeHints.PreferSystemChrome;
+            this.ExtendClientAreaToDecorationsHint = true;
+            if (System.OperatingSystem.IsLinux())
+            {
+                SystemDecorations = SystemDecorations.None;
+            }
+            else
+            {
+                SystemDecorations = SystemDecorations.Full;
+            }
+        }
     }
 
     public void Initialize(IDockable? dockable, IDockContext context, PixelPoint pos)
@@ -87,11 +139,11 @@ public class HostWindow : Window, IHostWindow
                 RoutingStrategies.Tunnel | RoutingStrategies.Bubble);
             _resizeBorder.PointerMoved += (_, e) =>
             {
-                if(WindowState != WindowState.Normal)
+                if (WindowState != WindowState.Normal)
                 {
                     return;
                 }
-                
+
                 Cursor = new Cursor(WindowUtility.SetResizeCursor(e, _resizeBorder, new Thickness(8)));
             };
             _resizeBorder.PointerExited += SetDefaultCursor;

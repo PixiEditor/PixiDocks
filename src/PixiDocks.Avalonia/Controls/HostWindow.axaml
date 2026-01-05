@@ -10,21 +10,9 @@
         <Setter Property="FontFamily" Value="{Binding FontFamily, RelativeSource={RelativeSource TemplatedParent}}" />
         <Setter Property="WindowState" Value="Normal" />
         <Setter Property="UseLayoutRounding" Value="True" />
-        <Setter Property="SystemDecorations">
-            <OnPlatform>
-                <OnPlatform.Default>
-                    <SystemDecorations>Full</SystemDecorations>
-                </OnPlatform.Default>
-                <OnPlatform.Linux>
-                    <SystemDecorations>None</SystemDecorations>
-                </OnPlatform.Linux>
-            </OnPlatform>
-        </Setter>
-        <Setter Property="ExtendClientAreaToDecorationsHint" Value="True" />
         <Setter Property="MinWidth" Value="250" />
         <Setter Property="Title" Value="{Binding Region.ValidDockable, FallbackValue=Window}" />
         <Setter Property="TextBlock.Foreground" Value="{DynamicResource ThemeDockForegroundBrush}" />
-        <Setter Property="ExtendClientAreaChromeHints" Value="PreferSystemChrome" />
 
         <Setter Property="Template">
             <ControlTemplate>
