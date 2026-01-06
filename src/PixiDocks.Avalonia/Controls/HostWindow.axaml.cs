@@ -67,13 +67,11 @@ public class HostWindow : Window, IHostWindow
     private void UpdateDecorations()
     {
         var cliArgs = Environment.GetCommandLineArgs();
-        bool isWindows10 = System.OperatingSystem.IsWindowsVersionAtLeast(10)
-                           && !System.OperatingSystem.IsWindowsVersionAtLeast(10, 0, 22000);
 
         bool systemDecorations = false;
-        if (cliArgs != null || isWindows10 || ForceUseSystemDecorations)
+        if (cliArgs != null || ForceUseSystemDecorations)
         {
-            if (isWindows10 || ForceUseSystemDecorations || cliArgs.Contains("--system-decorations"))
+            if (ForceUseSystemDecorations || cliArgs.Contains("--system-decorations"))
             {
                 this.ExtendClientAreaChromeHints = ExtendClientAreaChromeHints.Default;
                 this.ExtendClientAreaToDecorationsHint = false;
