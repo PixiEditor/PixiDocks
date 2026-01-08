@@ -568,6 +568,11 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
 
     private void OnFocusedHostChanged(IDockableTarget? host, bool selecting)
     {
+        if(!selecting && host == null)
+        {
+            return;
+        }
+
         bool isFocused = ReferenceEquals(host, this);
         PseudoClasses.Set(":focused", isFocused);
         if (isFocused)
