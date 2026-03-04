@@ -197,7 +197,7 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
 
     private void OnEffectiveViewportChanged(object? sender, EffectiveViewportChangedEventArgs e)
     {
-       UpdateTabControl(); 
+        UpdateTabControl();
     }
 
     private void OnTemplateApplied(object? sender, TemplateAppliedEventArgs e)
@@ -475,7 +475,8 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
         }
 
         Point pos = this.PointToClient(position);
-        return tabControl.GetRealizedContainers().Any(x => x.Bounds.Contains(pos - tabControl.ItemsPanelRoot.Bounds.Position));
+        return tabControl.GetRealizedContainers()
+            .Any(x => x.Bounds.Contains(pos - tabControl.ItemsPanelRoot.Bounds.Position));
     }
 
     public event Action<bool>? FocusedChanged;
@@ -525,6 +526,8 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
 
             if (dockable is IDockableSelectionEvents selectionEvents)
             {
+                if (dockable is Control { IsLoaded: false }) return;
+
                 selectionEvents.OnSelected();
             }
         }
@@ -568,7 +571,7 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
 
     private void OnFocusedHostChanged(IDockableTarget? host, bool selecting)
     {
-        if(!selecting && host == null)
+        if (!selecting && host == null)
         {
             return;
         }
