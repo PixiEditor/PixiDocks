@@ -514,6 +514,7 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
         if (args.NewValue is IDockable dockable)
         {
             dockable.Host = sender;
+
             if (sender.FloatCommand == null)
             {
                 sender.FloatCommand = new RelayCommand<IDockable>(sender.Float);
@@ -524,10 +525,8 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
                 sender.Dockables.Add(dockable);
             }
 
-            if (dockable is IDockableSelectionEvents selectionEvents)
+            if (dockable is IDockableSelectionEvents selectionEvents && sender.Context?.FocusedTarget?.ActiveDockable == dockable)
             {
-                if (dockable is Control { IsLoaded: false }) return;
-
                 selectionEvents.OnSelected();
             }
         }
