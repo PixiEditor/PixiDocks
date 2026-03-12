@@ -16,17 +16,19 @@
 
         <Setter Property="Template">
             <ControlTemplate>
-                <Panel Name="PART_ResizeBorder" Background="{DynamicResource ThemeBackgroundBrush}">
-                    <VisualLayerManager>
-                        <VisualLayerManager.ChromeOverlayLayer>
-                            <controls:HostWindowTitleBar Name="PART_TitleBar" />
-                        </VisualLayerManager.ChromeOverlayLayer>
-                        <controls:DockableAreaRegion
-                            Name="PART_DockableRegion">
-                            <controls:DockableArea Name="PART_DockableArea" />
-                        </controls:DockableAreaRegion>
-                    </VisualLayerManager>
-                </Panel>
+                <LayoutTransformControl>
+                    <Panel Name="PART_ResizeBorder" Background="{DynamicResource ThemeBackgroundBrush}">
+                        <VisualLayerManager>
+                            <VisualLayerManager.ChromeOverlayLayer>
+                                <controls:HostWindowTitleBar Name="PART_TitleBar" />
+                            </VisualLayerManager.ChromeOverlayLayer>
+                            <controls:DockableAreaRegion
+                                Name="PART_DockableRegion">
+                                <controls:DockableArea Name="PART_DockableArea" />
+                            </controls:DockableAreaRegion>
+                        </VisualLayerManager>
+                    </Panel>
+                </LayoutTransformControl>
             </ControlTemplate>
         </Setter>
     </ControlTheme>
