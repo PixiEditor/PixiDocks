@@ -3,28 +3,29 @@
                     xmlns:controls="using:PixiDocks.Avalonia.Controls"
                     xmlns:core="clr-namespace:PixiDocks.Core;assembly=PixiDocks.Core"
                     xmlns:docking="clr-namespace:PixiDocks.Core.Docking;assembly=PixiDocks.Core"
-                    xmlns:avalonia="clr-namespace:PixiDocks.Avalonia">
+                    xmlns:avalonia="clr-namespace:PixiDocks.Avalonia"
+                    xmlns:localization="clr-namespace:PixiEditor.UI.Common.Localization;assembly=PixiEditor.UI.Common">
     <Design.PreviewWith>
         <controls:DockableAreaStripItem />
     </Design.PreviewWith>
 
     <ContextMenu x:Key="DockableAreaItemContextMenu" x:DataType="docking:IDockable" x:CompileBindings="True">
-        <MenuItem Header="_Float"
+        <MenuItem localization:Translator.Key="TAB_FLOAT"
                   Command="{Binding Host.Float}"
                   CommandParameter="{Binding }"
                   IsVisible="{Binding CanFloat}" />
-        <MenuItem Header="_Close"
+        <MenuItem localization:Translator.Key="TAB_CLOSE"
                   Command="{Binding Host.Close}"
                   CommandParameter="{Binding }"
                   IsVisible="{Binding CanClose}" />
-        <MenuItem Header="Close _All"
+        <MenuItem localization:Translator.Key="TAB_CLOSE_ALL"
                   Command="{Binding Host.CloseAll}"
                   CommandParameter="{Binding }" />
-        <MenuItem Header="Close _Other Tabs"
+        <MenuItem localization:Translator.Key="TAB_CLOSE_OTHERS"
                   Command="{Binding Host.CloseAllExcept}"
                   CommandParameter="{Binding }" />
         <Separator />
-        <MenuItem Header="Split _Down"
+        <MenuItem localization:Translator.Key="TAB_SPLIT_DOWN"
                   Command="{Binding Host.SplitDown}"
                   CommandParameter="{Binding }"
                   IsVisible="{Binding CanSplit}">
@@ -32,7 +33,7 @@
                 <Image Source="/Images/bottom-dock.png" Width="16" Height="16" />
             </MenuItem.Icon>
         </MenuItem>
-        <MenuItem Header="Split _Up"
+        <MenuItem localization:Translator.Key="TAB_SPLIT_UP"
                   Command="{Binding Host.SplitUp}"
                   CommandParameter="{Binding }"
                   IsVisible="{Binding CanSplit}">
@@ -40,7 +41,7 @@
                 <Image Source="/Images/up-dock.png" Width="16" Height="16" />
             </MenuItem.Icon>
         </MenuItem>
-        <MenuItem Header="Split _Left"
+        <MenuItem localization:Translator.Key="TAB_SPLIT_LEFT"
                   Command="{Binding Host.SplitLeft}"
                   CommandParameter="{Binding }"
                   IsVisible="{Binding CanSplit}">
@@ -48,7 +49,7 @@
                 <Image Source="/Images/left-dock.png" Width="16" Height="16" />
             </MenuItem.Icon>
         </MenuItem>
-        <MenuItem Header="Split _Right"
+        <MenuItem localization:Translator.Key="TAB_SPLIT_RIGHT"
                   Command="{Binding Host.SplitRight}"
                   CommandParameter="{Binding }"
                   IsVisible="{Binding CanSplit}">

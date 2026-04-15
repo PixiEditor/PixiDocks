@@ -14,6 +14,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\..\..\PixiEditor.UI.Common\PixiEditor.UI.Common.csproj" />
         <ProjectReference Include="..\PixiDocks.Core\PixiDocks.Core.csproj"/>
     </ItemGroup>
 
