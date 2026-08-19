@@ -55,9 +55,11 @@ public class HostWindow : Window, IHostWindow
 
     public HostWindow()
     {
+/*
 #if DEBUG
         this.AttachDevTools();
 #endif
+*/
 
         UpdateTitleBar += UpdateDecorations;
 
@@ -73,24 +75,24 @@ public class HostWindow : Window, IHostWindow
         {
             if (ForceUseSystemDecorations || cliArgs.Contains("--system-decorations"))
             {
-                this.ExtendClientAreaChromeHints = ExtendClientAreaChromeHints.Default;
+                //this.ExtendClientAreaChromeHints = ExtendClientAreaChromeHints.Default;
                 this.ExtendClientAreaToDecorationsHint = false;
-                this.SystemDecorations = SystemDecorations.Full;
+                this.SystemDecorations = WindowDecorations.Full;
                 systemDecorations = true;
             }
         }
 
         if (!systemDecorations)
         {
-            this.ExtendClientAreaChromeHints = ExtendClientAreaChromeHints.PreferSystemChrome;
+            //this.ExtendClientAreaChromeHints = ExtendClientAreaChromeHints.PreferSystemChrome;
             this.ExtendClientAreaToDecorationsHint = true;
             if (System.OperatingSystem.IsLinux())
             {
-                SystemDecorations = SystemDecorations.None;
+                SystemDecorations = WindowDecorations.None;
             }
             else
             {
-                SystemDecorations = SystemDecorations.Full;
+                SystemDecorations = WindowDecorations.Full;
             }
         }
     }
@@ -201,7 +203,7 @@ public class HostWindow : Window, IHostWindow
     {
         base.OnPointerPressed(e);
 
-        if (TitleBar is not null && e.GetPosition(TitleBar).Y < TitleBar.Bounds.Height)
+        /*if (TitleBar is not null && e.GetPosition(TitleBar).Y < TitleBar.Bounds.Height)
         {
             Point pt = e.GetPosition(TitleBar);
             if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
@@ -232,7 +234,7 @@ public class HostWindow : Window, IHostWindow
                     e.Pointer.Capture(null);
                 }
             }
-        }
+        }*/
     }
 
     /// <inheritdoc/>

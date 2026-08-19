@@ -143,7 +143,7 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
         ContextProperty.Changed.AddClassHandler<DockableArea>(ContextChanged);
     }
 
-    protected override void OnGotFocus(GotFocusEventArgs e)
+    protected override void OnGotFocus(FocusChangedEventArgs e)
     {
         if (Context != null)
         {

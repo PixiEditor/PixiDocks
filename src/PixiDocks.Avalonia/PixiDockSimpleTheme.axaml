@@ -8,7 +8,6 @@
                 <MergeResourceInclude Source="Controls/Dockable.axaml"/>
                 <MergeResourceInclude Source="Controls/DockableArea.axaml"/>
                 <MergeResourceInclude Source="Controls/HostWindow.axaml"/>
-                <MergeResourceInclude Source="Controls/HostWindowTitleBar.axaml"/>
                 <MergeResourceInclude Source="Controls/DockableAreaRegion.axaml"/>
                 <MergeResourceInclude Source="Controls/DockableAreaStripItem.axaml"/>
                 <MergeResourceInclude Source="Controls/DockableTree.axaml"/>

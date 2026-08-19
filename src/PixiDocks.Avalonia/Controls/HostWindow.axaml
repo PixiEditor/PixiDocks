@@ -7,26 +7,23 @@
     </Design.PreviewWith>
 
     <ControlTheme TargetType="controls:HostWindow" x:Key="{x:Type controls:HostWindow}">
-        <Setter Property="FontFamily" Value="{Binding FontFamily, RelativeSource={RelativeSource TemplatedParent}}" />
+        <Setter Property="FontFamily" Value="{ReflectionBinding FontFamily, RelativeSource={RelativeSource TemplatedParent}}" />
         <Setter Property="WindowState" Value="Normal" />
         <Setter Property="UseLayoutRounding" Value="True" />
         <Setter Property="MinWidth" Value="250" />
+        <!--
         <Setter Property="Title" Value="{Binding Region.ValidDockable, FallbackValue=Window}" />
+        -->
         <Setter Property="TextBlock.Foreground" Value="{DynamicResource ThemeDockForegroundBrush}" />
 
         <Setter Property="Template">
             <ControlTemplate>
                 <LayoutTransformControl>
                     <Panel Name="PART_ResizeBorder" Background="{DynamicResource ThemeBackgroundBrush}">
-                        <VisualLayerManager>
-                            <VisualLayerManager.ChromeOverlayLayer>
-                                <controls:HostWindowTitleBar Name="PART_TitleBar" />
-                            </VisualLayerManager.ChromeOverlayLayer>
-                            <controls:DockableAreaRegion
-                                Name="PART_DockableRegion">
-                                <controls:DockableArea Name="PART_DockableArea" />
-                            </controls:DockableAreaRegion>
-                        </VisualLayerManager>
+                        <controls:DockableAreaRegion
+                            Name="PART_DockableRegion">
+                            <controls:DockableArea Name="PART_DockableArea" />
+                        </controls:DockableAreaRegion>
                     </Panel>
                 </LayoutTransformControl>
             </ControlTemplate>
