@@ -69,7 +69,6 @@ public class HostWindow : Window, IHostWindow
         {
             if (ForceUseSystemDecorations || cliArgs.Contains("--system-decorations"))
             {
-                //this.ExtendClientAreaChromeHints = ExtendClientAreaChromeHints.Default;
                 this.ExtendClientAreaToDecorationsHint = false;
                 this.WindowDecorations = WindowDecorations.Full;
                 systemDecorations = true;
@@ -78,16 +77,8 @@ public class HostWindow : Window, IHostWindow
 
         if (!systemDecorations)
         {
-            //this.ExtendClientAreaChromeHints = ExtendClientAreaChromeHints.PreferSystemChrome;
             this.ExtendClientAreaToDecorationsHint = true;
-            if (System.OperatingSystem.IsLinux())
-            {
-                WindowDecorations = WindowDecorations.None;
-            }
-            else
-            {
-                WindowDecorations = WindowDecorations.Full;
-            }
+            WindowDecorations = WindowDecorations.Full;
         }
     }
 
