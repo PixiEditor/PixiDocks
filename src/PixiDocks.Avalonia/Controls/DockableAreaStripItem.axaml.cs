@@ -4,6 +4,7 @@ using Avalonia.Controls.Metadata;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.LogicalTree;
 using Avalonia.Media;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
@@ -65,7 +66,7 @@ public class DockableAreaStripItem : TemplatedControl
     protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
     {
         _tabItem = this.FindAncestorOfType<TabItem>();
-        _tabItem.AddHandler(PointerPressedEvent, OnBorderOnPointerPressed, RoutingStrategies.Tunnel);
+        _tabItem.AddHandler(PointerPressedEvent, OnBorderOnPointerPressed, RoutingStrategies.Bubble, true);
         _tabItem.PointerMoved += OnBorderOnPointerMoved;
         _tabItem.PointerReleased += OnBorderOnPointerReleased;
         _parent = _tabItem.FindAncestorOfType<Panel>();
@@ -76,6 +77,8 @@ public class DockableAreaStripItem : TemplatedControl
 
     private void OnBorderOnPointerPressed(object? sender, PointerPressedEventArgs args)
     {
+        if ((args.Pointer.Captured as Visual)?.GetLogicalParent<Button>() != null) return;
+        
         var properties = args.GetCurrentPoint(this).Properties;
         if (properties.IsLeftButtonPressed)
         {
