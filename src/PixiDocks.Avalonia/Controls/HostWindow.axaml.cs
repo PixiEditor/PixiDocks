@@ -116,24 +116,6 @@ public class HostWindow : Window, IHostWindow
     protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
     {
         base.OnApplyTemplate(e);
-
-        if (OperatingSystem.IsLinux())
-        {
-            _resizeBorder = e.NameScope.Find<Control>("PART_ResizeBorder");
-            _resizeBorder.AddHandler(PointerPressedEvent, BeginResizing,
-                RoutingStrategies.Tunnel | RoutingStrategies.Bubble);
-            _resizeBorder.PointerMoved += (_, e) =>
-            {
-                if (WindowState != WindowState.Normal)
-                {
-                    return;
-                }
-
-                Cursor = new Cursor(WindowUtility.SetResizeCursor(e, _resizeBorder, new Thickness(8)));
-            };
-            _resizeBorder.PointerExited += SetDefaultCursor;
-        }
-
         _dockableRegion = e.NameScope.Find<DockableAreaRegion>("PART_DockableRegion");
         DockableArea = e.NameScope.Find<DockableArea>("PART_DockableArea");
     }
