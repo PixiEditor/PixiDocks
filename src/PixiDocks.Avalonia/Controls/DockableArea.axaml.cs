@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using System.Windows.Input;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Chrome;
 using Avalonia.Controls.Metadata;
 using Avalonia.Controls.Presenters;
 using Avalonia.Controls.Primitives;
@@ -136,6 +137,8 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
     private DockingDirection? _lastDirection;
     private DockableArea _lastDockingTarget;
 
+    private Panel titleBar;
+
     static DockableArea()
     {
         ActiveDockableProperty.Changed.AddClassHandler<DockableArea>(ActiveDockableChanged);
@@ -155,6 +158,7 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
     {
         base.OnApplyTemplate(e);
         tabControl = e.NameScope.Find<TabControl>("PART_TabControl");
+        titleBar = e.NameScope.Find<Panel>("PART_TitleBar");
         tabControl.ApplyTemplate();
         _strip = tabControl.Presenter;
         tabControl.PointerPressed += OnTabControlPointerPressed;
@@ -209,14 +213,21 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
     {
         bool isOverTab = false;
 
-        if (VisualRoot is HostWindow hostWindow)
+        bool rootIsHost = false;
+        if (VisualRoot?.Parent is HostWindow hostWindow)
         {
             var relative = FindRelativePos(tabControl, hostWindow);
 
             isOverTab = relative is { X: <= 65, Y: <= 25 };
+            rootIsHost = true;
         }
 
         tabControl.Classes.Set("overTab", isOverTab);
+
+        if (titleBar != null)
+        {
+            WindowDecorationProperties.SetElementRole(titleBar, rootIsHost ? WindowDecorationsElementRole.TitleBar : WindowDecorationsElementRole.None);
+        }
     }
 
     public void AddDockable(IDockable? dockable)

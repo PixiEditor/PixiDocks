@@ -11,6 +11,7 @@
                 <MergeResourceInclude Source="Controls/DockableAreaRegion.axaml"/>
                 <MergeResourceInclude Source="Controls/DockableAreaStripItem.axaml"/>
                 <MergeResourceInclude Source="Controls/DockableTree.axaml"/>
+                <MergeResourceInclude Source="Controls/WindowDrawnDecorations.axaml"/>
                 <MergeResourceInclude Source="Themes/PixiDockTabControl.axaml"/>
                 <MergeResourceInclude Source="Controls/TabCustomizationSettingsTemplate.axaml"/>
             </ResourceDictionary.MergedDictionaries>

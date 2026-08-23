@@ -55,12 +55,6 @@ public class HostWindow : Window, IHostWindow
 
     public HostWindow()
     {
-/*
-#if DEBUG
-        this.AttachDevTools();
-#endif
-*/
-
         UpdateTitleBar += UpdateDecorations;
 
         UpdateDecorations();
@@ -77,7 +71,7 @@ public class HostWindow : Window, IHostWindow
             {
                 //this.ExtendClientAreaChromeHints = ExtendClientAreaChromeHints.Default;
                 this.ExtendClientAreaToDecorationsHint = false;
-                this.SystemDecorations = WindowDecorations.Full;
+                this.WindowDecorations = WindowDecorations.Full;
                 systemDecorations = true;
             }
         }
@@ -88,11 +82,11 @@ public class HostWindow : Window, IHostWindow
             this.ExtendClientAreaToDecorationsHint = true;
             if (System.OperatingSystem.IsLinux())
             {
-                SystemDecorations = WindowDecorations.None;
+                WindowDecorations = WindowDecorations.None;
             }
             else
             {
-                SystemDecorations = WindowDecorations.Full;
+                WindowDecorations = WindowDecorations.Full;
             }
         }
     }
@@ -151,7 +145,6 @@ public class HostWindow : Window, IHostWindow
 
         _dockableRegion = e.NameScope.Find<DockableAreaRegion>("PART_DockableRegion");
         DockableArea = e.NameScope.Find<DockableArea>("PART_DockableArea");
-        TitleBar = e.NameScope.Find<HostWindowTitleBar>("PART_TitleBar");
     }
 
     protected override void OnLoaded(RoutedEventArgs e)

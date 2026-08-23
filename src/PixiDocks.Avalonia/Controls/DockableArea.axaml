@@ -67,32 +67,37 @@
                             <Grid.Resources>
                                 <converters:GreaterThanOneConverter x:Key="Converter" />
                             </Grid.Resources>
-                            <TabControl Name="PART_TabControl" Theme="{DynamicResource PixiDockTabControlTheme}"
-                                        Classes.draggable="{Binding Dockables.Count, Converter={StaticResource Converter}, RelativeSource={RelativeSource TemplatedParent}}"
-                                        SelectedItem="{Binding Path=ActiveDockable, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
-                                        ItemsSource="{TemplateBinding Dockables}"
-                                        TabStripPlacement="{TemplateBinding TabPlacement}">
-                                <TabControl.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <panels:TabGrid HorizontalAlignment="Left"
-                                                        Classes.offsetLeft="{OnPlatform Default=false, macOS=true}" />
-                                    </ItemsPanelTemplate>
-                                </TabControl.ItemsPanel>
-                                <TabControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <controls:DockableAreaStripItem
-                                            DockPanel.Dock="Top"
-                                            Dockable="{Binding $parent[TabItem].Content}" />
-                                    </DataTemplate>
-                                </TabControl.ItemTemplate>
-                                <TabControl.Resources>
-                                    <ResourceDictionary>
-                                        <ResourceDictionary.MergedDictionaries>
-                                            <MergeResourceInclude Source="/Themes/PixiDockTabItem.axaml" />
-                                        </ResourceDictionary.MergedDictionaries>
-                                    </ResourceDictionary>
-                                </TabControl.Resources>
-                            </TabControl>
+                            <Panel>
+                                <Panel Background="Transparent"
+                                       Name="PART_TitleBar"
+                                       Height="28" VerticalAlignment="Top" HorizontalAlignment="Stretch"></Panel>
+                                <TabControl Name="PART_TabControl" Theme="{DynamicResource PixiDockTabControlTheme}"
+                                            Classes.draggable="{Binding Dockables.Count, Converter={StaticResource Converter}, RelativeSource={RelativeSource TemplatedParent}}"
+                                            SelectedItem="{Binding Path=ActiveDockable, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                                            ItemsSource="{TemplateBinding Dockables}"
+                                            TabStripPlacement="{TemplateBinding TabPlacement}">
+                                    <TabControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <panels:TabGrid HorizontalAlignment="Left"
+                                                            Classes.offsetLeft="{OnPlatform Default=false, macOS=true}" />
+                                        </ItemsPanelTemplate>
+                                    </TabControl.ItemsPanel>
+                                    <TabControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <controls:DockableAreaStripItem
+                                                DockPanel.Dock="Top"
+                                                Dockable="{Binding $parent[TabItem].Content}" />
+                                        </DataTemplate>
+                                    </TabControl.ItemTemplate>
+                                    <TabControl.Resources>
+                                        <ResourceDictionary>
+                                            <ResourceDictionary.MergedDictionaries>
+                                                <MergeResourceInclude Source="/Themes/PixiDockTabItem.axaml" />
+                                            </ResourceDictionary.MergedDictionaries>
+                                        </ResourceDictionary>
+                                    </TabControl.Resources>
+                                </TabControl>
+                            </Panel>
                             <Grid
                                 IsVisible="{Binding !Dockables.Count, RelativeSource={RelativeSource TemplatedParent}}">
                                 <Button HorizontalAlignment="Right" VerticalAlignment="Top" Margin="5"
