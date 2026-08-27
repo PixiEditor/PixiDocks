@@ -1,3 +1,4 @@
+using Avalonia;
 using Avalonia.Markup.Xaml;
 using Avalonia.Markup.Xaml.Templates;
 using Avalonia.Styling;
@@ -21,5 +22,16 @@ public class PixiDockSimpleTheme : Styles
 
         LayoutTree.TypeResolver.Add("DockableArea", typeof(IDockableHost));
         LayoutTree.TypeResolver.Add("DockableTree", typeof(IDockableTree));
+        
+        if (OperatingSystem.IsLinux() && TryGetResource("LinuxHostWindowDecorations", null, out var decorTheme) && decorTheme is ControlTheme linuxControlTheme)
+        {
+            Application.Current.Styles.Resources.Add("HostWindowDecorations", linuxControlTheme);
+        }
+
+        if (OperatingSystem.IsWindows() && TryGetResource("WindowsHostWindowDecorations", null, out var windecorTheme) &&
+            windecorTheme is ControlTheme winControlTheme)
+        {
+            Application.Current.Styles.Resources.Add("HostWindowDecorations", winControlTheme);
+        }
     }
 }

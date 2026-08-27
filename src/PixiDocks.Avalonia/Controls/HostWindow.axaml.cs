@@ -55,10 +55,6 @@ public class HostWindow : Window, IHostWindow
 
     public HostWindow()
     {
-#if DEBUG
-        this.AttachDevTools();
-#endif
-
         UpdateTitleBar += UpdateDecorations;
 
         UpdateDecorations();
@@ -73,25 +69,16 @@ public class HostWindow : Window, IHostWindow
         {
             if (ForceUseSystemDecorations || cliArgs.Contains("--system-decorations"))
             {
-                this.ExtendClientAreaChromeHints = ExtendClientAreaChromeHints.Default;
                 this.ExtendClientAreaToDecorationsHint = false;
-                this.SystemDecorations = SystemDecorations.Full;
+                this.WindowDecorations = WindowDecorations.Full;
                 systemDecorations = true;
             }
         }
 
         if (!systemDecorations)
         {
-            this.ExtendClientAreaChromeHints = ExtendClientAreaChromeHints.PreferSystemChrome;
             this.ExtendClientAreaToDecorationsHint = true;
-            if (System.OperatingSystem.IsLinux())
-            {
-                SystemDecorations = SystemDecorations.None;
-            }
-            else
-            {
-                SystemDecorations = SystemDecorations.Full;
-            }
+            WindowDecorations = WindowDecorations.Full;
         }
     }
 
@@ -129,27 +116,8 @@ public class HostWindow : Window, IHostWindow
     protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
     {
         base.OnApplyTemplate(e);
-
-        if (OperatingSystem.IsLinux())
-        {
-            _resizeBorder = e.NameScope.Find<Control>("PART_ResizeBorder");
-            _resizeBorder.AddHandler(PointerPressedEvent, BeginResizing,
-                RoutingStrategies.Tunnel | RoutingStrategies.Bubble);
-            _resizeBorder.PointerMoved += (_, e) =>
-            {
-                if (WindowState != WindowState.Normal)
-                {
-                    return;
-                }
-
-                Cursor = new Cursor(WindowUtility.SetResizeCursor(e, _resizeBorder, new Thickness(8)));
-            };
-            _resizeBorder.PointerExited += SetDefaultCursor;
-        }
-
         _dockableRegion = e.NameScope.Find<DockableAreaRegion>("PART_DockableRegion");
         DockableArea = e.NameScope.Find<DockableArea>("PART_DockableArea");
-        TitleBar = e.NameScope.Find<HostWindowTitleBar>("PART_TitleBar");
     }
 
     protected override void OnLoaded(RoutedEventArgs e)
@@ -201,7 +169,7 @@ public class HostWindow : Window, IHostWindow
     {
         base.OnPointerPressed(e);
 
-        if (TitleBar is not null && e.GetPosition(TitleBar).Y < TitleBar.Bounds.Height)
+        /*if (TitleBar is not null && e.GetPosition(TitleBar).Y < TitleBar.Bounds.Height)
         {
             Point pt = e.GetPosition(TitleBar);
             if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
@@ -232,7 +200,7 @@ public class HostWindow : Window, IHostWindow
                     e.Pointer.Capture(null);
                 }
             }
-        }
+        }*/
     }
 
     /// <inheritdoc/>
