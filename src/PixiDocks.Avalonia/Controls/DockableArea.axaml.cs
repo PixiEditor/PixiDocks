@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using System.Windows.Input;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Chrome;
 using Avalonia.Controls.Metadata;
 using Avalonia.Controls.Presenters;
 using Avalonia.Controls.Primitives;
@@ -136,6 +137,8 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
     private DockingDirection? _lastDirection;
     private DockableArea _lastDockingTarget;
 
+    private Panel titleBar;
+
     static DockableArea()
     {
         ActiveDockableProperty.Changed.AddClassHandler<DockableArea>(ActiveDockableChanged);
@@ -143,7 +146,7 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
         ContextProperty.Changed.AddClassHandler<DockableArea>(ContextChanged);
     }
 
-    protected override void OnGotFocus(GotFocusEventArgs e)
+    protected override void OnGotFocus(FocusChangedEventArgs e)
     {
         if (Context != null)
         {
@@ -155,6 +158,7 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
     {
         base.OnApplyTemplate(e);
         tabControl = e.NameScope.Find<TabControl>("PART_TabControl");
+        titleBar = e.NameScope.Find<Panel>("PART_TitleBar");
         tabControl.ApplyTemplate();
         _strip = tabControl.Presenter;
         tabControl.PointerPressed += OnTabControlPointerPressed;
@@ -197,7 +201,7 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
 
     private void OnEffectiveViewportChanged(object? sender, EffectiveViewportChangedEventArgs e)
     {
-       UpdateTabControl(); 
+        UpdateTabControl();
     }
 
     private void OnTemplateApplied(object? sender, TemplateAppliedEventArgs e)
@@ -209,14 +213,21 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
     {
         bool isOverTab = false;
 
-        if (VisualRoot is HostWindow hostWindow)
+        bool rootIsHost = false;
+        if (VisualRoot?.Parent is HostWindow hostWindow)
         {
             var relative = FindRelativePos(tabControl, hostWindow);
 
             isOverTab = relative is { X: <= 65, Y: <= 25 };
+            rootIsHost = true;
         }
 
         tabControl.Classes.Set("overTab", isOverTab);
+
+        if (titleBar != null)
+        {
+            WindowDecorationProperties.SetElementRole(titleBar, rootIsHost ? WindowDecorationsElementRole.TitleBar : WindowDecorationsElementRole.None);
+        }
     }
 
     public void AddDockable(IDockable? dockable)
@@ -475,7 +486,8 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
         }
 
         Point pos = this.PointToClient(position);
-        return tabControl.GetRealizedContainers().Any(x => x.Bounds.Contains(pos - tabControl.ItemsPanelRoot.Bounds.Position));
+        return tabControl.GetRealizedContainers()
+            .Any(x => x.Bounds.Contains(pos - tabControl.ItemsPanelRoot.Bounds.Position));
     }
 
     public event Action<bool>? FocusedChanged;
@@ -513,6 +525,7 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
         if (args.NewValue is IDockable dockable)
         {
             dockable.Host = sender;
+
             if (sender.FloatCommand == null)
             {
                 sender.FloatCommand = new RelayCommand<IDockable>(sender.Float);
@@ -523,7 +536,7 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
                 sender.Dockables.Add(dockable);
             }
 
-            if (dockable is IDockableSelectionEvents selectionEvents)
+            if (dockable is IDockableSelectionEvents selectionEvents && sender.Context?.FocusedTarget?.ActiveDockable == dockable)
             {
                 selectionEvents.OnSelected();
             }
@@ -568,7 +581,7 @@ public class DockableArea : TemplatedControl, IDockableHost, ITreeElement
 
     private void OnFocusedHostChanged(IDockableTarget? host, bool selecting)
     {
-        if(!selecting && host == null)
+        if (!selecting && host == null)
         {
             return;
         }

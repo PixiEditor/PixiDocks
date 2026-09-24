@@ -5,6 +5,7 @@ using Avalonia.Controls.Metadata;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.Platform;
 using Avalonia.Threading;
 using PixiDocks.Avalonia.Helpers;
 using PixiDocks.Core;
@@ -38,11 +39,47 @@ public class HostWindow : Window, IHostWindow
 
     protected override Type StyleKeyOverride => typeof(HostWindow);
 
+    private static bool forceUseSystemDecorations;
+
+    public static bool ForceUseSystemDecorations
+    {
+        get => forceUseSystemDecorations;
+        set
+        {
+            forceUseSystemDecorations = value;
+            UpdateTitleBar?.Invoke();
+        }
+    }
+
+    private static event Action UpdateTitleBar;
+
     public HostWindow()
     {
-#if DEBUG
-        this.AttachDevTools();
-#endif
+        UpdateTitleBar += UpdateDecorations;
+
+        UpdateDecorations();
+    }
+
+    private void UpdateDecorations()
+    {
+        var cliArgs = Environment.GetCommandLineArgs();
+
+        bool systemDecorations = false;
+        if (cliArgs != null || ForceUseSystemDecorations)
+        {
+            if (ForceUseSystemDecorations || cliArgs.Contains("--system-decorations"))
+            {
+                this.ExtendClientAreaToDecorationsHint = false;
+                this.WindowDecorations = WindowDecorations.Full;
+                systemDecorations = true;
+            }
+        }
+
+        if (!systemDecorations)
+        {
+            this.ExtendClientAreaToDecorationsHint = true;
+            WindowDecorations = WindowDecorations.Full;
+        }
     }
 
     public void Initialize(IDockable? dockable, IDockContext context, PixelPoint pos)
@@ -79,27 +116,8 @@ public class HostWindow : Window, IHostWindow
     protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
     {
         base.OnApplyTemplate(e);
-
-        if (OperatingSystem.IsLinux())
-        {
-            _resizeBorder = e.NameScope.Find<Control>("PART_ResizeBorder");
-            _resizeBorder.AddHandler(PointerPressedEvent, BeginResizing,
-                RoutingStrategies.Tunnel | RoutingStrategies.Bubble);
-            _resizeBorder.PointerMoved += (_, e) =>
-            {
-                if(WindowState != WindowState.Normal)
-                {
-                    return;
-                }
-                
-                Cursor = new Cursor(WindowUtility.SetResizeCursor(e, _resizeBorder, new Thickness(8)));
-            };
-            _resizeBorder.PointerExited += SetDefaultCursor;
-        }
-
         _dockableRegion = e.NameScope.Find<DockableAreaRegion>("PART_DockableRegion");
         DockableArea = e.NameScope.Find<DockableArea>("PART_DockableArea");
-        TitleBar = e.NameScope.Find<HostWindowTitleBar>("PART_TitleBar");
     }
 
     protected override void OnLoaded(RoutedEventArgs e)
@@ -151,7 +169,7 @@ public class HostWindow : Window, IHostWindow
     {
         base.OnPointerPressed(e);
 
-        if (TitleBar is not null && e.GetPosition(TitleBar).Y < TitleBar.Bounds.Height)
+        /*if (TitleBar is not null && e.GetPosition(TitleBar).Y < TitleBar.Bounds.Height)
         {
             Point pt = e.GetPosition(TitleBar);
             if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
@@ -182,7 +200,7 @@ public class HostWindow : Window, IHostWindow
                     e.Pointer.Capture(null);
                 }
             }
-        }
+        }*/
     }
 
     /// <inheritdoc/>

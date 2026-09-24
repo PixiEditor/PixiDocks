@@ -42,8 +42,9 @@ public class DockContext : IDockContext
     public Func<HostWindow> HostWindowFactory { get; set; } = () => new HostWindow();
     public event Action<HostWindow>? WindowFloated;
     public event Action<IDockable>? DockableClosed;
-
     public event Action<IDockableTarget?, bool>? FocusedHostChanged;
+    public event Action<IDockable> DockableFocused;
+
     public bool IsFloating(IDockableHost dockableHost)
     {
         return floatingWindows.Values.Any(window => window.Region.AllTargets.Contains(dockableHost));
@@ -126,19 +127,23 @@ public class DockContext : IDockContext
 
         CreateBindings(dockable);
 
+        dockable.GotFocus += (s, e) => DockableFocused?.Invoke(dockable);
+
         return dockable;
     }
 
     private void CreateBindings(Dockable? dockable)
     {
-        Binding titleBinding = new(nameof(dockable.DockableContent.Title), BindingMode.TwoWay)
+        Binding titleBinding = new(nameof(dockable.DockableContent.Title))
         {
             Source = dockable.DockableContent,
+            Mode = BindingMode.TwoWay
         };
 
-        Binding tabCustomizationSettingsBinding = new(nameof(dockable.DockableContent.TabCustomizationSettings), BindingMode.TwoWay)
+        Binding tabCustomizationSettingsBinding = new(nameof(dockable.DockableContent.TabCustomizationSettings))
         {
             Source = dockable.DockableContent,
+            Mode = BindingMode.TwoWay
         };
 
         dockable.Bind(Dockable.TitleProperty, titleBinding);

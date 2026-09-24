@@ -8,7 +8,7 @@ public static class CoordinatesUtil
     public static Point ToRelativePoint(Visual visual, int x, int y)
     {
         PixelPoint point = new PixelPoint(x, y);
-        if(visual.GetVisualRoot() is null)
+        if(visual.GetPresentationSource()?.RootVisual is null)
         {
             return new Point(-1, -1);
         }

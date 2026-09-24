@@ -242,13 +242,13 @@ public class DockableTree : TemplatedControl, ITreeElement, IDockableTree
         if (areaToSplit == Second)
         {
             area = Second as DockableArea;
-            Second = new DockableTree() { First = area, DockableParent = this, Context = Context, Region = Region };
+            Second = new DockableTree() { First = area, DockableParent = this, Context = Context, Region = Region, SecondSize = 0.5};
             resultTree = Second as DockableTree;
         }
         else if (areaToSplit == First)
         {
             area = First as DockableArea;
-            First = new DockableTree() { First = area, DockableParent = this, Context = Context, Region = Region };
+            First = new DockableTree() { First = area, DockableParent = this, Context = Context, Region = Region,  SecondSize = 0.5 };
             resultTree = First as DockableTree;
         }
         else if (Equals(areaToSplit, this))

@@ -9,6 +9,7 @@ public class DockableTreeConverter : CustomConverter<IDockableTree>
     public override void Write(Utf8JsonWriter writer, IDockableTree value, JsonSerializerOptions options)
     {
         writer.WriteStartObject("DockableTree");
+        writer.WriteString("Id", ((IDockableTarget)value).Id ?? string.Empty);
         writer.WriteString("SplitDirection", value.SplitDirection.ToString());
         if (value.SplitDirection.HasValue)
         {
@@ -31,6 +32,7 @@ public class DockableTreeConverter : CustomConverter<IDockableTree>
     {
         StartReadingScope(ref reader);
 
+        string id = string.Empty;
         DockingDirection? direction = null;
         double? firstSize = null;
         double? secondSize = null;
@@ -42,6 +44,9 @@ public class DockableTreeConverter : CustomConverter<IDockableTree>
         {
             switch (propName)
             {
+                case nameof(IDockableTarget.Id):
+                    id = ReadStringProperty(ref reader);
+                    break;
                 case nameof(IDockableTree.SplitDirection):
                     direction = null;
                     if (Enum.TryParse(typeof(DockingDirection), ReadStringProperty(ref reader), out object? result))
@@ -65,6 +70,7 @@ public class DockableTreeConverter : CustomConverter<IDockableTree>
         }
 
         IDockableTree treeElement = Activator.CreateInstance(typeToConvert) as IDockableTree;
+            ((IDockableTarget)treeElement).Id = id;
             treeElement.First = first as ITreeElement;
             treeElement.Second = second as ITreeElement;
             treeElement.SplitDirection = direction;

@@ -9,6 +9,7 @@ public class DockableHostConverter : CustomConverter<IDockableHost>
     public override void Write(Utf8JsonWriter writer, IDockableHost value, JsonSerializerOptions options)
     {
         writer.WriteStartObject("DockableArea");
+        writer.WriteString("Id", ((IDockableTarget)value).Id ?? string.Empty);
         writer.WriteStartArray("Dockables");
         foreach (var dockable in value.Dockables)
         {
@@ -31,6 +32,10 @@ public class DockableHostConverter : CustomConverter<IDockableHost>
             bool found;
             switch (propName)
             {
+                case nameof(IDockableTarget.Id):
+                    ((IDockableTarget)host).Id = ReadStringProperty(ref reader);
+                    found = false;
+                    break;
                 case nameof(IDockableHost.Dockables):
                     found = true;
                     StartReadingScope(ref reader);
