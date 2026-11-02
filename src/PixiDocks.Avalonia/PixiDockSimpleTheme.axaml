@@ -8,10 +8,11 @@
                 <MergeResourceInclude Source="Controls/Dockable.axaml"/>
                 <MergeResourceInclude Source="Controls/DockableArea.axaml"/>
                 <MergeResourceInclude Source="Controls/HostWindow.axaml"/>
-                <MergeResourceInclude Source="Controls/HostWindowTitleBar.axaml"/>
                 <MergeResourceInclude Source="Controls/DockableAreaRegion.axaml"/>
                 <MergeResourceInclude Source="Controls/DockableAreaStripItem.axaml"/>
                 <MergeResourceInclude Source="Controls/DockableTree.axaml"/>
+                <MergeResourceInclude Source="Controls/WindowDrawnDecorationsWindows.axaml"/>
+                <MergeResourceInclude Source="Controls/WindowDrawnDecorationsLinux.axaml"/>
                 <MergeResourceInclude Source="Themes/PixiDockTabControl.axaml"/>
                 <MergeResourceInclude Source="Controls/TabCustomizationSettingsTemplate.axaml"/>
             </ResourceDictionary.MergedDictionaries>

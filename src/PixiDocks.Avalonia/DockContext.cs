@@ -134,14 +134,16 @@ public class DockContext : IDockContext
 
     private void CreateBindings(Dockable? dockable)
     {
-        Binding titleBinding = new(nameof(dockable.DockableContent.Title), BindingMode.TwoWay)
+        Binding titleBinding = new(nameof(dockable.DockableContent.Title))
         {
             Source = dockable.DockableContent,
+            Mode = BindingMode.TwoWay
         };
 
-        Binding tabCustomizationSettingsBinding = new(nameof(dockable.DockableContent.TabCustomizationSettings), BindingMode.TwoWay)
+        Binding tabCustomizationSettingsBinding = new(nameof(dockable.DockableContent.TabCustomizationSettings))
         {
             Source = dockable.DockableContent,
+            Mode = BindingMode.TwoWay
         };
 
         dockable.Bind(Dockable.TitleProperty, titleBinding);
